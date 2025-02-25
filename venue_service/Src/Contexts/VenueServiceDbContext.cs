@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using venue_service.Src.Models.User;
+using venue_service.Src.Models.UserModel;
 using venue_service.Src.Models.Venue;
 
 public class VenueServiceDbContext : DbContext

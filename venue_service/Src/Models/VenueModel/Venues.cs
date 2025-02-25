@@ -1,6 +1,4 @@
-﻿using System;
-using venue_service.Src.Models.User;
-using venue_service.Src.Models.Venue.Equipament;
+﻿using venue_service.Src.Models.UserModel;
 
 namespace venue_service.Src.Models.Venue
 {

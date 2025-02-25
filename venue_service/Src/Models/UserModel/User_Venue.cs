@@ -1,6 +1,6 @@
 ﻿using venue_service.Src.Models.Venue;
 
-namespace venue_service.Src.Models.User
+namespace venue_service.Src.Models.UserModel
 {
     public class User_Venue
     {
