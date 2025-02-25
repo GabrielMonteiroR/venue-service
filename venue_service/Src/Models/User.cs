@@ -16,6 +16,6 @@ namespace venue_service.Src.Models
         public TimeSpan UpdatedAt { get; set; }
         public TimeSpan DeletedAt { get; set; }
 
-        public ICollection<UserVenue> UserVenues { get; set; }
+        public ICollection<User_Venue> UserVenues { get; set; }
     }
 }

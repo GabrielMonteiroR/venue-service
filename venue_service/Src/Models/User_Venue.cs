@@ -1,6 +1,6 @@
 ﻿namespace venue_service.Src.Models
 {
-    public class UserVenue
+    public class User_Venue
     {
         public int UserId { get; set; }
         public User User { get; set; }

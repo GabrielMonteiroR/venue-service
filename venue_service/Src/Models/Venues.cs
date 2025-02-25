@@ -23,6 +23,6 @@ namespace venue_service.Src.Models
         public VenueType Type { get; set; }
         public VenueAvaliability VenueAvaliability { get; set; }
 
-        public ICollection<UserVenue> UserVenues { get; set; }
+        public ICollection<User_Venue> UserVenues { get; set; }
     }
 }
