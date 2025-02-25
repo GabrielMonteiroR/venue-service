@@ -1,4 +1,6 @@
-﻿namespace venue_service.Src.Models
+﻿using System.Data;
+
+namespace venue_service.Src.Models
 {
     public class User
     {
@@ -8,11 +10,12 @@
         public string Email { get; set; }
         public string Password { get; set; }
         public string Phone { get; set; }
-        public Role role { get; set; }
-        public bool isBanned { get; set; }
-        public TimeSpan createdAt {  get; set; }
-        public TimeSpan updatedAt { get; set; }
-        public TimeSpan deletedAt { get; set; }
+        public Role Role { get; set; }
+        public bool IsBanned { get; set; }
+        public TimeSpan CreatedAt { get; set; }
+        public TimeSpan UpdatedAt { get; set; }
+        public TimeSpan DeletedAt { get; set; }
 
+        public ICollection<UserVenue> UserVenues { get; set; }
     }
 }
