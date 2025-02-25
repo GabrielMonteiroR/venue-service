@@ -1,6 +1,6 @@
-﻿namespace venue_service.Src.Models
+﻿namespace venue_service.Src.Models.Venue.Equipament
 {
-    public class VenueEquipaments
+    public class VenueEquipament
     {
         public int Id { get; set }
         public string EquipamentName { get; set; }

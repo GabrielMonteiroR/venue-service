@@ -1,4 +1,4 @@
-﻿namespace venue_service.Src.Models
+﻿namespace venue_service.Src.Models.Venue
 {
     public class VenueAvaliability
     {

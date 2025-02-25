@@ -1,6 +1,8 @@
 ﻿using System;
+using venue_service.Src.Models.User;
+using venue_service.Src.Models.Venue.Equipament;
 
-namespace venue_service.Src.Models
+namespace venue_service.Src.Models.Venue
 {
     public class Venues
     {
@@ -18,7 +20,7 @@ namespace venue_service.Src.Models
         public TimeSpan UpdatedAt { get; set; }
         public TimeSpan DeletedAt { get; set; }
         public User Owner { get; set; }
-        public VenueEquipaments Equipaments { get; set; }
+        public VenueEquipament Equipaments { get; set; }
         public Sport AvaliableSports { get; set; }
         public VenueType Type { get; set; }
         public VenueAvaliability VenueAvaliability { get; set; }

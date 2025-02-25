@@ -1,4 +1,6 @@
-﻿namespace venue_service.Src.Models
+﻿using venue_service.Src.Models.Venue;
+
+namespace venue_service.Src.Models.User
 {
     public class User_Venue
     {
