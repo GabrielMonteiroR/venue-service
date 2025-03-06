@@ -2,6 +2,9 @@
 {
     public class Equipament
     {
-        public bool avaliable { get; set; }
+        public int Id { get; set; }
+        public EquipamentType EquipamentType { get; set; } 
+        public Venues Venue { get; set; } 
+        public bool IsAvailable { get; set; } 
     }
 }

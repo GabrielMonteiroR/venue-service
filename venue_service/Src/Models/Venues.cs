@@ -11,15 +11,15 @@
         public double Longitude { get; set; }
         public string Description { get; set; }
         public bool AllowLocalPayment { get; set; }
-        public VenueImage VenueImages { get; set; }
+        public List<VenueImage> VenueImages { get; set; } = new List<VenueImage>();
         public TimeSpan CreatedAt { get; set; }
         public TimeSpan UpdatedAt { get; set; }
-        public TimeSpan deletedAt { get; set; }
+        public TimeSpan DeletedAt { get; set; }
         public User Owner { get; set; }
-
-        public Sport AvaliableSports { get; set; } //MANY TO MANY
-
+        public List<Sport> AvaliableSports { get; set; } = new List<Sport>();
         public VenueType TypeOfVenue { get; set; }
-        public LocationAvailabilityTime LocationAvailability { get; set; }
+        public List<LocationAvailabilityTime> LocationAvailability { get; set; } = new List<LocationAvailabilityTime>();
+
+        public List<Equipament> Equipaments { get; set; } = new List<Equipament>();
     }
 }
