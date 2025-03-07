@@ -10,9 +10,9 @@
         public string Phone { get; set; }
         public Role role { get; set; }
         public bool isBanned { get; set; }
-        public TimeSpan createdAt {  get; set; }
-        public TimeSpan updatedAt { get; set; }
-        public TimeSpan deletedAt { get; set; }
+        public DateTime createdAt {  get; set; }
+        public DateTime updatedAt { get; set; }
+        public DateTime deletedAt { get; set; }
 
     }
 }

@@ -1,9 +1,9 @@
 ﻿namespace venue_service.Src.Models
 {
-    public class Sport
+    public class VenueStatusEnum
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public List<EquipamentType> EquipamentTypes { get; set; } = new();
+        public string Description { get; set; }
     }
 }
