@@ -3,7 +3,7 @@ using venue_service.Src.Models;
 
 namespace venue_service.Src.Contexts;
 
-public class DbContext
+public class VenueDbContext : DbContext
 {
     public DbSet<Equipament> equipaments { get; set; }
     public DbSet<EquipamentType> equipamentTypes { get; set; }
@@ -15,4 +15,19 @@ public class DbContext
     public DbSet<Venue> venues { get; set; }
     public DbSet<VenueStatusEnum> VenueStatusEnums { get; set; }
     public DbSet<VenueTypeEnum> venueTypeEnums { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseNpgsql("Host=my_host;Database=my_db;Username=my_user;Password=my_pw");
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<EquipamentType>()
+            .HasMany(e => e.Equipaments)
+            .WithOne(et => et.EquipamentType)
+            .HasForeignKey(et => et.EquipamentTypeId);
+
+    }
+
 }

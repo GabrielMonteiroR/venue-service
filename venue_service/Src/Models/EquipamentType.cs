@@ -6,6 +6,7 @@
         public string Name { get; set; } 
         public int SportId { get; set; }
         public Sport Sport { get; set; }
-        public List<Equipament> Equipaments { get; set; } = new();
+
+        public List<Equipament> Equipaments { get; set; }
     }
 }

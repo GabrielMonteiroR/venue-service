@@ -1,5 +1,6 @@
 ﻿namespace venue_service.Src.Models
 {
+    //TODO RELATIONSHIP
     public class VenueStatusEnum
     {
         public int Id { get; set; }
