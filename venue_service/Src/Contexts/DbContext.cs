@@ -28,6 +28,7 @@ public class VenueDbContext : DbContext
             .WithOne(et => et.EquipamentType)
             .HasForeignKey(et => et.EquipamentTypeId);
 
+        modelBuilder.Entity<Sport>.Has
     }
 
 }

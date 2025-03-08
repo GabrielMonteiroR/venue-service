@@ -3,11 +3,7 @@
 public class Equipament
 {
     public int Id { get; set; }
-    public int VenueId { get; set; }
-    public Venue Venue { get; set; }
     public bool IsAvailable { get; set; }
 
-    public int EquipamentTypeId { get; set; }
-    public EquipamentType EquipamentType { get; set; }
 
 }
