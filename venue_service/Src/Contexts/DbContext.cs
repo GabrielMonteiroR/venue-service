@@ -6,7 +6,6 @@ namespace venue_service.Src.Contexts;
 public class VenueDbContext : DbContext
 {
     public DbSet<Equipament> equipaments { get; set; }
-    public DbSet<EquipamentType> equipamentTypes { get; set; }
     public DbSet<LocationAvailabilityTime> locationAvailabilityTimes { get; set; }
     public DbSet<Sport> sports { get; set; }
     public DbSet<User> users { get; set; }
@@ -23,12 +22,11 @@ public class VenueDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<EquipamentType>()
+        modelBuilder.Entity<Venue>()
             .HasMany(e => e.Equipaments)
-            .WithOne(et => et.EquipamentType)
-            .HasForeignKey(et => et.EquipamentTypeId);
+            .WithMany(v => v.Venues);
 
-        modelBuilder.Entity<Sport>.Has
+
     }
 
 }
