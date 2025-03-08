@@ -25,8 +25,6 @@ public class VenueDbContext : DbContext
         modelBuilder.Entity<Venue>()
             .HasMany(e => e.Equipaments)
             .WithMany(v => v.Venues);
-
-
     }
 
 }
