@@ -1,5 +1,6 @@
 ﻿namespace venue_service.Src.Models.Venue
 {
+    //TODO RELATIONSHIP
     public class VenueContactInfo
     {
         public int Id { get; set; }

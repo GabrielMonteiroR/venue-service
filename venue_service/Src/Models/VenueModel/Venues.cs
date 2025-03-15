@@ -1,4 +1,4 @@
-﻿using venue_service.Src.Models.UserModel;
+using venue_service.Src.Models.UserModel;
 
 namespace venue_service.Src.Models.Venue
 {
