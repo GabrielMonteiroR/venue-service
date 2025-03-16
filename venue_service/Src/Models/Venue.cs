@@ -1,4 +1,3 @@
-using Src.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -49,7 +48,7 @@ namespace venue_service.Src.Models
         [ForeignKey("VenueAvaliabilityId")]
         [Column("venue_avaliability_id")]
         public int VenueAvaliabilityId { get; set; }
-        public VenueAvaliability VenueAvaliability { get; set; }
+        public VenueAvailability VenueAvaliability { get; set; }
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -60,10 +59,10 @@ namespace venue_service.Src.Models
         [Column("deleted_at")]
         public DateTime? DeletedAt { get; set; }
 
-        // Relacionamentos
         public ICollection<VenueImage> VenueImages { get; set; }
         public ICollection<VenueEquipament> VenueEquipaments { get; set; }
         public ICollection<User_Venue> UserVenues { get; set; }
         public ICollection<Venue_Sport> VenueSports { get; set; }
+        public ICollection<VenueContactInfo> VenueContactInfos { get; set; } 
     }
 }

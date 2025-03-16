@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using venue_service.Src.Models.Venue.Equipament;
+
 
 namespace venue_service.Src.Models
 {

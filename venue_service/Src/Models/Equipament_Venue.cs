@@ -1,5 +1,4 @@
-﻿using Src.Models;
-
+﻿
 namespace venue_service.Src.Models
 {
     public class Equipament_Venue
