@@ -16,6 +16,8 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
+app.UseMiddleware<venue_service.Src.Middlewares.ErrorHandlingMiddleware>();
+
 app.MapControllers();
 
 app.Run();
