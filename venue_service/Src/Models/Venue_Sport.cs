@@ -1,9 +1,18 @@
-﻿namespace venue_service.Src.Models;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-public class Venue_Sport
+namespace venue_service.Src.Models
 {
-    public int Id { get; set; }
-    public int sportId { get; set; }
-    public int venueId { get; set; }
+    [Table("venue_sports")]
+    public class Venue_Sport
+    {
+        [ForeignKey("VenueId")]
+        [Column("venue_id")]
+        public int VenueId { get; set; }
+        public Venue Venue { get; set; }
 
+        [ForeignKey("SportId")]
+        [Column("sport_id")]
+        public int SportId { get; set; }
+        public Sport Sport { get; set; }
+    }
 }
