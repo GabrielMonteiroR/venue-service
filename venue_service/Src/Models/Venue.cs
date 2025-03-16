@@ -36,6 +36,12 @@ namespace venue_service.Src.Models
         [Column("allow_local_payment")]
         public bool AllowLocalPayment { get; set; }
 
+        [ForeignKey("VenueTypeId")]
+        [Column("venue_type_id")]
+        public int VenueTypeId { get; set; }
+        public VenueType VenueType { get; set; }
+
+
         [MaxLength(500)]
         [Column("rules")]
         public string Rules { get; set; }
