@@ -11,7 +11,7 @@ namespace venue_service.Src.Models
         public int Id { get; set; }
 
         [Column("status")]
-        public VenueStatusEnum Status { get; set; }
+        public VenueStatus Status { get; set; }
 
         [Required]
         [Column("price")]
