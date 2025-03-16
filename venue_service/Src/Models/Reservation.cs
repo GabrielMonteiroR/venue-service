@@ -28,7 +28,7 @@ namespace venue_service.Src.Models
         [Required]
         [MaxLength(50)]
         [Column("status")]
-        public string Status { get; set; } 
+        public string Status { get; set; }
 
         [MaxLength(50)]
         [Column("payment_method")]

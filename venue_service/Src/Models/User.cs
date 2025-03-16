@@ -49,7 +49,7 @@ public class User
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
     [Column("deleted_at")]
-    public DateTime? DeletedAt { get; set; } 
+    public DateTime? DeletedAt { get; set; }
 
     public ICollection<User_Venue> UserVenues { get; set; }
 }

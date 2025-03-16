@@ -5,9 +5,7 @@ namespace venue_service.Src.Contexts
 {
     public class DatabaseContext : DbContext
     {
-        public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
-        {
-        }
+        public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
 
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
@@ -66,6 +64,7 @@ namespace venue_service.Src.Contexts
                 .WithMany(v => v.UserVenues)
                 .HasForeignKey(uv => uv.VenueId);
 
+
             modelBuilder.Entity<Venue_Sport>()
                 .HasKey(vs => new { vs.VenueId, vs.SportId });
 
@@ -84,10 +83,20 @@ namespace venue_service.Src.Contexts
                 .WithOne(va => va.Venue)
                 .HasForeignKey<VenueAvailability>(va => va.VenueId);
 
+            modelBuilder.Entity<Venue>()
+                .HasOne(v => v.VenueType)
+                .WithMany()
+                .HasForeignKey(v => v.VenueTypeId);
+
             modelBuilder.Entity<VenueAvailability>()
                 .HasMany(va => va.LocationAvailabilityTimes)
                 .WithOne(lat => lat.VenueAvailability)
                 .HasForeignKey(lat => lat.VenueAvailabilityId);
+
+            modelBuilder.Entity<LocationAvailabilityTime>()
+                .HasOne(lat => lat.VenueStatus)
+                .WithMany()
+                .HasForeignKey(lat => lat.VenueStatusId);
 
             modelBuilder.Entity<Venue>()
                 .HasMany(v => v.VenueEquipaments)
@@ -128,27 +137,6 @@ namespace venue_service.Src.Contexts
                 .HasOne(r => r.LocationAvailabilityTime)
                 .WithMany()
                 .HasForeignKey(r => r.LocationAvailabilityTimeId);
-
-            modelBuilder.Entity<Reservation>()
-                .HasOne(r => r.User)
-                .WithMany()
-                .HasForeignKey(r => r.UserId);
-
-            modelBuilder.Entity<Reservation>()
-                .HasOne(r => r.Venue)
-                .WithMany()
-                .HasForeignKey(r => r.VenueId);
-
-            modelBuilder.Entity<Reservation>()
-                .HasOne(r => r.LocationAvailabilityTime)
-                .WithMany()
-                .HasForeignKey(r => r.LocationAvailabilityTimeId);
-
-            modelBuilder.Entity<Venue>()
-                .HasOne(v => v.VenueType)
-                .WithMany()
-                .HasForeignKey(v => v.VenueTypeId);
-
         }
     }
 }
