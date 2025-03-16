@@ -1,12 +1,19 @@
-﻿using venue_service.Src.Models;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
-namespace Src.Models;
-
-public class User_Venue
+namespace venue_service.Src.Models
 {
-    public int UserId { get; set; }
-    public User User { get; set; }
+    [Table("user_venues")]
+    public class User_Venue
+    {
+        [ForeignKey("UserId")]
+        [Column("user_id")]
+        public int UserId { get; set; }
+        public User User { get; set; }
 
-    public int VenueId { get; set; }
-    public Venue Venue { get; set; }
+        [ForeignKey("VenueId")]
+        [Column("venue_id")]
+        public int VenueId { get; set; }
+        public Venue Venue { get; set; }
+    }
 }
