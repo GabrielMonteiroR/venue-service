@@ -1,10 +1,20 @@
-﻿namespace venue_service.Src.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-public class Sport
+namespace venue_service.Src.Models
 {
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public List<Equipament> equipaments { get; set; }
+    [Table("sports")]
+    public class Sport
+    {
+        [Key]
+        [Column("id")]
+        public int Id { get; set; }
 
+        [Required]
+        [MaxLength(100)]
+        [Column("name")]
+        public string Name { get; set; }
 
+        public ICollection<Venue_Sport> VenueSports { get; set; }
+    }
 }

@@ -1,10 +1,20 @@
-﻿namespace venue_service.Src.Models.Venue
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace venue_service.Src.Models
 {
-    public class VenueAvaliability
+    [Table("venue_availability")]
+    public class VenueAvailability
     {
+        [Key]
+        [Column("id")]
         public int Id { get; set; }
+
+        [ForeignKey("VenueId")]
+        [Column("venue_id")]
         public int VenueId { get; set; }
-        public Venue Venue { get; set; } = null!;
-        public LocationAvailability LocationAvailability { get; set; }
+        public Venue Venue { get; set; }
+
+        public ICollection<LocationAvailabilityTime> LocationAvailabilityTimes { get; set; }
     }
 }

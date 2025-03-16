@@ -1,32 +1,69 @@
-using venue_service.Src.Models;
-using venue_service.Src.Models.Venue;
-using venue_service.Src.Models.Venue.Equipament;
+using Src.Models;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Src.Models;
-
-public class Venue
+namespace venue_service.Src.Models
 {
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public string Address { get; set; }
-    public int Capacity { get; set; }
-    public double Latitude { get; set; }
-    public double Longitude { get; set; }
-    public string Description { get; set; }
-    public bool AllowLocalPayment { get; set; }
-    public string Rules { get; set; }
+    [Table("venues")]
+    public class Venue
+    {
+        [Key]
+        [Column("id")]
+        public int Id { get; set; }
 
-    public int OwnerId { get; set; }
-    public User Owner { get; set; } = null!;
+        [Required]
+        [MaxLength(150)]
+        [Column("name")]
+        public string Name { get; set; }
 
-    public int VenueAvaliabilityId { get; set; }
-    public VenueAvaliability VenueAvaliability { get; set; }
+        [Required]
+        [MaxLength(250)]
+        [Column("address")]
+        public string Address { get; set; }
 
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
-    public DateTime? DeletedAt { get; set; }
+        [Column("capacity")]
+        public int Capacity { get; set; }
 
-    public ICollection<VenueImage> VenueImages { get; set; } 
-    public ICollection<VenueEquipament> Equipaments { get; set; } 
-    public ICollection<User_Venue> UserVenues { get; set; } 
+        [Column("latitude")]
+        public double Latitude { get; set; }
+
+        [Column("longitude")]
+        public double Longitude { get; set; }
+
+        [MaxLength(500)]
+        [Column("description")]
+        public string Description { get; set; }
+
+        [Column("allow_local_payment")]
+        public bool AllowLocalPayment { get; set; }
+
+        [MaxLength(500)]
+        [Column("rules")]
+        public string Rules { get; set; }
+
+        [ForeignKey("OwnerId")]
+        [Column("owner_id")]
+        public int OwnerId { get; set; }
+        public User Owner { get; set; }
+
+        [ForeignKey("VenueAvaliabilityId")]
+        [Column("venue_avaliability_id")]
+        public int VenueAvaliabilityId { get; set; }
+        public VenueAvaliability VenueAvaliability { get; set; }
+
+        [Column("created_at")]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        [Column("updated_at")]
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
+        [Column("deleted_at")]
+        public DateTime? DeletedAt { get; set; }
+
+        // Relacionamentos
+        public ICollection<VenueImage> VenueImages { get; set; }
+        public ICollection<VenueEquipament> VenueEquipaments { get; set; }
+        public ICollection<User_Venue> UserVenues { get; set; }
+        public ICollection<Venue_Sport> VenueSports { get; set; }
+    }
 }
