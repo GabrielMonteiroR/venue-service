@@ -19,7 +19,6 @@
 
   <ItemGroup>
     <Folder Include="Src\Controllers\" />
-    <Folder Include="Src\Services\" />
   </ItemGroup>
 
 </Project>
