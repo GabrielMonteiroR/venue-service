@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace venue_service.Src.Models
 {
-    [Table("sports")]
-    public class Sport
+    [Table("equipament_types")]
+    public class EquipamentType
     {
         [Key]
         [Column("id")]
@@ -12,9 +12,9 @@ namespace venue_service.Src.Models
 
         [Required]
         [MaxLength(100)]
-        [Column("name")]
-        public string Name { get; set; }
+        [Column("type_name")]
+        public string TypeName { get; set; }
 
-        public ICollection<Venue_Sport> VenueSports { get; set; }
+        public ICollection<VenueEquipament> VenueEquipaments { get; set; }
     }
 }

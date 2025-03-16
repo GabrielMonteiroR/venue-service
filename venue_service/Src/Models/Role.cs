@@ -3,18 +3,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace venue_service.Src.Models
 {
-    [Table("sports")]
-    public class Sport
+    [Table("roles")]
+    public class Role
     {
         [Key]
         [Column("id")]
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(100)]
+        [MaxLength(50)]
         [Column("name")]
         public string Name { get; set; }
 
-        public ICollection<Venue_Sport> VenueSports { get; set; }
+        public ICollection<User> Users { get; set; }
     }
 }

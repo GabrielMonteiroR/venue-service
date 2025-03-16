@@ -1,24 +1,20 @@
+using venue_service.Src.Contexts;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Pegando a connection string do appsettings
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
+// Injetando o DbContext com a connection string
+builder.Services.AddDbContext<DatabaseContext>(options =>
+    options.UseNpgsql(connectionString)
+);
+
+// Restante das configurações
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
 
 app.MapControllers();
 
