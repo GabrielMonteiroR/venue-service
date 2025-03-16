@@ -14,7 +14,8 @@ public class Venue
     public double Longitude { get; set; }
     public string Description { get; set; }
     public bool AllowLocalPayment { get; set; }
-    
+    public string Rules { get; set; }
+
     public int OwnerId { get; set; }
     public User Owner { get; set; } = null!;
 
