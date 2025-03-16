@@ -23,6 +23,7 @@ namespace venue_service.Src.Contexts
         public DbSet<VenueStatus> VenueStatusEnums { get; set; }
         public DbSet<VenueType> VenueTypeEnums { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
+        public DbSet<PaymentMethod> PaymentMethods { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -44,6 +45,7 @@ namespace venue_service.Src.Contexts
             modelBuilder.Entity<VenueStatus>().ToTable("venue_status");
             modelBuilder.Entity<VenueType>().ToTable("venue_types");
             modelBuilder.Entity<Reservation>().ToTable("reservations");
+            modelBuilder.Entity<PaymentMethod>().ToTable("payment_methods");
 
             modelBuilder.Entity<Role>()
                 .HasMany(r => r.Users)
@@ -137,6 +139,14 @@ namespace venue_service.Src.Contexts
                 .HasOne(r => r.LocationAvailabilityTime)
                 .WithMany()
                 .HasForeignKey(r => r.LocationAvailabilityTimeId);
-        }
+
+        modelBuilder.Entity<Reservation>()
+        .HasOne(r => r.PaymentMethod)
+    .WithMany()
+    .HasForeignKey(r => r.PaymentMethodId)
+    .OnDelete(DeleteBehavior.Restrict);
+
+
     }
+}
 }
