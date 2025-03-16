@@ -140,13 +140,13 @@ namespace venue_service.Src.Contexts
                 .WithMany()
                 .HasForeignKey(r => r.LocationAvailabilityTimeId);
 
-        modelBuilder.Entity<Reservation>()
-        .HasOne(r => r.PaymentMethod)
-    .WithMany()
-    .HasForeignKey(r => r.PaymentMethodId)
-    .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Reservation>()
+                .HasOne(r => r.PaymentMethod)
+                .WithMany(pm => pm.Reservations)
+                .HasForeignKey(r => r.PaymentMethodId)
+                .OnDelete(DeleteBehavior.Restrict);
 
 
+        }
     }
-}
 }

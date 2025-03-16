@@ -18,5 +18,7 @@ namespace venue_service.Src.Models
         [MaxLength(200)]
         [Column("description")]
         public string Description { get; set; }
+
+        public ICollection<Reservation> Reservations { get; set; }
     }
 }
