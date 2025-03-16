@@ -2,9 +2,9 @@
 {
     public class VenueAvaliability
     {
+        public int Id { get; set; }
+        public int VenueId { get; set; }
+        public Venue Venue { get; set; } = null!;
         public LocationAvailability LocationAvailability { get; set; }
-        //public VenueStatus Status { get; set; }
-        //public Price Price { get; set; }
-        //public AvaliableTime avaliableTimes { get; set; }
     }
 }

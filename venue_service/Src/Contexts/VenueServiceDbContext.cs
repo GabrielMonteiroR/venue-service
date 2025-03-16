@@ -6,7 +6,7 @@ public class VenueServiceDbContext : DbContext
 {
     //TODO: Ajustar dbcontext
     public DbSet<User> Users { get; set; }
-    public DbSet<Venues> Venues { get; set; }
+    public DbSet<Venue> Venues { get; set; }
     public DbSet<User_Venue> UserVenues { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
