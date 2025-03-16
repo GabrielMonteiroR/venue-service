@@ -28,11 +28,12 @@ namespace venue_service.Src.Models
         [Required]
         [MaxLength(50)]
         [Column("status")]
-        public string Status { get; set; } 
+        public string Status { get; set; }
 
-        [MaxLength(50)]
-        [Column("payment_method")]
-        public string PaymentMethod { get; set; }
+        [ForeignKey("PaymentMethodId")]
+        [Column("payment_method_id")]
+        public int PaymentMethodId { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

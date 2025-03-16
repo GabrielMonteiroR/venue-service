@@ -10,8 +10,10 @@ namespace venue_service.Src.Models
         [Column("id")]
         public int Id { get; set; }
 
-        [Column("status")]
-        public VenueStatus Status { get; set; }
+        [ForeignKey("VenueStatusId")]
+        [Column("venue_status_id")]
+        public int VenueStatusId { get; set; }
+        public VenueStatus VenueStatus { get; set; }
 
         [Required]
         [Column("price")]
