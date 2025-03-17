@@ -69,27 +69,29 @@ public class ReservationService : IReservationService
         }
     }
 
-    public async Task<ReservationResponseDto> GetReservationByUserIdAsync(int userId)
+    public async Task<IEnumerable<ReservationResponseDto>> GetReservationsByUserIdAsync(int userId)
     {
-        var reservations = await _context.Reservations.Where(r => r.UserId == userId).Select(r => new ReservationResponseDto
+        try
         {
-            Id = r.Id,
-            UserId = r.UserId,
-            VenueId = r.VenueId,
-            LocationAvailabilityTimeId = r.LocationAvailabilityTimeId,
-            PaymentMethodId = r.PaymentMethodId,
-            Status = r.Status,
-            CreatedAt = r.CreatedAt
-        }).ToListAsync();
+            var reservations = await _context.Reservations.Where(r => r.UserId == userId).Select(r => new ReservationResponseDto
+            {
+                Id = r.Id,
+                UserId = r.UserId,
+                VenueId = r.VenueId,
+                LocationAvailabilityTimeId = r.LocationAvailabilityTimeId,
+                PaymentMethodId = r.PaymentMethodId,
+                Status = r.Status,
+                CreatedAt = r.CreatedAt
+            }).ToListAsync();
 
-        if (reservations.Count == 0)
-            throw new HttpResponseException(HttpStatusCode.NoContent, "No Content", $"There's no reservations for user with id {userId}");
+            if (reservations.Count == 0)
+                throw new HttpResponseException(HttpStatusCode.NoContent, "No Content", $"There's no reservations for user with id {userId}");
 
-
-
-
-
-
+            return reservations;
+        }
+        catch (Exception e)
+        {
+            throw new HttpResponseException(HttpStatusCode.InternalServerError, "Internal Server Error", e.Message);
+        }
     }
-
 }
