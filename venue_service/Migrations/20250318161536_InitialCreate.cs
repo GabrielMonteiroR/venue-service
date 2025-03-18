@@ -4,6 +4,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace venue_service.Migrations
 {
     /// <inheritdoc />
@@ -36,6 +38,20 @@ namespace venue_service.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_equipament_types", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "payment_methods",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    description = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_payment_methods", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -313,7 +329,7 @@ namespace venue_service.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    StatusId = table.Column<int>(type: "integer", nullable: false),
+                    venue_status_id = table.Column<int>(type: "integer", nullable: false),
                     price = table.Column<decimal>(type: "numeric", nullable: false),
                     available_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     venue_availability_id = table.Column<int>(type: "integer", nullable: false)
@@ -328,8 +344,8 @@ namespace venue_service.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_location_availability_times_venue_status_StatusId",
-                        column: x => x.StatusId,
+                        name: "FK_location_availability_times_venue_status_venue_status_id",
+                        column: x => x.venue_status_id,
                         principalTable: "venue_status",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -345,7 +361,7 @@ namespace venue_service.Migrations
                     venue_id = table.Column<int>(type: "integer", nullable: false),
                     location_availability_time_id = table.Column<int>(type: "integer", nullable: false),
                     status = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    payment_method = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    payment_method_id = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -357,6 +373,12 @@ namespace venue_service.Migrations
                         principalTable: "location_availability_times",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_reservations_payment_methods_payment_method_id",
+                        column: x => x.payment_method_id,
+                        principalTable: "payment_methods",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_reservations_users_user_id",
                         column: x => x.user_id,
@@ -371,10 +393,136 @@ namespace venue_service.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_location_availability_times_StatusId",
+            migrationBuilder.InsertData(
+                table: "equipament_brands",
+                columns: new[] { "id", "brand_name" },
+                values: new object[,]
+                {
+                    { 1, "Nike" },
+                    { 2, "Adidas" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "equipament_types",
+                columns: new[] { "id", "type_name" },
+                values: new object[,]
+                {
+                    { 1, "Ball" },
+                    { 2, "Net" },
+                    { 3, "Racket" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "payment_methods",
+                columns: new[] { "id", "description", "name" },
+                values: new object[,]
+                {
+                    { 1, "Credit Card", "CreditCard" },
+                    { 2, "Pix Payment", "Pix" },
+                    { 3, "Payment at Venue", "LocalPayment" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "roles",
+                columns: new[] { "id", "name" },
+                values: new object[,]
+                {
+                    { 1, "Admin" },
+                    { 2, "Owner" },
+                    { 3, "Athlete" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "sports",
+                columns: new[] { "id", "name" },
+                values: new object[,]
+                {
+                    { 1, "Football" },
+                    { 2, "Basketball" },
+                    { 3, "Tennis" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "venue_status",
+                columns: new[] { "id", "description", "name" },
+                values: new object[,]
+                {
+                    { 1, "Venue is available", "Available" },
+                    { 2, "Under maintenance", "Maintenance" },
+                    { 3, "Not available", "Unavailable" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "venue_types",
+                columns: new[] { "id", "description", "name" },
+                values: new object[,]
+                {
+                    { 1, "Indoor court", "Indoor court" },
+                    { 2, "Outdoor field", "Outdoor field" },
+                    { 3, "Gymnasium", "Gymnasium" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "users",
+                columns: new[] { "id", "created_at", "deleted_at", "email", "first_name", "is_banned", "last_name", "password", "phone", "role_id", "updated_at" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc), null, "gabriel@example.com", "Gabriel", false, "Ricardo", "hashedpassword", "123456789", 2, new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc) },
+                    { 2, new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc), null, "joao@example.com", "João", false, "Silva", "hashedpassword", "987654321", 3, new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc) }
+                });
+
+            migrationBuilder.InsertData(
+                table: "venues",
+                columns: new[] { "id", "address", "allow_local_payment", "capacity", "created_at", "deleted_at", "description", "latitude", "longitude", "name", "owner_id", "rules", "updated_at", "venue_avaliability_id", "venue_type_id" },
+                values: new object[] { 1, "123 Main St", true, 100, new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc), null, "Main sports court", -23.5505, -46.633299999999998, "Central Court", 1, "No smoking", new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc), 1, 1 });
+
+            migrationBuilder.InsertData(
+                table: "user_venues",
+                columns: new[] { "user_id", "venue_id" },
+                values: new object[] { 1, 1 });
+
+            migrationBuilder.InsertData(
+                table: "venue_availability",
+                columns: new[] { "id", "venue_id" },
+                values: new object[] { 1, 1 });
+
+            migrationBuilder.InsertData(
+                table: "venue_contact_infos",
+                columns: new[] { "id", "email", "phone", "venue_id" },
+                values: new object[] { 1, "contact@centralcourt.com", "999999999", 1 });
+
+            migrationBuilder.InsertData(
+                table: "venue_equipaments",
+                columns: new[] { "id", "equipament_brand_id", "equipament_name", "equipament_type_id", "quantity", "venue_id" },
+                values: new object[,]
+                {
+                    { 1, 1, "Nike Football", 1, 10, 1 },
+                    { 2, 2, "Adidas Net", 2, 2, 1 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "venue_images",
+                columns: new[] { "id", "image_url", "venue_id" },
+                values: new object[] { 1, "https://example.com/image1.jpg", 1 });
+
+            migrationBuilder.InsertData(
+                table: "venue_sports",
+                columns: new[] { "sport_id", "venue_id", "SportId1" },
+                values: new object[,]
+                {
+                    { 1, 1, null },
+                    { 2, 1, null }
+                });
+
+            migrationBuilder.InsertData(
                 table: "location_availability_times",
-                column: "StatusId");
+                columns: new[] { "id", "available_time", "price", "venue_availability_id", "venue_status_id" },
+                values: new object[] { 1, new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc), 150.00m, 1, 1 });
+
+            migrationBuilder.InsertData(
+                table: "reservations",
+                columns: new[] { "id", "created_at", "location_availability_time_id", "payment_method_id", "status", "user_id", "venue_id" },
+                values: new object[] { 1, new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc), 1, 1, "Pending", 1, 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_location_availability_times_venue_availability_id",
@@ -382,9 +530,19 @@ namespace venue_service.Migrations
                 column: "venue_availability_id");
 
             migrationBuilder.CreateIndex(
+                name: "IX_location_availability_times_venue_status_id",
+                table: "location_availability_times",
+                column: "venue_status_id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_reservations_location_availability_time_id",
                 table: "reservations",
                 column: "location_availability_time_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_reservations_payment_method_id",
+                table: "reservations",
+                column: "payment_method_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_reservations_user_id",
@@ -481,6 +639,9 @@ namespace venue_service.Migrations
 
             migrationBuilder.DropTable(
                 name: "location_availability_times");
+
+            migrationBuilder.DropTable(
+                name: "payment_methods");
 
             migrationBuilder.DropTable(
                 name: "equipament_brands");

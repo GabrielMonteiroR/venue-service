@@ -12,7 +12,7 @@ using venue_service.Src.Contexts;
 namespace venue_service.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20250316201925_InitialCreate")]
+    [Migration("20250318161536_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -43,6 +43,18 @@ namespace venue_service.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("equipament_brands", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BrandName = "Nike"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            BrandName = "Adidas"
+                        });
                 });
 
             modelBuilder.Entity("venue_service.Src.Models.EquipamentType", b =>
@@ -63,6 +75,23 @@ namespace venue_service.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("equipament_types", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            TypeName = "Ball"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            TypeName = "Net"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            TypeName = "Racket"
+                        });
                 });
 
             modelBuilder.Entity("venue_service.Src.Models.LocationAvailabilityTime", b =>
@@ -82,20 +111,77 @@ namespace venue_service.Migrations
                         .HasColumnType("numeric")
                         .HasColumnName("price");
 
-                    b.Property<int>("StatusId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("VenueAvailabilityId")
                         .HasColumnType("integer")
                         .HasColumnName("venue_availability_id");
 
-                    b.HasKey("Id");
+                    b.Property<int>("VenueStatusId")
+                        .HasColumnType("integer")
+                        .HasColumnName("venue_status_id");
 
-                    b.HasIndex("StatusId");
+                    b.HasKey("Id");
 
                     b.HasIndex("VenueAvailabilityId");
 
+                    b.HasIndex("VenueStatusId");
+
                     b.ToTable("location_availability_times", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AvailableTime = new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 150.00m,
+                            VenueAvailabilityId = 1,
+                            VenueStatusId = 1
+                        });
+                });
+
+            modelBuilder.Entity("venue_service.Src.Models.PaymentMethod", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("payment_methods", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Credit Card",
+                            Name = "CreditCard"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Pix Payment",
+                            Name = "Pix"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "Payment at Venue",
+                            Name = "LocalPayment"
+                        });
                 });
 
             modelBuilder.Entity("venue_service.Src.Models.Reservation", b =>
@@ -115,11 +201,9 @@ namespace venue_service.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("location_availability_time_id");
 
-                    b.Property<string>("PaymentMethod")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("payment_method");
+                    b.Property<int>("PaymentMethodId")
+                        .HasColumnType("integer")
+                        .HasColumnName("payment_method_id");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -139,11 +223,25 @@ namespace venue_service.Migrations
 
                     b.HasIndex("LocationAvailabilityTimeId");
 
+                    b.HasIndex("PaymentMethodId");
+
                     b.HasIndex("UserId");
 
                     b.HasIndex("VenueId");
 
                     b.ToTable("reservations", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LocationAvailabilityTimeId = 1,
+                            PaymentMethodId = 1,
+                            Status = "Pending",
+                            UserId = 1,
+                            VenueId = 1
+                        });
                 });
 
             modelBuilder.Entity("venue_service.Src.Models.Role", b =>
@@ -164,6 +262,23 @@ namespace venue_service.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("roles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Admin"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Owner"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Athlete"
+                        });
                 });
 
             modelBuilder.Entity("venue_service.Src.Models.Sport", b =>
@@ -184,6 +299,23 @@ namespace venue_service.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("sports", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Football"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Basketball"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Tennis"
+                        });
                 });
 
             modelBuilder.Entity("venue_service.Src.Models.User", b =>
@@ -249,6 +381,34 @@ namespace venue_service.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("users", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "gabriel@example.com",
+                            FirstName = "Gabriel",
+                            IsBanned = false,
+                            LastName = "Ricardo",
+                            Password = "hashedpassword",
+                            Phone = "123456789",
+                            RoleId = 2,
+                            UpdatedAt = new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "joao@example.com",
+                            FirstName = "João",
+                            IsBanned = false,
+                            LastName = "Silva",
+                            Password = "hashedpassword",
+                            Phone = "987654321",
+                            RoleId = 3,
+                            UpdatedAt = new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc)
+                        });
                 });
 
             modelBuilder.Entity("venue_service.Src.Models.User_Venue", b =>
@@ -266,6 +426,13 @@ namespace venue_service.Migrations
                     b.HasIndex("VenueId");
 
                     b.ToTable("user_venues", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1,
+                            VenueId = 1
+                        });
                 });
 
             modelBuilder.Entity("venue_service.Src.Models.Venue", b =>
@@ -348,6 +515,25 @@ namespace venue_service.Migrations
                     b.HasIndex("VenueTypeId");
 
                     b.ToTable("venues", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Address = "123 Main St",
+                            AllowLocalPayment = true,
+                            Capacity = 100,
+                            CreatedAt = new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Main sports court",
+                            Latitude = -23.5505,
+                            Longitude = -46.633299999999998,
+                            Name = "Central Court",
+                            OwnerId = 1,
+                            Rules = "No smoking",
+                            UpdatedAt = new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                            VenueAvaliabilityId = 1,
+                            VenueTypeId = 1
+                        });
                 });
 
             modelBuilder.Entity("venue_service.Src.Models.VenueAvailability", b =>
@@ -369,6 +555,13 @@ namespace venue_service.Migrations
                         .IsUnique();
 
                     b.ToTable("venue_availability", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            VenueId = 1
+                        });
                 });
 
             modelBuilder.Entity("venue_service.Src.Models.VenueContactInfo", b =>
@@ -401,6 +594,15 @@ namespace venue_service.Migrations
                     b.HasIndex("VenueId");
 
                     b.ToTable("venue_contact_infos", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Email = "contact@centralcourt.com",
+                            Phone = "999999999",
+                            VenueId = 1
+                        });
                 });
 
             modelBuilder.Entity("venue_service.Src.Models.VenueEquipament", b =>
@@ -443,6 +645,26 @@ namespace venue_service.Migrations
                     b.HasIndex("VenueId");
 
                     b.ToTable("venue_equipaments", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            EquipamentBrandId = 1,
+                            EquipamentName = "Nike Football",
+                            EquipamentTypeId = 1,
+                            Quantity = 10,
+                            VenueId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            EquipamentBrandId = 2,
+                            EquipamentName = "Adidas Net",
+                            EquipamentTypeId = 2,
+                            Quantity = 2,
+                            VenueId = 1
+                        });
                 });
 
             modelBuilder.Entity("venue_service.Src.Models.VenueImage", b =>
@@ -469,6 +691,14 @@ namespace venue_service.Migrations
                     b.HasIndex("VenueId");
 
                     b.ToTable("venue_images", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ImageURL = "https://example.com/image1.jpg",
+                            VenueId = 1
+                        });
                 });
 
             modelBuilder.Entity("venue_service.Src.Models.VenueStatus", b =>
@@ -495,6 +725,26 @@ namespace venue_service.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("venue_status", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Venue is available",
+                            Name = "Available"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Under maintenance",
+                            Name = "Maintenance"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "Not available",
+                            Name = "Unavailable"
+                        });
                 });
 
             modelBuilder.Entity("venue_service.Src.Models.VenueType", b =>
@@ -521,6 +771,26 @@ namespace venue_service.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("venue_types", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Indoor court",
+                            Name = "Indoor court"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Outdoor field",
+                            Name = "Outdoor field"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "Gymnasium",
+                            Name = "Gymnasium"
+                        });
                 });
 
             modelBuilder.Entity("venue_service.Src.Models.Venue_Sport", b =>
@@ -543,25 +813,37 @@ namespace venue_service.Migrations
                     b.HasIndex("SportId1");
 
                     b.ToTable("venue_sports", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            VenueId = 1,
+                            SportId = 1
+                        },
+                        new
+                        {
+                            VenueId = 1,
+                            SportId = 2
+                        });
                 });
 
             modelBuilder.Entity("venue_service.Src.Models.LocationAvailabilityTime", b =>
                 {
-                    b.HasOne("venue_service.Src.Models.VenueStatus", "Status")
-                        .WithMany()
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("venue_service.Src.Models.VenueAvailability", "VenueAvailability")
                         .WithMany("LocationAvailabilityTimes")
                         .HasForeignKey("VenueAvailabilityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Status");
+                    b.HasOne("venue_service.Src.Models.VenueStatus", "VenueStatus")
+                        .WithMany()
+                        .HasForeignKey("VenueStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("VenueAvailability");
+
+                    b.Navigation("VenueStatus");
                 });
 
             modelBuilder.Entity("venue_service.Src.Models.Reservation", b =>
@@ -570,6 +852,12 @@ namespace venue_service.Migrations
                         .WithMany()
                         .HasForeignKey("LocationAvailabilityTimeId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("venue_service.Src.Models.PaymentMethod", "PaymentMethod")
+                        .WithMany("Reservations")
+                        .HasForeignKey("PaymentMethodId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("venue_service.Src.Models.User", "User")
@@ -585,6 +873,8 @@ namespace venue_service.Migrations
                         .IsRequired();
 
                     b.Navigation("LocationAvailabilityTime");
+
+                    b.Navigation("PaymentMethod");
 
                     b.Navigation("User");
 
@@ -731,6 +1021,11 @@ namespace venue_service.Migrations
             modelBuilder.Entity("venue_service.Src.Models.EquipamentType", b =>
                 {
                     b.Navigation("VenueEquipaments");
+                });
+
+            modelBuilder.Entity("venue_service.Src.Models.PaymentMethod", b =>
+                {
+                    b.Navigation("Reservations");
                 });
 
             modelBuilder.Entity("venue_service.Src.Models.Role", b =>
