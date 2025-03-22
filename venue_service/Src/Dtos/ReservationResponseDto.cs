@@ -1,4 +1,4 @@
-﻿namespace venue_service.Src.Dtos.Reservation
+﻿namespace venue_service.Src.Dtos
 {
     public class ReservationResponseDto
     {

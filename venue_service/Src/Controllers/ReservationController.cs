@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 using venue_service.Src.Dtos;
 using venue_service.Src.Services;
-using System.Threading.Tasks;
 
 namespace venue_service.Src.Controllers
 {

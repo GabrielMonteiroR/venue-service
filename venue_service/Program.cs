@@ -1,7 +1,7 @@
 ﻿using venue_service.Src.Contexts;
 using Microsoft.EntityFrameworkCore;
-using venue_service.Src.Services;
 using venue_service.Src.Middlewares;
+using venue_service.Src.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
