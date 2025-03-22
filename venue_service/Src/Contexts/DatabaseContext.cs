@@ -66,7 +66,6 @@ namespace venue_service.Src.Contexts
                 .WithMany(v => v.UserVenues)
                 .HasForeignKey(uv => uv.VenueId);
 
-
             modelBuilder.Entity<Venue_Sport>()
                 .HasKey(vs => new { vs.VenueId, vs.SportId });
 
@@ -146,7 +145,221 @@ namespace venue_service.Src.Contexts
                 .HasForeignKey(r => r.PaymentMethodId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // Roles
+            modelBuilder.Entity<Role>().HasData(
+                new Role { Id = 1, Name = "Admin" },
+                new Role { Id = 2, Name = "Owner" },
+                new Role { Id = 3, Name = "Athlete" }
+            );
 
+
+
+            modelBuilder.Entity<VenueStatus>().HasData(
+     new VenueStatus
+     {
+         Id = 1,
+         Name = "Available",
+         Description = "Venue is available"
+     },
+     new VenueStatus
+     {
+         Id = 2,
+         Name = "Maintenance",
+         Description = "Under maintenance"
+     },
+     new VenueStatus
+     {
+         Id = 3,
+         Name = "Unavailable",
+         Description = "Not available"
+     }
+ );
+
+
+            // Venue Type
+            modelBuilder.Entity<VenueType>().HasData(
+                new VenueType { Name= "Indoor court", Id = 1, Description = "Indoor court" },
+                new VenueType { Name= "Outdoor field",Id = 2, Description = "Outdoor field" },
+                new VenueType {Name = "Gymnasium", Id = 3, Description = "Gymnasium" }
+            );
+
+            // Payment Methods
+            modelBuilder.Entity<PaymentMethod>().HasData(
+                new PaymentMethod { Id = 1, Name = "CreditCard", Description = "Credit Card" },
+                new PaymentMethod { Id = 2, Name = "Pix", Description = "Pix Payment" },
+                new PaymentMethod { Id = 3, Name = "LocalPayment", Description = "Payment at Venue" }
+            );
+
+            // Users
+            modelBuilder.Entity<User>().HasData(
+                new User
+                {
+                    Id = 1,
+                    FirstName = "Gabriel",
+                    LastName = "Ricardo",
+                    Email = "gabriel@example.com",
+                    Password = "hashedpassword", 
+                    Phone = "123456789",
+                    RoleId = 2,
+                    IsBanned = false,
+                    CreatedAt = DateTime.SpecifyKind(new DateTime(2025, 03, 20), DateTimeKind.Utc),
+                    UpdatedAt = DateTime.SpecifyKind(new DateTime(2025, 03, 20), DateTimeKind.Utc)
+
+                },
+                new User
+                {
+                    Id = 2,
+                    FirstName = "João",
+                    LastName = "Silva",
+                    Email = "joao@example.com",
+                    Password = "hashedpassword",
+                    Phone = "987654321",
+                    RoleId = 3,
+                    IsBanned = false,
+                    CreatedAt = DateTime.SpecifyKind(new DateTime(2025, 03, 20), DateTimeKind.Utc),
+                    UpdatedAt = DateTime.SpecifyKind(new DateTime(2025, 03, 20), DateTimeKind.Utc)
+
+                }
+            );
+
+            // Venues
+            modelBuilder.Entity<Venue>().HasData(
+                new Venue
+                {
+                    Id = 1,
+                    Name = "Central Court",
+                    Address = "123 Main St",
+                    Capacity = 100,
+                    Latitude = -23.5505,
+                    Longitude = -46.6333,
+                    Description = "Main sports court",
+                    AllowLocalPayment = true,
+                    Rules = "No smoking",
+                    OwnerId = 1,
+                    VenueAvaliabilityId = 1,
+                    VenueTypeId = 1,
+                    CreatedAt = DateTime.SpecifyKind(new DateTime(2025, 03, 20), DateTimeKind.Utc),
+                    UpdatedAt = DateTime.SpecifyKind(new DateTime(2025, 03, 20), DateTimeKind.Utc)
+
+                }
+            );
+
+            // Venue Availability
+            modelBuilder.Entity<VenueAvailability>().HasData(
+                new VenueAvailability
+                {
+                    Id = 1,
+                    VenueId = 1
+                }
+            );
+
+            // Location Availability Time
+            modelBuilder.Entity<LocationAvailabilityTime>().HasData(
+                new LocationAvailabilityTime
+                {
+                    Id = 1,
+                    VenueStatusId = 1,
+                    Price = 150.00m,
+                    AvailableTime = DateTime.SpecifyKind(new DateTime(2025, 03, 20), DateTimeKind.Utc),
+                    VenueAvailabilityId = 1
+                }
+            );
+
+            // User_Venue (Owner)
+            modelBuilder.Entity<User_Venue>().HasData(
+                new User_Venue
+                {
+                    UserId = 1,
+                    VenueId = 1
+                }
+            );
+
+            // Sports
+            modelBuilder.Entity<Sport>().HasData(
+                new Sport { Id = 1, Name = "Football" },
+                new Sport { Id = 2, Name = "Basketball" },
+                new Sport { Id = 3, Name = "Tennis" }
+            );
+
+            // Equipament Brands
+            modelBuilder.Entity<EquipamentBrand>().HasData(
+                new EquipamentBrand { Id = 1, BrandName = "Nike" },
+                new EquipamentBrand { Id = 2, BrandName = "Adidas" }
+            );
+
+            // Equipament Types
+            modelBuilder.Entity<EquipamentType>().HasData(
+                new EquipamentType { Id = 1, TypeName = "Ball" },
+                new EquipamentType { Id = 2, TypeName = "Net" },
+                new EquipamentType { Id = 3, TypeName = "Racket" }
+            );
+
+            // Venue Equipaments
+            modelBuilder.Entity<VenueEquipament>().HasData(
+                new VenueEquipament
+                {
+                    Id = 1,
+                    EquipamentName = "Nike Football",
+                    EquipamentBrandId = 1,
+                    EquipamentTypeId = 1,
+                    Quantity = 10,
+                    VenueId = 1
+                },
+                new VenueEquipament
+                {
+                    Id = 2,
+                    EquipamentName = "Adidas Net",
+                    EquipamentBrandId = 2,
+                    EquipamentTypeId = 2,
+                    Quantity = 2,
+                    VenueId = 1
+                }
+            );
+
+            // Venue Contact Info
+            modelBuilder.Entity<VenueContactInfo>().HasData(
+                new VenueContactInfo
+                {
+                    Id = 1,
+                    Phone = "999999999",
+                    Email = "contact@centralcourt.com",
+                    VenueId = 1
+                }
+            );
+
+            // Venue Images
+            modelBuilder.Entity<VenueImage>().HasData(
+                new VenueImage
+                {
+                    Id = 1,
+                    ImageURL = "https://example.com/image1.jpg",
+                    VenueId = 1
+                }
+            );
+
+            modelBuilder.Entity<Reservation>().HasData(
+    new Reservation
+    {
+        Id = 1,
+        UserId = 1,
+        VenueId = 1,
+        LocationAvailabilityTimeId = 1,
+        PaymentMethodId = 1, // Valor existente!
+        Status = "Pending",
+        CreatedAt = DateTime.SpecifyKind(new DateTime(2025, 03, 20), DateTimeKind.Utc),
+
+    }
+);
+
+
+            // Venue_Sport (Many-to-Many)
+            modelBuilder.Entity<Venue_Sport>().HasData(
+                new Venue_Sport { VenueId = 1, SportId = 1 },
+                new Venue_Sport { VenueId = 1, SportId = 2 }
+            );
         }
     }
 }
+
+
+

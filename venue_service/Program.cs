@@ -1,5 +1,7 @@
-using venue_service.Src.Contexts;
+﻿using venue_service.Src.Contexts;
 using Microsoft.EntityFrameworkCore;
+using venue_service.Src.Middlewares;
+using venue_service.Src.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,13 +13,30 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseNpgsql(connectionString)
 );
 
-// Restante das configura��es
+// Injetando os Controllers
 builder.Services.AddControllers();
 
+// Swagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+// Registrando os Services (injeção de dependência)
+builder.Services.AddScoped<IReservationService, ReservationService>();
+
+// Build do app
 var app = builder.Build();
 
-app.UseMiddleware<venue_service.Src.Middlewares.ErrorHandlingMiddleware>();
+// Middleware de tratamento de erros
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
+// Swagger ativado somente em ambiente de desenvolvimento
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+// Mapeamento de Controllers
 app.MapControllers();
 
 app.Run();
