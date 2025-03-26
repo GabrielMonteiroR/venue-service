@@ -1,6 +1,6 @@
 ﻿namespace venue_service.Src.Dtos
 {
-    public class CreateVenueResponseDto
+    public class VenueResponseDto
     {
         public string Name { get; set; }
         public string Address { get; set; }
