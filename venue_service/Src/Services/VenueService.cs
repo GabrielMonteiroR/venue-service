@@ -46,7 +46,7 @@ namespace venue_service.Src.Services
                     AllowLocalPayment = venue.AllowLocalPayment,
                     VenueTypeId = venue.VenueTypeId,
                     Rules = venue.Rules,
-                    ownerId = venue.OwnerId,
+                    OwnerId = venue.OwnerId,
                     VenueAvaliabilityId = venue.VenueAvaliabilityId
                 };
 
