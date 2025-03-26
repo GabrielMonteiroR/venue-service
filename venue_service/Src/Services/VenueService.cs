@@ -6,7 +6,7 @@ using venue_service.Src.Models;
 
 namespace venue_service.Src.Services
 {
-    public class VenueService 
+    public class VenueService
     {
         private readonly DatabaseContext _context;
 
@@ -50,9 +50,13 @@ namespace venue_service.Src.Services
                     VenueAvaliabilityId = venue.VenueAvaliabilityId
                 };
 
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 throw new HttpResponseException(HttpStatusCode.InternalServerError, "Internal Server Error", ex.Message);
             }
+
+        }
 
     }
 }
