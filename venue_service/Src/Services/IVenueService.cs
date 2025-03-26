@@ -4,8 +4,8 @@ namespace venue_service.Src.Services
 {
     public interface IVenueService
     {
-        Task<VenueResponseDto> createVenueAsync(CreateVenueDto dto);
-        Task<VenueResponseDto> updateVenueAsync(updateVenueDto dto);
+        Task<VenueResponseDto> CreateVenueAsync(CreateVenueDto dto);
+        Task<VenueResponseDto> UpdateVenueAsync(updateVenueDto dto);
         Task<>
     }
 }

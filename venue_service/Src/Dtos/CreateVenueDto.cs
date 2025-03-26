@@ -13,6 +13,5 @@
         public string Rules { get; set; }
         public int OwnerId { get; set; }
         public int VenueAvaliabilityId { get; set; }
-
     }
 }
