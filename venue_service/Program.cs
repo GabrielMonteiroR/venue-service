@@ -20,8 +20,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddAutoMapper(typeof(Program));
+
 // Registrando os Services (injeção de dependência)
 builder.Services.AddScoped<IReservationService, ReservationService>();
+builder.Services.AddScoped<IVenueService, VenueService>();
 
 // Build do app
 var app = builder.Build();

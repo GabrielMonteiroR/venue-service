@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 using venue_service.Src.Dtos;
 using venue_service.Src.Services;
 
