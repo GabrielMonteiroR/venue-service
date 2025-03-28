@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using venue_service.Src.Dtos;
 using venue_service.Src.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace venue_service.Src.Mappings
 {

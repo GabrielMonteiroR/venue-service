@@ -63,5 +63,26 @@ namespace venue_service.Src.Services
                 throw new HttpResponseException(HttpStatusCode.InternalServerError, "Internal Server Error", ex.Message);
             }
         }
+        public async Task<VenueResponseDto> DeleteVenuesAsync(int[] ids)
+        {
+            try
+            {
+                var venues = await _context.Venues.SelectMany(v => ids, (v, id) => new { v, id }).Where(v => v.v.Id == v.id).ToListAsync();
+
+                if (venues.Count == 0)
+                {
+                    throw new HttpResponseException(HttpStatusCode.NoContent, "No Content", "No venues found");
+                }
+
+                _context.Venues.RemoveRange(venues.Select(v => v.v));
+            } catch(HttpResponseException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "Internal Server Error", ex.Message);
+            }
+        }
     }
 }
