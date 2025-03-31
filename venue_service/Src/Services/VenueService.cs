@@ -75,9 +75,9 @@ namespace venue_service.Src.Services
                 }
 
                 _context.Venues.RemoveRange(venues.Select(v => v.v));
-            } catch(HttpResponseException)
-            {
-                throw;
+                await _context.SaveChangesAsync();
+
+                return _mapper.Map<VenueResponseDto>(venues.First().v);
             }
             catch (Exception ex)
             {

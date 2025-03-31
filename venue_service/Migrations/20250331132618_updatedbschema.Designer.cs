@@ -12,8 +12,8 @@ using venue_service.Src.Contexts;
 namespace venue_service.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20250318161536_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250331132618_updatedbschema")]
+    partial class updatedbschema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -94,50 +94,6 @@ namespace venue_service.Migrations
                         });
                 });
 
-            modelBuilder.Entity("venue_service.Src.Models.LocationAvailabilityTime", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("AvailableTime")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("available_time");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric")
-                        .HasColumnName("price");
-
-                    b.Property<int>("VenueAvailabilityId")
-                        .HasColumnType("integer")
-                        .HasColumnName("venue_availability_id");
-
-                    b.Property<int>("VenueStatusId")
-                        .HasColumnType("integer")
-                        .HasColumnName("venue_status_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("VenueAvailabilityId");
-
-                    b.HasIndex("VenueStatusId");
-
-                    b.ToTable("location_availability_times", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AvailableTime = new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Price = 150.00m,
-                            VenueAvailabilityId = 1,
-                            VenueStatusId = 1
-                        });
-                });
-
             modelBuilder.Entity("venue_service.Src.Models.PaymentMethod", b =>
                 {
                     b.Property<int>("Id")
@@ -197,9 +153,9 @@ namespace venue_service.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<int>("LocationAvailabilityTimeId")
-                        .HasColumnType("integer")
-                        .HasColumnName("location_availability_time_id");
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
 
                     b.Property<int>("PaymentMethodId")
                         .HasColumnType("integer")
@@ -211,17 +167,23 @@ namespace venue_service.Migrations
                         .HasColumnType("character varying(50)")
                         .HasColumnName("status");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
                     b.Property<int>("UserId")
                         .HasColumnType("integer")
                         .HasColumnName("user_id");
+
+                    b.Property<int>("VenueAvailabilityTimeId")
+                        .HasColumnType("integer")
+                        .HasColumnName("venue_availability_time_id");
 
                     b.Property<int>("VenueId")
                         .HasColumnType("integer")
                         .HasColumnName("venue_id");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("LocationAvailabilityTimeId");
 
                     b.HasIndex("PaymentMethodId");
 
@@ -236,10 +198,11 @@ namespace venue_service.Migrations
                         {
                             Id = 1,
                             CreatedAt = new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc),
-                            LocationAvailabilityTimeId = 1,
                             PaymentMethodId = 1,
                             Status = "Pending",
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UserId = 1,
+                            VenueAvailabilityTimeId = 1,
                             VenueId = 1
                         });
                 });
@@ -500,10 +463,6 @@ namespace venue_service.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.Property<int>("VenueAvaliabilityId")
-                        .HasColumnType("integer")
-                        .HasColumnName("venue_avaliability_id");
-
                     b.Property<int>("VenueTypeId")
                         .HasColumnType("integer")
                         .HasColumnName("venue_type_id");
@@ -531,28 +490,43 @@ namespace venue_service.Migrations
                             OwnerId = 1,
                             Rules = "No smoking",
                             UpdatedAt = new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc),
-                            VenueAvaliabilityId = 1,
                             VenueTypeId = 1
                         });
                 });
 
-            modelBuilder.Entity("venue_service.Src.Models.VenueAvailability", b =>
+            modelBuilder.Entity("venue_service.Src.Models.VenueAvailabilityTime", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
+                        .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("end_date");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("start_date");
+
+                    b.Property<string>("TimeStatus")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("time_status");
 
                     b.Property<int>("VenueId")
                         .HasColumnType("integer")
                         .HasColumnName("venue_id");
 
+                    b.Property<double>("price")
+                        .HasColumnType("double precision")
+                        .HasColumnName("price");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("VenueId")
-                        .IsUnique();
+                    b.HasIndex("VenueId");
 
                     b.ToTable("venue_availability", (string)null);
 
@@ -560,7 +534,11 @@ namespace venue_service.Migrations
                         new
                         {
                             Id = 1,
-                            VenueId = 1
+                            EndDate = new DateTime(2025, 3, 20, 10, 0, 0, 0, DateTimeKind.Utc),
+                            StartDate = new DateTime(2025, 3, 20, 8, 0, 0, 0, DateTimeKind.Utc),
+                            TimeStatus = "PENDING",
+                            VenueId = 1,
+                            price = 100.0
                         });
                 });
 
@@ -827,33 +805,8 @@ namespace venue_service.Migrations
                         });
                 });
 
-            modelBuilder.Entity("venue_service.Src.Models.LocationAvailabilityTime", b =>
-                {
-                    b.HasOne("venue_service.Src.Models.VenueAvailability", "VenueAvailability")
-                        .WithMany("LocationAvailabilityTimes")
-                        .HasForeignKey("VenueAvailabilityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("venue_service.Src.Models.VenueStatus", "VenueStatus")
-                        .WithMany()
-                        .HasForeignKey("VenueStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("VenueAvailability");
-
-                    b.Navigation("VenueStatus");
-                });
-
             modelBuilder.Entity("venue_service.Src.Models.Reservation", b =>
                 {
-                    b.HasOne("venue_service.Src.Models.LocationAvailabilityTime", "LocationAvailabilityTime")
-                        .WithMany()
-                        .HasForeignKey("LocationAvailabilityTimeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("venue_service.Src.Models.PaymentMethod", "PaymentMethod")
                         .WithMany("Reservations")
                         .HasForeignKey("PaymentMethodId")
@@ -871,8 +824,6 @@ namespace venue_service.Migrations
                         .HasForeignKey("VenueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("LocationAvailabilityTime");
 
                     b.Navigation("PaymentMethod");
 
@@ -930,15 +881,13 @@ namespace venue_service.Migrations
                     b.Navigation("VenueType");
                 });
 
-            modelBuilder.Entity("venue_service.Src.Models.VenueAvailability", b =>
+            modelBuilder.Entity("venue_service.Src.Models.VenueAvailabilityTime", b =>
                 {
-                    b.HasOne("venue_service.Src.Models.Venue", "Venue")
-                        .WithOne("VenueAvaliability")
-                        .HasForeignKey("venue_service.Src.Models.VenueAvailability", "VenueId")
+                    b.HasOne("venue_service.Src.Models.Venue", null)
+                        .WithMany("VenueAvailabilityTimes")
+                        .HasForeignKey("VenueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Venue");
                 });
 
             modelBuilder.Entity("venue_service.Src.Models.VenueContactInfo", b =>
@@ -1047,8 +996,7 @@ namespace venue_service.Migrations
                 {
                     b.Navigation("UserVenues");
 
-                    b.Navigation("VenueAvaliability")
-                        .IsRequired();
+                    b.Navigation("VenueAvailabilityTimes");
 
                     b.Navigation("VenueContactInfos");
 
@@ -1057,11 +1005,6 @@ namespace venue_service.Migrations
                     b.Navigation("VenueImages");
 
                     b.Navigation("VenueSports");
-                });
-
-            modelBuilder.Entity("venue_service.Src.Models.VenueAvailability", b =>
-                {
-                    b.Navigation("LocationAvailabilityTimes");
                 });
 #pragma warning restore 612, 618
         }

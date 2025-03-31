@@ -36,6 +36,12 @@ namespace venue_service.Src.Models
         public PaymentMethod PaymentMethod { get; set; }
 
         [Column("created_at")]
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } 
+
+        [Column("updated_at")]
+        public DateTime UpdatedAt { get; set; } 
+
+        [Column("deleted_at")]
+        public DateTime? DeletedAt { get; set; }
     }
 }

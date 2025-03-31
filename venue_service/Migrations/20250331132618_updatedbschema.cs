@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace venue_service.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class updatedbschema : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -152,7 +152,6 @@ namespace venue_service.Migrations
                     venue_type_id = table.Column<int>(type: "integer", nullable: false),
                     rules = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     owner_id = table.Column<int>(type: "integer", nullable: false),
-                    venue_avaliability_id = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     deleted_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
@@ -170,6 +169,44 @@ namespace venue_service.Migrations
                         name: "FK_venues_venue_types_venue_type_id",
                         column: x => x.venue_type_id,
                         principalTable: "venue_types",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "reservations",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    user_id = table.Column<int>(type: "integer", nullable: false),
+                    venue_id = table.Column<int>(type: "integer", nullable: false),
+                    status = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    venue_availability_time_id = table.Column<int>(type: "integer", nullable: false),
+                    payment_method_id = table.Column<int>(type: "integer", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    deleted_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_reservations", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_reservations_payment_methods_payment_method_id",
+                        column: x => x.payment_method_id,
+                        principalTable: "payment_methods",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_reservations_users_user_id",
+                        column: x => x.user_id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_reservations_venues_venue_id",
+                        column: x => x.venue_id,
+                        principalTable: "venues",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -202,13 +239,17 @@ namespace venue_service.Migrations
                 name: "venue_availability",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    venue_id = table.Column<int>(type: "integer", nullable: false)
+                    start_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    end_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    venue_id = table.Column<int>(type: "integer", nullable: false),
+                    price = table.Column<double>(type: "double precision", nullable: false),
+                    time_status = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_venue_availability", x => x.id);
+                    table.PrimaryKey("PK_venue_availability", x => x.Id);
                     table.ForeignKey(
                         name: "FK_venue_availability_venues_venue_id",
                         column: x => x.venue_id,
@@ -323,76 +364,6 @@ namespace venue_service.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "location_availability_times",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    venue_status_id = table.Column<int>(type: "integer", nullable: false),
-                    price = table.Column<decimal>(type: "numeric", nullable: false),
-                    available_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    venue_availability_id = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_location_availability_times", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_location_availability_times_venue_availability_venue_availa~",
-                        column: x => x.venue_availability_id,
-                        principalTable: "venue_availability",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_location_availability_times_venue_status_venue_status_id",
-                        column: x => x.venue_status_id,
-                        principalTable: "venue_status",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "reservations",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    user_id = table.Column<int>(type: "integer", nullable: false),
-                    venue_id = table.Column<int>(type: "integer", nullable: false),
-                    location_availability_time_id = table.Column<int>(type: "integer", nullable: false),
-                    status = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    payment_method_id = table.Column<int>(type: "integer", nullable: false),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_reservations", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_reservations_location_availability_times_location_availabil~",
-                        column: x => x.location_availability_time_id,
-                        principalTable: "location_availability_times",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_reservations_payment_methods_payment_method_id",
-                        column: x => x.payment_method_id,
-                        principalTable: "payment_methods",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_reservations_users_user_id",
-                        column: x => x.user_id,
-                        principalTable: "users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_reservations_venues_venue_id",
-                        column: x => x.venue_id,
-                        principalTable: "venues",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.InsertData(
                 table: "equipament_brands",
                 columns: new[] { "id", "brand_name" },
@@ -473,8 +444,13 @@ namespace venue_service.Migrations
 
             migrationBuilder.InsertData(
                 table: "venues",
-                columns: new[] { "id", "address", "allow_local_payment", "capacity", "created_at", "deleted_at", "description", "latitude", "longitude", "name", "owner_id", "rules", "updated_at", "venue_avaliability_id", "venue_type_id" },
-                values: new object[] { 1, "123 Main St", true, 100, new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc), null, "Main sports court", -23.5505, -46.633299999999998, "Central Court", 1, "No smoking", new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc), 1, 1 });
+                columns: new[] { "id", "address", "allow_local_payment", "capacity", "created_at", "deleted_at", "description", "latitude", "longitude", "name", "owner_id", "rules", "updated_at", "venue_type_id" },
+                values: new object[] { 1, "123 Main St", true, 100, new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc), null, "Main sports court", -23.5505, -46.633299999999998, "Central Court", 1, "No smoking", new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc), 1 });
+
+            migrationBuilder.InsertData(
+                table: "reservations",
+                columns: new[] { "id", "created_at", "deleted_at", "payment_method_id", "status", "updated_at", "user_id", "venue_availability_time_id", "venue_id" },
+                values: new object[] { 1, new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc), null, 1, "Pending", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 1, 1 });
 
             migrationBuilder.InsertData(
                 table: "user_venues",
@@ -483,8 +459,8 @@ namespace venue_service.Migrations
 
             migrationBuilder.InsertData(
                 table: "venue_availability",
-                columns: new[] { "id", "venue_id" },
-                values: new object[] { 1, 1 });
+                columns: new[] { "Id", "end_date", "start_date", "time_status", "venue_id", "price" },
+                values: new object[] { 1, new DateTime(2025, 3, 20, 10, 0, 0, 0, DateTimeKind.Utc), new DateTime(2025, 3, 20, 8, 0, 0, 0, DateTimeKind.Utc), "PENDING", 1, 100.0 });
 
             migrationBuilder.InsertData(
                 table: "venue_contact_infos",
@@ -514,31 +490,6 @@ namespace venue_service.Migrations
                     { 2, 1, null }
                 });
 
-            migrationBuilder.InsertData(
-                table: "location_availability_times",
-                columns: new[] { "id", "available_time", "price", "venue_availability_id", "venue_status_id" },
-                values: new object[] { 1, new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc), 150.00m, 1, 1 });
-
-            migrationBuilder.InsertData(
-                table: "reservations",
-                columns: new[] { "id", "created_at", "location_availability_time_id", "payment_method_id", "status", "user_id", "venue_id" },
-                values: new object[] { 1, new DateTime(2025, 3, 20, 0, 0, 0, 0, DateTimeKind.Utc), 1, 1, "Pending", 1, 1 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_location_availability_times_venue_availability_id",
-                table: "location_availability_times",
-                column: "venue_availability_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_location_availability_times_venue_status_id",
-                table: "location_availability_times",
-                column: "venue_status_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_reservations_location_availability_time_id",
-                table: "reservations",
-                column: "location_availability_time_id");
-
             migrationBuilder.CreateIndex(
                 name: "IX_reservations_payment_method_id",
                 table: "reservations",
@@ -567,8 +518,7 @@ namespace venue_service.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_venue_availability_venue_id",
                 table: "venue_availability",
-                column: "venue_id",
-                unique: true);
+                column: "venue_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_venue_contact_infos_venue_id",
@@ -626,6 +576,9 @@ namespace venue_service.Migrations
                 name: "user_venues");
 
             migrationBuilder.DropTable(
+                name: "venue_availability");
+
+            migrationBuilder.DropTable(
                 name: "venue_contact_infos");
 
             migrationBuilder.DropTable(
@@ -638,7 +591,7 @@ namespace venue_service.Migrations
                 name: "venue_sports");
 
             migrationBuilder.DropTable(
-                name: "location_availability_times");
+                name: "venue_status");
 
             migrationBuilder.DropTable(
                 name: "payment_methods");
@@ -651,12 +604,6 @@ namespace venue_service.Migrations
 
             migrationBuilder.DropTable(
                 name: "sports");
-
-            migrationBuilder.DropTable(
-                name: "venue_availability");
-
-            migrationBuilder.DropTable(
-                name: "venue_status");
 
             migrationBuilder.DropTable(
                 name: "venues");
