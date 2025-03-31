@@ -48,8 +48,7 @@ public class ReservationService : IReservationService
                 CreatedAt = DateTime.UtcNow
             };
 
-            _context.Reservations.Add(reservation);
-            await _context.SaveChangesAsync();
+            _context.Reservations.AddAsync(reservation);
 
             return new ReservationResponseDto
             {
