@@ -51,11 +51,6 @@ namespace venue_service.Src.Models
         public int OwnerId { get; set; }
         public User Owner { get; set; }
 
-        [ForeignKey("VenueAvaliabilityId")]
-        [Column("venue_avaliability_id")]
-        public int VenueAvaliabilityId { get; set; }
-        public VenueAvailability VenueAvaliability { get; set; }
-
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
@@ -70,5 +65,6 @@ namespace venue_service.Src.Models
         public ICollection<User_Venue> UserVenues { get; set; }
         public ICollection<Venue_Sport> VenueSports { get; set; }
         public ICollection<VenueContactInfo> VenueContactInfos { get; set; }
+        public ICollection<VenueAvailabilityTime> VenueAvailabilityTimes { get; set; }
     }
 }

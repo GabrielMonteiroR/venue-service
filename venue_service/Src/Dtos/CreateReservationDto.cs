@@ -1,10 +1,9 @@
-﻿namespace venue_service.Src.Dtos
+﻿namespace venue_service.Src.Dtos;
+
+public class CreateReservationDto
 {
-    public class CreateReservationDto
-    {
-        public int UserId { get; set; }
-        public int VenueId { get; set; }
-        public int LocationAvailabilityTimeId { get; set; }
-        public int PaymentMethodId { get; set; }
-    }
+    public int UserId { get; set; }
+    public int VenueId { get; set; }
+    public int VenueAvailabilityTimeId { get; set; }
+    public int PaymentMethodId { get; set; }
 }

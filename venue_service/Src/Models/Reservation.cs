@@ -20,15 +20,15 @@ namespace venue_service.Src.Models
         public int VenueId { get; set; }
         public Venue Venue { get; set; }
 
-        [ForeignKey("LocationAvailabilityTimeId")]
-        [Column("location_availability_time_id")]
-        public int LocationAvailabilityTimeId { get; set; }
-        public LocationAvailabilityTime LocationAvailabilityTime { get; set; }
 
         [Required]
         [MaxLength(50)]
         [Column("status")]
         public string Status { get; set; }
+
+        [Required]
+        [Column("venue_availability_time_id")]
+        public int VenueAvailabilityTimeId { get; set; }
 
         [ForeignKey("PaymentMethodId")]
         [Column("payment_method_id")]
@@ -36,6 +36,12 @@ namespace venue_service.Src.Models
         public PaymentMethod PaymentMethod { get; set; }
 
         [Column("created_at")]
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } 
+
+        [Column("updated_at")]
+        public DateTime UpdatedAt { get; set; } 
+
+        [Column("deleted_at")]
+        public DateTime? DeletedAt { get; set; }
     }
 }
