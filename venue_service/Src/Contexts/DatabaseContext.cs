@@ -34,7 +34,6 @@ namespace venue_service.Src.Contexts
             modelBuilder.Entity<Sport>().ToTable("sports");
             modelBuilder.Entity<Venue>().ToTable("venues");
             modelBuilder.Entity<VenueAvailability>().ToTable("venue_availability");
-            modelBuilder.Entity<LocationAvailabilityTime>().ToTable("location_availability_times");
             modelBuilder.Entity<User_Venue>().ToTable("user_venues");
             modelBuilder.Entity<Venue_Sport>().ToTable("venue_sports");
             modelBuilder.Entity<VenueEquipament>().ToTable("venue_equipaments");
@@ -94,11 +93,6 @@ namespace venue_service.Src.Contexts
                 .WithOne(lat => lat.VenueAvailability)
                 .HasForeignKey(lat => lat.VenueAvailabilityId);
 
-            modelBuilder.Entity<LocationAvailabilityTime>()
-                .HasOne(lat => lat.VenueStatus)
-                .WithMany()
-                .HasForeignKey(lat => lat.VenueStatusId);
-
             modelBuilder.Entity<Venue>()
                 .HasMany(v => v.VenueEquipaments)
                 .WithOne(ve => ve.Venue)
@@ -133,11 +127,6 @@ namespace venue_service.Src.Contexts
                 .HasOne(r => r.Venue)
                 .WithMany()
                 .HasForeignKey(r => r.VenueId);
-
-            modelBuilder.Entity<Reservation>()
-                .HasOne(r => r.LocationAvailabilityTime)
-                .WithMany()
-                .HasForeignKey(r => r.LocationAvailabilityTimeId);
 
             modelBuilder.Entity<Reservation>()
                 .HasOne(r => r.PaymentMethod)
@@ -253,18 +242,6 @@ namespace venue_service.Src.Contexts
                 }
             );
 
-            // Location Availability Time
-            modelBuilder.Entity<LocationAvailabilityTime>().HasData(
-                new LocationAvailabilityTime
-                {
-                    Id = 1,
-                    VenueStatusId = 1,
-                    Price = 150.00m,
-                    AvailableTime = DateTime.SpecifyKind(new DateTime(2025, 03, 20), DateTimeKind.Utc),
-                    VenueAvailabilityId = 1
-                }
-            );
-
             // User_Venue (Owner)
             modelBuilder.Entity<User_Venue>().HasData(
                 new User_Venue
@@ -343,8 +320,10 @@ namespace venue_service.Src.Contexts
         Id = 1,
         UserId = 1,
         VenueId = 1,
-        LocationAvailabilityTimeId = 1,
-        PaymentMethodId = 1, // Valor existente!
+        StartDate = DateTime.SpecifyKind(new DateTime(2025, 03, 20), DateTimeKind.Utc),
+        EndDate = DateTime.SpecifyKind(new DateTime(2025, 03, 20), DateTimeKind.Utc),
+        TotalPrice = 100.00,
+        PaymentMethodId = 1,
         Status = "Pending",
         CreatedAt = DateTime.SpecifyKind(new DateTime(2025, 03, 20), DateTimeKind.Utc),
 

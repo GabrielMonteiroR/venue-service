@@ -20,15 +20,23 @@ namespace venue_service.Src.Models
         public int VenueId { get; set; }
         public Venue Venue { get; set; }
 
-        [ForeignKey("LocationAvailabilityTimeId")]
-        [Column("location_availability_time_id")]
-        public int LocationAvailabilityTimeId { get; set; }
-        public LocationAvailabilityTime LocationAvailabilityTime { get; set; }
 
         [Required]
         [MaxLength(50)]
         [Column("status")]
         public string Status { get; set; }
+
+        [Required]
+        [Column("start_date")]
+        public DateTime StartDate { get; set; }
+
+        [Required]
+        [Column("end_date")]
+        public DateTime EndDate { get; set; }
+
+        [Required]
+        [Column("total_price")]
+        public double TotalPrice { get; set; }
 
         [ForeignKey("PaymentMethodId")]
         [Column("payment_method_id")]
