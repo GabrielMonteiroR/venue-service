@@ -11,8 +11,7 @@ namespace venue_service.Src.Contexts
         public DbSet<Role> Roles { get; set; }
         public DbSet<Sport> Sports { get; set; }
         public DbSet<Venue> Venues { get; set; }
-        public DbSet<VenueAvailability> VenueAvailabilities { get; set; }
-        public DbSet<LocationAvailabilityTime> LocationAvailabilityTimes { get; set; }
+        public DbSet<VenueAvailabilityTime> VenueAvailabilities { get; set; }
         public DbSet<User_Venue> UserVenues { get; set; }
         public DbSet<Venue_Sport> VenueSports { get; set; }
         public DbSet<VenueEquipament> VenueEquipaments { get; set; }
@@ -33,7 +32,7 @@ namespace venue_service.Src.Contexts
             modelBuilder.Entity<Role>().ToTable("roles");
             modelBuilder.Entity<Sport>().ToTable("sports");
             modelBuilder.Entity<Venue>().ToTable("venues");
-            modelBuilder.Entity<VenueAvailability>().ToTable("venue_availability");
+            modelBuilder.Entity<VenueAvailabilityTime>().ToTable("venue_availability");
             modelBuilder.Entity<User_Venue>().ToTable("user_venues");
             modelBuilder.Entity<Venue_Sport>().ToTable("venue_sports");
             modelBuilder.Entity<VenueEquipament>().ToTable("venue_equipaments");
@@ -78,20 +77,11 @@ namespace venue_service.Src.Contexts
                 .WithMany()
                 .HasForeignKey(vs => vs.SportId);
 
-            modelBuilder.Entity<Venue>()
-                .HasOne(v => v.VenueAvaliability)
-                .WithOne(va => va.Venue)
-                .HasForeignKey<VenueAvailability>(va => va.VenueId);
 
             modelBuilder.Entity<Venue>()
                 .HasOne(v => v.VenueType)
                 .WithMany()
                 .HasForeignKey(v => v.VenueTypeId);
-
-            modelBuilder.Entity<VenueAvailability>()
-                .HasMany(va => va.LocationAvailabilityTimes)
-                .WithOne(lat => lat.VenueAvailability)
-                .HasForeignKey(lat => lat.VenueAvailabilityId);
 
             modelBuilder.Entity<Venue>()
                 .HasMany(v => v.VenueEquipaments)
@@ -224,8 +214,7 @@ namespace venue_service.Src.Contexts
                     Description = "Main sports court",
                     AllowLocalPayment = true,
                     Rules = "No smoking",
-                    OwnerId = 1,
-                    VenueAvaliabilityId = 1,
+                    OwnerId = 1,                   
                     VenueTypeId = 1,
                     CreatedAt = DateTime.SpecifyKind(new DateTime(2025, 03, 20), DateTimeKind.Utc),
                     UpdatedAt = DateTime.SpecifyKind(new DateTime(2025, 03, 20), DateTimeKind.Utc)
@@ -234,8 +223,8 @@ namespace venue_service.Src.Contexts
             );
 
             // Venue Availability
-            modelBuilder.Entity<VenueAvailability>().HasData(
-                new VenueAvailability
+            modelBuilder.Entity<VenueAvailabilityTime>().HasData(
+                new VenueAvailabilityTime
                 {
                     Id = 1,
                     VenueId = 1
@@ -314,15 +303,21 @@ namespace venue_service.Src.Contexts
                 }
             );
 
+            //Avaliability Times
+            modelBuilder.Entity<VenueAvailabilityTime>().HasData(
+                new VenueAvailabilityTime
+                {
+                    Id = 1,
+                    VenueId = 1,
+                });
+
             modelBuilder.Entity<Reservation>().HasData(
     new Reservation
     {
         Id = 1,
         UserId = 1,
         VenueId = 1,
-        StartDate = DateTime.SpecifyKind(new DateTime(2025, 03, 20), DateTimeKind.Utc),
-        EndDate = DateTime.SpecifyKind(new DateTime(2025, 03, 20), DateTimeKind.Utc),
-        TotalPrice = 100.00,
+        VenueAvailabilityTimeId = 1,
         PaymentMethodId = 1,
         Status = "Pending",
         CreatedAt = DateTime.SpecifyKind(new DateTime(2025, 03, 20), DateTimeKind.Utc),
