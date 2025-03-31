@@ -7,6 +7,7 @@ namespace venue_service.Src.Models
     public class VenueAvailabilityTime
     {
         [Key]
+        [Column("id")]
         public int Id { get; set; }
 
         [Required]
@@ -24,11 +25,15 @@ namespace venue_service.Src.Models
 
         [Required]
         [Column("price")]
-        public double price { get; set; }
+        public decimal Price { get; set; }
 
         [Required]
         [Column("time_status")]
         [MaxLength(50)]
         public string TimeStatus { get; set; }
+
+        [Required]
+        [Column("is_reserved")]
+        public bool IsReserved { get; set; }
     }
 }

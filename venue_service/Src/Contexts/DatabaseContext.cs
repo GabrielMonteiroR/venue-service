@@ -223,7 +223,7 @@ public class DatabaseContext : DbContext
                 VenueId = 1,
                 StartDate = new DateTime(2025, 03, 20, 08, 00, 00, DateTimeKind.Utc),
                 EndDate = new DateTime(2025, 03, 20, 10, 00, 00, DateTimeKind.Utc),
-                price = 100,
+                Price = 100,
                 TimeStatus = "PENDING"
             }
         );
