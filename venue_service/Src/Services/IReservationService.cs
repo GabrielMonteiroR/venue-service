@@ -7,6 +7,6 @@ namespace venue_service.Src.Services
         Task<ReservationResponseDto> CreateReservationAsync(CreateReservationDto dto);
         Task<ReservationsResponseDto> GetReservationsByUserIdAsync(int userId);
         //Task<ReservationResponseDto> UpdateReservationAsync(int id, UpdateReservationDto dto);
-        Task<bool> DeleteReservationAsync(int id);
+        //Task<bool> DeleteReservationAsync(int id);
     }
 }
