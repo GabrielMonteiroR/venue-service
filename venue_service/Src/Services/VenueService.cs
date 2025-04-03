@@ -11,23 +11,35 @@ namespace venue_service.Src.Services
     public class VenueService : IVenueService
     {
         private readonly DatabaseContext _context;
-        private readonly IMapper _mapper;
 
-        public VenueService(DatabaseContext context, IMapper mapper)
+        public VenueService(DatabaseContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
         public async Task<VenueResponseDto> CreateVenueAsync(CreateVenueDto dto)
         {
             try
-            {
-                var venue = _mapper.Map<Venue>(dto);
+            { 
+                var venue = new Venue
+                {
+                    Name = dto.Name,
+                    Address = dto.Address,
+                    Capacity = dto.Capacity,
+                    Latitude = dto.Latitude,
+                    Longitude = dto.Longitude,
+                    Description = dto.Description,
+                    AllowLocalPayment = dto.AllowLocalPayment,
+                    VenueTypeId = dto.VenueTypeId,
+                    Rules = dto.Rules,
+                    OwnerId = dto.OwnerId
+                };
+
+                if (venue is null)
+                    throw new HttpResponseException(HttpStatusCode.BadRequest, "Invalid data", "The provided venue data is null.");
+
                 _context.Venues.Add(venue);
                 await _context.SaveChangesAsync();
-
-                return _mapper.Map<VenueResponseDto>(venue);
             }
             catch (Exception ex)
             {
