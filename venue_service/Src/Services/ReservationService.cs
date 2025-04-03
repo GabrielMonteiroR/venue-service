@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Net;
 using venue_service.Src.Contexts;
 using venue_service.Src.Dtos;
+using venue_service.Src.Enums;
 using venue_service.Src.Exceptions;
 using venue_service.Src.Models;
 using venue_service.Src.Services;
@@ -12,14 +13,12 @@ namespace Src.Services;
 public class ReservationService : IReservationService
 {
     private readonly DatabaseContext _context;
-    private readonly IMapper _mapper;
 
-    public ReservationService(DatabaseContext context, IMapper mapper)
+    public ReservationService(DatabaseContext context)
     {
         _context = context;
-        _mapper = mapper;
     }
-
+    
     public async Task<ReservationResponseDto> CreateReservationAsync(CreateReservationDto dto)
     {
         var userExists = await _context.Users.AnyAsync(u => u.Id == dto.UserId);
@@ -32,14 +31,28 @@ public class ReservationService : IReservationService
         if (!availabilityExists) throw new HttpResponseException(HttpStatusCode.BadRequest, "Validation Error", "Availability not found");
         if (!paymentMethodExists) throw new HttpResponseException(HttpStatusCode.BadRequest, "Validation Error", "Payment Method invalid");
 
-        var reservation = _mapper.Map<Reservation>(dto);
-        reservation.Status = "PENDING";
-        reservation.CreatedAt = DateTime.UtcNow;
+        var reservation = new Reservation
+        {
+            UserId = dto.UserId,
+            VenueId = dto.VenueId,
+            VenueAvailabilityTimeId = dto.VenueAvailabilityTimeId,
+            PaymentMethodId = dto.PaymentMethodId,
+            Status = ReservationStatusEnum.PENDING.ToString(),
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
 
         _context.Reservations.Add(reservation);
         await _context.SaveChangesAsync();
 
-        return _mapper.Map<ReservationResponseDto>(reservation);
+        return new ReservationResponseDto
+        {
+            CreatedAt = reservation.CreatedAt,
+            Id = reservation.Id,
+            Status = reservation.Status,
+            UserId = reservation.UserId,
+            VenueId = reservation.VenueId,
+        };
     }
 
     public async Task<IEnumerable<ReservationResponseDto>> GetReservationsByUserIdAsync(int userId)
@@ -48,7 +61,7 @@ public class ReservationService : IReservationService
                                           .Where(r => r.UserId == userId)
                                           .ToListAsync();
 
-        return _mapper.Map<IEnumerable<ReservationResponseDto>>(reservations);
+        return 
     }
 
     public async Task<ReservationResponseDto> UpdateReservationAsync(int id, UpdateReservationDto dto)
