@@ -88,21 +88,45 @@ namespace venue_service.Src.Services
                 throw new HttpResponseException(HttpStatusCode.InternalServerError, "Internal Server Error", ex.Message);
             }
         }
-        public async Task<VenueResponseDto> DeleteVenuesAsync(int[] ids)
+
+        public double GetLongitude()
+        {
+            return Longitude;
+        }
+
+        public async Task<VenuesResponseDto> DeleteVenuesAsync(int[] ids, double longitude)
         {
             try
             {
-                var venues = await _context.Venues.SelectMany(v => ids, (v, id) => new { v, id }).Where(v => v.v.Id == v.id).ToListAsync();
+                var venues = await _context.Venues.Where(v => ids.Contains(v.Id)).ToListAsync();
 
                 if (venues.Count == 0)
                 {
                     throw new HttpResponseException(HttpStatusCode.NoContent, "No Content", "No venues found");
                 }
 
-                _context.Venues.RemoveRange(venues.Select(v => v.v));
+                var deletedVenues = venues;
+
+                _context.Venues.RemoveRange(venues);
                 await _context.SaveChangesAsync();
 
-                return _mapper.Map<VenueResponseDto>(venues.First().v);
+                return new VenuesResponseDto
+                {
+                    Message = "Venues deleted successfully",
+                    Data = deletedVenues.Select(v => new VenueResponseDto
+                    {
+                        Name = v.Name,
+                        Address = v.Address,
+                        Capacity = v.Capacity,
+                        Latitude = v.Latitude,
+                        Longitude = v.Longitude,
+                        Description = v.Description,
+                        AllowLocalPayment = v.AllowLocalPayment,
+                        VenueTypeId = v.VenueTypeId,
+                        Rules = v.Rules,
+                        OwnerId = v.OwnerId
+                    }).ToList()
+                };
             }
             catch (Exception ex)
             {
