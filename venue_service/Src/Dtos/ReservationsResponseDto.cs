@@ -2,7 +2,7 @@
 {
     public class ReservationsResponseDto
     {
-        public string Message { get; set; },
+        public string Message { get; set; }
         public List<ReservationResponseDto> Reservations { get; set; }
     }
 }
