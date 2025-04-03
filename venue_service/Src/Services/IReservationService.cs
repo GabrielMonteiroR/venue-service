@@ -5,8 +5,8 @@ namespace venue_service.Src.Services
     public interface IReservationService
     {
         Task<ReservationResponseDto> CreateReservationAsync(CreateReservationDto dto);
-        Task<IEnumerable<ReservationResponseDto>> GetReservationsByUserIdAsync(int userId);
-        Task<ReservationResponseDto> UpdateReservationAsync(int id, UpdateReservationDto dto);
+        Task<ReservationsResponseDto> GetReservationsByUserIdAsync(int userId);
+        //Task<ReservationResponseDto> UpdateReservationAsync(int id, UpdateReservationDto dto);
         Task<bool> DeleteReservationAsync(int id);
     }
 }

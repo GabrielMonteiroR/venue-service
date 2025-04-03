@@ -18,7 +18,7 @@ public class ReservationService : IReservationService
     {
         _context = context;
     }
-    
+
     public async Task<ReservationResponseDto> CreateReservationAsync(CreateReservationDto dto)
     {
         var userExists = await _context.Users.AnyAsync(u => u.Id == dto.UserId);
@@ -55,51 +55,75 @@ public class ReservationService : IReservationService
         };
     }
 
-    public async Task<IEnumerable<ReservationResponseDto>> GetReservationsByUserIdAsync(int userId)
+    public async Task<ReservationsResponseDto> GetReservationsByUserIdAsync(int userId)
     {
-        var reservations = await _context.Reservations
-                                          .Where(r => r.UserId == userId)
-                                          .ToListAsync();
-
-        return 
-    }
-
-    public async Task<ReservationResponseDto> UpdateReservationAsync(int id, UpdateReservationDto dto)
-    {
-        var reservation = await _context.Reservations
-                                        .Include(r => r.User)
-                                        .Include(r => r.Venue)
-                                        .FirstOrDefaultAsync(r => r.Id == id);
-
-        if (reservation == null)
+        try
         {
-            throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Reservation not found");
-        }
+            var reservations = await _context.Reservations
+                                              .Where(r => r.UserId == userId)
+                                              .ToListAsync();
 
-        reservation.Status = dto.Status;
-        reservation.VenueId = dto.VenueId;
-        reservation.VenueAvailabilityTimeId = dto.VenueAvailabilityTimeId;
-        reservation.PaymentMethodId = dto.PaymentMethodId;
-        reservation.UpdatedAt = DateTime.UtcNow;
+            if (reservations.Count == 0)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "No reservations found for this user");
+            }
 
-        _context.Reservations.Update(reservation);
-        await _context.SaveChangesAsync();
-
-        return _mapper.Map<ReservationResponseDto>(reservation);
-    }
-
-    public async Task<bool> DeleteReservationAsync(int id)
-    {
-        var reservation = await _context.Reservations.FindAsync(id);
-
-        if (reservation == null)
+            return new ReservationsResponseDto
+            {
+                Message = "Reservations found",
+                Reservations = reservations.Select(r => new ReservationResponseDto
+                {
+                    Id = r.Id,
+                    UserId = r.UserId,
+                    VenueId = r.VenueId,
+                    Status = r.Status,
+                    CreatedAt = r.CreatedAt
+                }).ToList()
+            };
+        } catch (Exception ex)
         {
-            throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Reservation not found");
-        }
+            throw new HttpResponseException(HttpStatusCode.InternalServerError, "Unexpected error", ex.Message);
+}
 
-        _context.Reservations.Remove(reservation);
-        await _context.SaveChangesAsync();
 
-        return true;
     }
+
+//    public async Task<ReservationResponseDto> UpdateReservationAsync(int id, UpdateReservationDto dto)
+//{
+//    var reservation = await _context.Reservations
+//                                    .Include(r => r.User)
+//                                    .Include(r => r.Venue)
+//                                    .FirstOrDefaultAsync(r => r.Id == id);
+
+//    if (reservation == null)
+//    {
+//        throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Reservation not found");
+//    }
+
+//    reservation.Status = dto.Status;
+//    reservation.VenueId = dto.VenueId;
+//    reservation.VenueAvailabilityTimeId = dto.VenueAvailabilityTimeId;
+//    reservation.PaymentMethodId = dto.PaymentMethodId;
+//    reservation.UpdatedAt = DateTime.UtcNow;
+
+//    _context.Reservations.Update(reservation);
+//    await _context.SaveChangesAsync();
+
+//    return _mapper.Map<ReservationResponseDto>(reservation);
+//}
+
+//public async Task<bool> DeleteReservationAsync(int id)
+//{
+//    var reservation = await _context.Reservations.FindAsync(id);
+
+//    if (reservation == null)
+//    {
+//        throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Reservation not found");
+//    }
+
+//    _context.Reservations.Remove(reservation);
+//    await _context.SaveChangesAsync();
+
+//    return true;
+//}
 }
