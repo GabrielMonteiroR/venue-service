@@ -58,17 +58,30 @@ namespace venue_service.Src.Services
                     throw new HttpResponseException(HttpStatusCode.NoContent, "No Content", "No venues found");
                 }
 
-                var venueDtos = _mapper.Map<List<VenueResponseDto>>(venues);
+                var venueDtos = venues.Select(v => new VenueResponseDto
+                {
+                    Name = v.Name,
+                    Address = v.Address,
+                    Capacity = v.Capacity,
+                    Latitude = v.Latitude,
+                    Longitude = v.Longitude,
+                    Description = v.Description,
+                    AllowLocalPayment = v.AllowLocalPayment,
+                    VenueTypeId = v.VenueTypeId,
+                    Rules = v.Rules,
+                    OwnerId = v.OwnerId,
+                }).ToList();
 
+                if (venueDtos.Count == 0)
+                {
+                    throw new HttpResponseException(HttpStatusCode.NoContent, "No Content", "No venues found");
+                }
+                
                 return new VenuesResponseDto
                 {
                     Message = "Venues retrieved successfully",
                     Data = venueDtos
                 };
-            }
-            catch (HttpResponseException)
-            {
-                throw;
             }
             catch (Exception ex)
             {
