@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Net;
 using venue_service.Src.Contexts;
 using venue_service.Src.Dtos;
@@ -20,7 +19,7 @@ namespace venue_service.Src.Services
         public async Task<VenueResponseDto> CreateVenueAsync(CreateVenueDto dto)
         {
             try
-            { 
+            {
                 var venue = new Venue
                 {
                     Name = dto.Name,
@@ -40,6 +39,20 @@ namespace venue_service.Src.Services
 
                 _context.Venues.Add(venue);
                 await _context.SaveChangesAsync();
+
+                return new VenueResponseDto
+                {
+                    Name = venue.Name,
+                    Address = venue.Address,
+                    Capacity = venue.Capacity,
+                    Latitude = venue.Latitude,
+                    Longitude = venue.Longitude,
+                    Description = venue.Description,
+                    AllowLocalPayment = venue.AllowLocalPayment,
+                    VenueTypeId = venue.VenueTypeId,
+                    Rules = venue.Rules,
+                    OwnerId = venue.OwnerId
+                };
             }
             catch (Exception ex)
             {

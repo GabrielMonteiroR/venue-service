@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Net;
 using venue_service.Src.Contexts;
 using venue_service.Src.Dtos;
