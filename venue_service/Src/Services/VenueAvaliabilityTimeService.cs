@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using System.Net;
+﻿using System.Net;
 using venue_service.Src.Contexts;
 using venue_service.Src.Dtos;
 using venue_service.Src.Exceptions;
@@ -11,12 +9,10 @@ namespace venue_service.Src.Services
     public class VenueAvaliabilityTimeService : IVenueAvaliabilityTime
     {
         private readonly DatabaseContext _context;
-        private readonly IMapper _mapper;
 
-        public VenueAvaliabilityTimeService(DatabaseContext context, IMapper mapper)
+        public VenueAvaliabilityTimeService(DatabaseContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
         public async Task<VenueAvailabilityTimeResponseDto> CreateVenueAvailabilityTime(CreateVenueAvaliabilityDto dto)
@@ -26,7 +22,13 @@ namespace venue_service.Src.Services
                 if (dto is null)
                     throw new HttpResponseException(HttpStatusCode.BadRequest, "Invalid data", "The provided availability data is null.");
 
-                var newAvailability = _mapper.Map<VenueAvailabilityTime>(dto);
+                var newAvailability = new VenueAvailabilityTime
+                {
+                    StartDate = dto.StartDate,
+                    EndDate = dto.EndDate,
+                    VenueId = dto.VenueId,
+                    Price = dto.Price,
+                };
 
                 if (newAvailability.IsReserved)
                 {
@@ -36,7 +38,16 @@ namespace venue_service.Src.Services
                 }
                 _context.VenueAvailabilities.Add(newAvailability);
                 await _context.SaveChangesAsync();
-                return _mapper.Map<VenueAvailabilityTimeResponseDto>(dto);
+
+                var responseDto = new VenueAvailabilityTimeResponseDto
+                {
+                    StartDate = newAvailability.StartDate,
+                    EndDate = newAvailability.EndDate,
+                    VenueId = newAvailability.VenueId,
+                    Price = dto.Price
+                };
+
+                return responseDto;
             }
             catch (Exception ex)
             {
@@ -44,11 +55,27 @@ namespace venue_service.Src.Services
             }
         }
 
+        public async Task<VenueAvailabilityTimeResponseDto> CreateVenueAvailabilityTimeAsync(CreateVenueAvaliabilityDto dto)
+        {
+            return await CreateVenueAvailabilityTime(dto);
+        }
 
+        public async Task<bool> DeleteVenueAvailabilityTimeAsync(int id)
+        {
+            var availability = await _context.VenueAvailabilities.FindAsync(id);
+            if (availability == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound, "Not found", $"No availability found with ID {id}");
+            }
 
+            _context.VenueAvailabilities.Remove(availability);
+            await _context.SaveChangesAsync();
+            return true;
+        }
 
-
-
-
+        //public async Task<IVenueAvaliabilityTime> GetVenueAvaliabilityTimesByVenueIdAsync()
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

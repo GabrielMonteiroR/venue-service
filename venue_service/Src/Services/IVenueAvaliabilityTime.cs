@@ -1,10 +1,12 @@
-﻿namespace venue_service.Src.Services
+﻿using venue_service.Src.Dtos;
+
+namespace venue_service.Src.Services
 {
-    public class IVenueAvaliabilityTime
+    public interface IVenueAvaliabilityTime
     {
-        Task<VenueAvailabilityTimeResponseDto> CreateVenueAvailabilityTimeAsync(CreateVenueAvailabilityTimeDto dto);
-        Task<VenueAvailabilityTimeResponseDto> UpdateVenueAvailabilityTimeAsync(int id, UpdateVenueAvailabilityTimeDto dto);
+        Task<VenueAvailabilityTimeResponseDto> CreateVenueAvailabilityTimeAsync(CreateVenueAvaliabilityDto dto);
+        //Task<VenueAvailabilityTimeResponseDto> UpdateVenueAvailabilityTimeAsync(int id, UpdateVenueAvailabilityTimeDto dto);
         Task<bool> DeleteVenueAvailabilityTimeAsync(int id);
-        Task<IVenueAvaliabilityTime> GetVenueAvaliabilityTimesByVenueIdAsync();
+        //Task<IVenueAvaliabilityTime> GetVenueAvaliabilityTimesByVenueIdAsync();
     }
 }
