@@ -102,11 +102,6 @@ namespace venue_service.Src.Services
             }
         }
 
-        public double GetLongitude()
-        {
-            return Longitude;
-        }
-
         public async Task<VenuesResponseDto> DeleteVenuesAsync(int[] ids, double longitude)
         {
             try
