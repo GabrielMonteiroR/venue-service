@@ -1,9 +1,7 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using venue_service.Src.Contexts;
 using venue_service.Src.Dtos.Auth;
@@ -13,11 +11,11 @@ namespace venue_service.Src.Services;
 
 public class AuthService
 {
-    private readonly AppDbContext _context;
+    private readonly DatabaseContext _context;
     private readonly IConfiguration _configuration;
     private readonly PasswordHasher<User> _passwordHasher;
 
-    public AuthService(AppDbContext context, IConfiguration configuration)
+    public AuthService(DatabaseContext context, IConfiguration configuration)
     {
         _context = context;
         _configuration = configuration;
@@ -27,7 +25,7 @@ public class AuthService
     public async Task<AuthResponseDto> RegisterAsync(RegisterRequestDto dto)
     {
         if (_context.Users.Any(u => u.Email == dto.Email))
-            throw new Exception("Email já está em uso.");
+            throw new Exception("Email already in use!");
 
         var user = new User
         {
@@ -35,7 +33,10 @@ public class AuthService
             LastName = dto.LastName,
             Email = dto.Email,
             Phone = dto.Phone,
-            RoleId = dto.RoleId
+            RoleId = dto.RoleId,
+            IsBanned = false,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
         };
 
         user.Password = _passwordHasher.HashPassword(user, dto.Password);
@@ -43,11 +44,9 @@ public class AuthService
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
 
-        var token = GenerateToken(user);
-
         return new AuthResponseDto
         {
-            Token = token,
+            Token = GenerateToken(user),
             Email = user.Email,
             FirstName = user.FirstName
         };
@@ -56,17 +55,15 @@ public class AuthService
     public AuthResponseDto Login(LoginRequestDto dto)
     {
         var user = _context.Users.FirstOrDefault(u => u.Email == dto.Email)
-                   ?? throw new Exception("Usuário ou senha inválidos.");
+                   ?? throw new Exception("Invalid user or password.");
 
         var result = _passwordHasher.VerifyHashedPassword(user, user.Password, dto.Password);
         if (result == PasswordVerificationResult.Failed)
-            throw new Exception("Usuário ou senha inválidos.");
-
-        var token = GenerateToken(user);
+            throw new Exception("Invalid user or password.");
 
         return new AuthResponseDto
         {
-            Token = token,
+            Token = GenerateToken(user),
             Email = user.Email,
             FirstName = user.FirstName
         };
