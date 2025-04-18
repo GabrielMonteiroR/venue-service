@@ -18,16 +18,13 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequestDto dto)
     {
-        try
-        {
-            var response = await _authService.RegisterAsync(dto);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var response = await _authService.RegisterAsync(dto);
+        return Ok(response);
     }
+
 
     [HttpPost("login")]
     public IActionResult Login([FromBody] LoginRequestDto dto)
