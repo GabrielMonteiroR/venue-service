@@ -1,5 +1,8 @@
-﻿using venue_service.Src.Contexts;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using venue_service.Src.Contexts;
 using venue_service.Src.Middlewares;
 using venue_service.Src.Services;
 using Src.Services;
@@ -9,7 +12,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Pegando a connection string do appsettings
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Injetando o DbContext com a connection string
 builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseNpgsql(connectionString)
 );
@@ -21,11 +23,30 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Registrando os Services (injeção de dependência)
+// JWT Authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        var key = builder.Configuration["Jwt:Key"];
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
+        };
+    });
+
+builder.Services.AddAuthorization();
+
+// Injetando os Services
 builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IVenueService, VenueService>();
+builder.Services.AddScoped<AuthService>(); // Adicionando AuthService
 
-// Build do app
 var app = builder.Build();
 
 // Middleware de tratamento de erros
@@ -37,6 +58,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Ativando autenticação e autorização
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Mapeamento de Controllers
 app.MapControllers();
