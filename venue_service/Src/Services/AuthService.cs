@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using venue_service.Src.Contexts;
 using venue_service.Src.Dtos.Auth;
@@ -54,8 +55,10 @@ public class AuthService
 
     public AuthResponseDto Login(LoginRequestDto dto)
     {
-        var user = _context.Users.FirstOrDefault(u => u.Email == dto.Email)
-                   ?? throw new Exception("Invalid user or password.");
+        var user = _context.Users
+            .Include(u => u.Role) 
+            .FirstOrDefault(u => u.Email == dto.Email)
+            ?? throw new Exception("Invalid user or password.");
 
         var result = _passwordHasher.VerifyHashedPassword(user, user.Password, dto.Password);
         if (result == PasswordVerificationResult.Failed)
@@ -64,8 +67,18 @@ public class AuthService
         return new AuthResponseDto
         {
             Token = GenerateToken(user),
+
+            Id = user.Id,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
             Email = user.Email,
-            FirstName = user.FirstName
+            Phone = user.Phone,
+            RoleId = user.RoleId,
+            RoleName = user.Role?.Name ?? "Unknown",
+
+            IsBanned = user.IsBanned,
+            CreatedAt = user.CreatedAt,
+            UpdatedAt = user.UpdatedAt
         };
     }
 
