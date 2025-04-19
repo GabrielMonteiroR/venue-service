@@ -18,9 +18,9 @@ public class ReservationService : IReservationService
         _context = context;
     }
 
-    public async Task<ReservationResponseDto> CreateReservationAsync(CreateReservationDto dto)
+    public async Task<ReservationResponseDto> CreateReservationAsync(CreateReservationDto dto, int userId)
     {
-        var userExists = await _context.Users.AnyAsync(u => u.Id == dto.UserId);
+        var userExists = await _context.Users.AnyAsync(u => u.Id == userId);
         var venueExists = await _context.Venues.AnyAsync(v => v.Id == dto.VenueId);
         var availabilityExists = await _context.VenueAvailabilities.AnyAsync(lat => lat.Id == dto.VenueAvailabilityTimeId);
         var paymentMethodExists = await _context.PaymentMethods.AnyAsync(pm => pm.Id == dto.PaymentMethodId);
@@ -32,7 +32,7 @@ public class ReservationService : IReservationService
 
         var reservation = new Reservation
         {
-            UserId = dto.UserId,
+            UserId = userId,
             VenueId = dto.VenueId,
             VenueAvailabilityTimeId = dto.VenueAvailabilityTimeId,
             PaymentMethodId = dto.PaymentMethodId,

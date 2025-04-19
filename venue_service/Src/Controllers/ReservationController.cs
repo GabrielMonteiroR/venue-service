@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using venue_service.Src.Dtos;
 using venue_service.Src.Services;
 
@@ -15,18 +17,14 @@ namespace venue_service.Src.Controllers
             _reservationService = reservationService;
         }
 
-        [HttpPost]
+        [Authorize]
+        [HttpPost("reservations")]
         public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto dto)
         {
-            var result = await _reservationService.CreateReservationAsync(dto);
-            return Ok(result);
-        }
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-        [HttpGet("user/{userId}")]
-        public async Task<IActionResult> GetReservationsByUser(int userId)
-        {
-            var result = await _reservationService.GetReservationsByUserIdAsync(userId);
-            return Ok(result);
+            await _reservationService.CreateReservationAsync(dto, userId);
+            return Ok();
         }
     }
 }
