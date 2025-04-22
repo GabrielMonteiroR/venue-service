@@ -66,4 +66,6 @@ app.UseAuthorization();
 // Mapeamento de Controllers
 app.MapControllers();
 
+app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
 app.Run();
