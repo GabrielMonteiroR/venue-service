@@ -92,7 +92,7 @@ namespace venue_service.Src.Services
                 return new VenueAvaliabilityTimesResponseDto
                 {
                     Message = avaliableTimes.Any() ? $"Available times found." : $"No available times for venue with id {venueId}.",
-                    Data = avaliableTimes
+                    venueAvailabilityTimeResponseDtos = avaliableTimes
                 }; 
             } catch (Exception ex)
             {
