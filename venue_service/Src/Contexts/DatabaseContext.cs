@@ -45,6 +45,8 @@ public class DatabaseContext : DbContext
         modelBuilder.Entity<Reservation>().ToTable("reservations");
         modelBuilder.Entity<PaymentMethod>().ToTable("payment_methods");
 
+        modelBuilder.Entity<VenueAvailabilityTime>().Property(v => v.Price).HasColumnType("numeric");
+
         modelBuilder.Entity<Role>()
             .HasMany(r => r.Users)
             .WithOne(u => u.Role)

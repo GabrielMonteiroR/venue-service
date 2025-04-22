@@ -45,7 +45,8 @@ builder.Services.AddAuthorization();
 // Injetando os Services
 builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IVenueService, VenueService>();
-builder.Services.AddScoped<AuthService>(); // Adicionando AuthService
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<IVenueAvaliabilityTime, VenueAvaliabilityTimeService>();
 
 var app = builder.Build();
 

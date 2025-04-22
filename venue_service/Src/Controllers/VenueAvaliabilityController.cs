@@ -16,8 +16,7 @@ namespace venue_service.Src.Controllers
         }
 
         [HttpGet]
-        [Route("api/venue-availability")]
-        public async Task<IActionResult> GetAvaliableTimesByVenue([FromBody] int venueId)
+        public async Task<IActionResult> GetAvaliableTimesByVenue([FromQuery] int venueId)
         {
             var avaliableTimes = await _venueAvaliabilityTimeService.ListAvaliableTimesByVenue(venueId);
             return Ok(avaliableTimes);
