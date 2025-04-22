@@ -2,7 +2,7 @@
 {
     public class VenueAvaliabilityTimesResponseDto
     {
-        public string Message { get; set; };
+        public string Message { get; set; }
         public List<VenueAvailabilityTimeResponseDto> venueAvailabilityTimeResponseDtos { get; set; }
     }
 }
