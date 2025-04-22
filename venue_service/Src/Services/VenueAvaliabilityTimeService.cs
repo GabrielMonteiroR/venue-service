@@ -73,9 +73,10 @@ namespace venue_service.Src.Services
             return true;
         }
 
-        //public async Task<IVenueAvaliabilityTime> GetVenueAvaliabilityTimesByVenueIdAsync()
-        //{
-        //    throw new NotImplementedException();
-        //}
+        public Task<VenueAvaliabilityTimesResponseDto> ListAvaliableTimesByVenue(int venueId)
+        {
+           try
+        }
+
     }
 }
