@@ -24,8 +24,9 @@ namespace venue_service.Src.Models
         public int VenueId { get; set; }
 
         [Required]
-        [Column("price")]
+        [Column("price", TypeName = "numeric")]
         public decimal Price { get; set; }
+
 
         [Required]
         [Column("time_status")]

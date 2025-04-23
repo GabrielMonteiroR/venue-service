@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace venue_service.Migrations
 {
     /// <inheritdoc />
-    public partial class updatedbschema : Migration
+    public partial class updateMigrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -239,17 +239,18 @@ namespace venue_service.Migrations
                 name: "venue_availability",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
+                    id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     start_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     end_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     venue_id = table.Column<int>(type: "integer", nullable: false),
-                    price = table.Column<double>(type: "double precision", nullable: false),
-                    time_status = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false)
+                    price = table.Column<decimal>(type: "numeric", nullable: false),
+                    time_status = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    is_reserved = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_venue_availability", x => x.Id);
+                    table.PrimaryKey("PK_venue_availability", x => x.id);
                     table.ForeignKey(
                         name: "FK_venue_availability_venues_venue_id",
                         column: x => x.venue_id,
@@ -459,8 +460,8 @@ namespace venue_service.Migrations
 
             migrationBuilder.InsertData(
                 table: "venue_availability",
-                columns: new[] { "Id", "end_date", "start_date", "time_status", "venue_id", "price" },
-                values: new object[] { 1, new DateTime(2025, 3, 20, 10, 0, 0, 0, DateTimeKind.Utc), new DateTime(2025, 3, 20, 8, 0, 0, 0, DateTimeKind.Utc), "PENDING", 1, 100.0 });
+                columns: new[] { "id", "end_date", "is_reserved", "price", "start_date", "time_status", "venue_id" },
+                values: new object[] { 1, new DateTime(2025, 3, 20, 10, 0, 0, 0, DateTimeKind.Utc), false, 100m, new DateTime(2025, 3, 20, 8, 0, 0, 0, DateTimeKind.Utc), "PENDING", 1 });
 
             migrationBuilder.InsertData(
                 table: "venue_contact_infos",

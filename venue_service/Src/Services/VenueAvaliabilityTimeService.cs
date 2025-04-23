@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Net;
 using venue_service.Src.Contexts;
 using venue_service.Src.Dtos;
 using venue_service.Src.Exceptions;
@@ -73,9 +74,31 @@ namespace venue_service.Src.Services
             return true;
         }
 
-        //public async Task<IVenueAvaliabilityTime> GetVenueAvaliabilityTimesByVenueIdAsync()
-        //{
-        //    throw new NotImplementedException();
-        //}
+        public async Task<VenueAvaliabilityTimesResponseDto> ListAvaliableTimesByVenue(int venueId)
+        {
+            try
+            {
+                var avaliableTimes = await _context.VenueAvailabilities
+                    .Where(v => v.VenueId == venueId)
+                    .Select(v => new VenueAvailabilityTimeResponseDto
+                    {
+                        StartDate = v.StartDate,
+                        EndDate = v.EndDate,
+                        VenueId = v.VenueId,
+                        Price = v.Price
+                    })
+                    .ToListAsync();
+
+                return new VenueAvaliabilityTimesResponseDto
+                {
+                    Message = avaliableTimes.Any() ? $"Available times found." : $"No available times for venue with id {venueId}.",
+                    venueAvailabilityTimeResponseDtos = avaliableTimes
+                }; 
+            } catch (Exception ex)
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "Unexpected error", ex.Message);
+            }
+        }
+
     }
 }

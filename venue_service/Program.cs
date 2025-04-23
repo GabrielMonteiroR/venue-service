@@ -9,6 +9,12 @@ using Src.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: false)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+    .AddEnvironmentVariables();
+
+
 // Pegando a connection string do appsettings
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
@@ -45,9 +51,18 @@ builder.Services.AddAuthorization();
 // Injetando os Services
 builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IVenueService, VenueService>();
-builder.Services.AddScoped<AuthService>(); // Adicionando AuthService
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<IVenueAvaliabilityTime, VenueAvaliabilityTimeService>();
+builder.Services.AddScoped<IVenueType, VenueTypeService>();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+    db.Database.Migrate(); 
+}
+
 
 // Middleware de tratamento de erros
 app.UseMiddleware<ErrorHandlingMiddleware>();

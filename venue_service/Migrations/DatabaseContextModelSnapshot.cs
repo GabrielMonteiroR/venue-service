@@ -495,13 +495,22 @@ namespace venue_service.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("end_date");
+
+                    b.Property<bool>("IsReserved")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_reserved");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric")
+                        .HasColumnName("price");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone")
@@ -517,10 +526,6 @@ namespace venue_service.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("venue_id");
 
-                    b.Property<double>("price")
-                        .HasColumnType("double precision")
-                        .HasColumnName("price");
-
                     b.HasKey("Id");
 
                     b.HasIndex("VenueId");
@@ -532,10 +537,11 @@ namespace venue_service.Migrations
                         {
                             Id = 1,
                             EndDate = new DateTime(2025, 3, 20, 10, 0, 0, 0, DateTimeKind.Utc),
+                            IsReserved = false,
+                            Price = 100m,
                             StartDate = new DateTime(2025, 3, 20, 8, 0, 0, 0, DateTimeKind.Utc),
                             TimeStatus = "PENDING",
-                            VenueId = 1,
-                            price = 100.0
+                            VenueId = 1
                         });
                 });
 
