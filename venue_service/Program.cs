@@ -16,7 +16,7 @@ builder.Configuration
 
 
 // Pegando a connection string do appsettings
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = builder.Configuration["DefaultConnection"];
 
 builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseNpgsql(connectionString)
