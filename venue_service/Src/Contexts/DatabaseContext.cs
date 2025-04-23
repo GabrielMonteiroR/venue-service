@@ -20,7 +20,7 @@ public class DatabaseContext : DbContext
     public DbSet<VenueImage> VenueImages { get; set; }
     public DbSet<VenueContactInfo> VenueContactInfos { get; set; }
     public DbSet<VenueStatus> VenueStatusEnums { get; set; }
-    public DbSet<VenueType> VenueTypeEnums { get; set; }
+    public DbSet<VenueType> VenueType { get; set; }
     public DbSet<Reservation> Reservations { get; set; }
     public DbSet<PaymentMethod> PaymentMethods { get; set; }
 
