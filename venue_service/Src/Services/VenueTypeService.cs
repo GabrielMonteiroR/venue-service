@@ -14,7 +14,7 @@ namespace venue_service.Src.Services
             _context = context;
         }
 
-        public async Task<VenueTypesResponseDto> GetAllVenuesTypes()
+        public async Task<VenueTypesResponseDto> GetAllVenueTypes()
         {
             try
             {
@@ -24,6 +24,17 @@ namespace venue_service.Src.Services
                 {
                     throw new HttpResponseException(System.Net.HttpStatusCode.NoContent, "No Venue Types Found", "No venue types were found in the database.");
                 }
+
+                return new VenueTypesResponseDto
+                {
+                    Message = "Venue Types Found",
+                    venueTypesList = venueTypes.Select(v => new VenueTypeResponseDto
+                    {
+                        Id = v.Id,
+                        Name = v.Name,
+                        Description = v.Description
+                    }).ToList()
+                };
 
             } catch(Exception ex)
             {
