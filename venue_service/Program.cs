@@ -16,11 +16,12 @@ builder.Configuration
 
 
 // Pegando a connection string do appsettings
-var connectionString = builder.Configuration["DefaultConnection"];
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseNpgsql(connectionString)
 );
+
 
 // Injetando os Controllers
 builder.Services.AddControllers();
