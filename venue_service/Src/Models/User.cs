@@ -51,5 +51,4 @@ public class User
     [Column("deleted_at")]
     public DateTime? DeletedAt { get; set; }
 
-    public ICollection<User_Venue> UserVenues { get; set; }
 }

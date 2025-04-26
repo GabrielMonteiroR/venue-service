@@ -12,7 +12,6 @@ public class DatabaseContext : DbContext
     public DbSet<Sport> Sports { get; set; }
     public DbSet<Venue> Venues { get; set; }
     public DbSet<VenueAvailabilityTime> VenueAvailabilities { get; set; }
-    public DbSet<User_Venue> UserVenues { get; set; }
     public DbSet<Venue_Sport> VenueSports { get; set; }
     public DbSet<VenueEquipament> VenueEquipaments { get; set; }
     public DbSet<EquipamentBrand> EquipamentBrands { get; set; }
@@ -33,7 +32,6 @@ public class DatabaseContext : DbContext
         modelBuilder.Entity<Sport>().ToTable("sports");
         modelBuilder.Entity<Venue>().ToTable("venues");
         modelBuilder.Entity<VenueAvailabilityTime>().ToTable("venue_availability");
-        modelBuilder.Entity<User_Venue>().ToTable("user_venues");
         modelBuilder.Entity<Venue_Sport>().ToTable("venue_sports");
         modelBuilder.Entity<VenueEquipament>().ToTable("venue_equipaments");
         modelBuilder.Entity<EquipamentBrand>().ToTable("equipament_brands");
@@ -53,18 +51,6 @@ public class DatabaseContext : DbContext
             .HasForeignKey(u => u.RoleId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        modelBuilder.Entity<User_Venue>()
-            .HasKey(uv => new { uv.UserId, uv.VenueId });
-
-        modelBuilder.Entity<User_Venue>()
-            .HasOne(uv => uv.User)
-            .WithMany(u => u.UserVenues)
-            .HasForeignKey(uv => uv.UserId);
-
-        modelBuilder.Entity<User_Venue>()
-            .HasOne(uv => uv.Venue)
-            .WithMany(v => v.UserVenues)
-            .HasForeignKey(uv => uv.VenueId);
 
         modelBuilder.Entity<Venue_Sport>()
             .HasKey(vs => new { vs.VenueId, vs.SportId });
@@ -88,6 +74,13 @@ public class DatabaseContext : DbContext
             .HasMany(v => v.VenueEquipaments)
             .WithOne(ve => ve.Venue)
             .HasForeignKey(ve => ve.VenueId);
+
+        modelBuilder.Entity<Venue>()
+    .HasOne(v => v.Owner)
+    .WithMany()
+    .HasForeignKey(v => v.OwnerId)
+    .OnDelete(DeleteBehavior.Cascade);
+
 
         modelBuilder.Entity<Venue>()
             .HasMany(v => v.VenueImages)
@@ -227,15 +220,6 @@ public class DatabaseContext : DbContext
                 EndDate = new DateTime(2025, 03, 20, 10, 00, 00, DateTimeKind.Utc),
                 Price = 100,
                 TimeStatus = "PENDING"
-            }
-        );
-
-        // User_Venue (Owner)
-        modelBuilder.Entity<User_Venue>().HasData(
-            new User_Venue
-            {
-                UserId = 1,
-                VenueId = 1
             }
         );
 

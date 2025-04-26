@@ -62,7 +62,6 @@ namespace venue_service.Src.Models
 
         public ICollection<VenueImage> VenueImages { get; set; }
         public ICollection<VenueEquipament> VenueEquipaments { get; set; }
-        public ICollection<User_Venue> UserVenues { get; set; }
         public ICollection<Venue_Sport> VenueSports { get; set; }
         public ICollection<VenueContactInfo> VenueContactInfos { get; set; }
         public ICollection<VenueAvailabilityTime>? VenueAvailabilityTimes { get; set; }
