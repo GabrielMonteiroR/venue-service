@@ -102,7 +102,7 @@ namespace venue_service.Src.Services
             }
         }
 
-        public async Task<VenuesResponseDto> DeleteVenuesAsync(int[] ids, double longitude)
+        public async Task<VenuesResponseDto> DeleteVenuesAsync(int[] ids)
         {
             try
             {
@@ -140,6 +140,36 @@ namespace venue_service.Src.Services
             {
                 throw new HttpResponseException(HttpStatusCode.InternalServerError, "Internal Server Error", ex.Message);
             }
+        }
+
+        public Task<VenueResponseDto> UpdateVenueAsync(int id, CreateVenueRequestDto dto)
+        {
+            try
+            {
+                var venue = _context.Venues.FirstOrDefault(v => v.Id == id);
+                if (venue == null)
+                {
+                    throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Venue not found");
+                }
+
+                venue.Name = dto.Name;
+                venue.Address = dto.Address;
+                venue.Capacity = dto.Capacity;
+                venue.Latitude = dto.Latitude;
+                venue.Longitude = dto.Longitude;
+                venue.Description = dto.Description;
+                venue.AllowLocalPayment = dto.AllowLocalPayment;
+                venue.VenueTypeId = dto.VenueTypeId;
+                venue.Rules = dto.Rules;
+       
+
+
+            } catch (Exception ex)
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "Internal Server Error", ex.Message);
+            }
+
+            
         }
     }
 }
