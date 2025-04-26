@@ -147,6 +147,18 @@ namespace venue_service.Src.Services
             try
             {
                 var venue = await _context.Venues.FirstOrDefaultAsync(v => v.Id == id);
+                var owner = await _context.Venues.FirstOrDefaultAsync(v => v.OwnerId == dto.OwnerId);
+
+                if (owner == null)
+                {
+                    throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Owner not found");
+                }
+
+                if (owner.Id != dto.OwnerId)
+                {
+                    throw new HttpResponseException(HttpStatusCode.Forbidden, "Forbidden", "You are not allowed to update this venue");
+                }
+
                 if (venue == null)
                 {
                     throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Venue not found");
