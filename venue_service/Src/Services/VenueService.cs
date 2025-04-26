@@ -142,11 +142,11 @@ namespace venue_service.Src.Services
             }
         }
 
-        public Task<VenueResponseDto> UpdateVenueAsync(int id, CreateVenueRequestDto dto)
+        public async Task<VenueResponseDto> UpdateVenueAsync(int id, UpdateVenueRequestDto dto)
         {
             try
             {
-                var venue = _context.Venues.FirstOrDefault(v => v.Id == id);
+                var venue = await _context.Venues.FirstOrDefaultAsync(v => v.Id == id);
                 if (venue == null)
                 {
                     throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Venue not found");
@@ -161,15 +161,27 @@ namespace venue_service.Src.Services
                 venue.AllowLocalPayment = dto.AllowLocalPayment;
                 venue.VenueTypeId = dto.VenueTypeId;
                 venue.Rules = dto.Rules;
-       
 
+                await _context.SaveChangesAsync(); 
 
-            } catch (Exception ex)
+                return new VenueResponseDto
+                {
+                    Name = venue.Name,
+                    Address = venue.Address,
+                    Capacity = venue.Capacity,
+                    Latitude = venue.Latitude,
+                    Longitude = venue.Longitude,
+                    Description = venue.Description,
+                    AllowLocalPayment = venue.AllowLocalPayment,
+                    VenueTypeId = venue.VenueTypeId,
+                    Rules = venue.Rules,
+                };
+
+            }
+            catch (Exception ex)
             {
                 throw new HttpResponseException(HttpStatusCode.InternalServerError, "Internal Server Error", ex.Message);
             }
-
-            
         }
     }
 }
