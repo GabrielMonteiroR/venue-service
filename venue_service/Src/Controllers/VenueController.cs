@@ -16,7 +16,7 @@ namespace venue_service.Src.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateVenue([FromBody] CreateVenueDto dto)
+        public async Task<IActionResult> CreateVenue([FromBody] CreateVenueRequestDto dto)
         {
             var result = await _venueService.CreateVenueAsync(dto);
             return Ok(result);

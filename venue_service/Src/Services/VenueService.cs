@@ -16,7 +16,7 @@ namespace venue_service.Src.Services
             _context = context;
         }
 
-        public async Task<VenueResponseDto> CreateVenueAsync(CreateVenueDto dto)
+        public async Task<VenueResponseDto> CreateVenueAsync(CreateVenueRequestDto dto)
         {
             try
             {
