@@ -42,5 +42,12 @@ namespace venue_service.Src.Controllers
             var result = await _venueService.DeleteVenuesAsync(ids);
             return Ok(result);
         }
+
+        [HttpGet("by-owner")]
+        public async Task<IActionResult> GetVenueByOwnerId([FromQuery] int id)
+        {
+            var result = await _venueService.ListVenuesByOwner(id);
+            return Ok(result);
+        }
     }
 }
