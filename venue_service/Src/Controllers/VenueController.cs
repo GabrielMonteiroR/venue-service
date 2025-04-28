@@ -5,7 +5,7 @@ using venue_service.Src.Services;
 namespace venue_service.Src.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/venue")]
     public class VenueController : ControllerBase
     {
         private readonly IVenueService _venueService;
@@ -26,6 +26,27 @@ namespace venue_service.Src.Controllers
         public async Task<IActionResult> ListVenues()
         {
             var result = await _venueService.ListVenuesAsync();
+            return Ok(result);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateVenue([FromQuery]int id, [FromBody] UpdateVenueRequestDto dto)
+        {
+            var result = await _venueService.UpdateVenueAsync(id, dto);
+            return Ok(result);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteVenues([FromQuery] int[] ids)
+        {
+            var result = await _venueService.DeleteVenuesAsync(ids);
+            return Ok(result);
+        }
+
+        [HttpGet("by-owner")]
+        public async Task<IActionResult> GetVenueByOwnerId([FromQuery] int id)
+        {
+            var result = await _venueService.ListVenuesByOwner(id);
             return Ok(result);
         }
     }
