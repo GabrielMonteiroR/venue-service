@@ -31,7 +31,7 @@ public class AuthController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var response = await _authService.RegisterAthleteAsync(dto);
+        var response = await _authService.RegisterOwnerAsync(dto);
         return Ok(response);
     }
 
