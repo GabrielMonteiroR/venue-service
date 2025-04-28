@@ -23,7 +23,7 @@ public class AuthService
         _passwordHasher = new PasswordHasher<User>();
     }
 
-    public async Task<AuthResponseDto> RegisterAsync(RegisterRequestDto dto)
+    public async Task<AuthResponseDto> RegisterOwnerAsync(RegisterRequestDto dto)
     {
         if (_context.Users.Any(u => u.Email == dto.Email))
             throw new Exception("Email already in use!");
@@ -34,7 +34,36 @@ public class AuthService
             LastName = dto.LastName,
             Email = dto.Email,
             Phone = dto.Phone,
-            RoleId = dto.RoleId,
+            RoleId = 2,
+            IsBanned = false,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+        user.Password = _passwordHasher.HashPassword(user, dto.Password);
+
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
+
+        return new AuthResponseDto
+        {
+            Token = GenerateToken(user),
+            Email = user.Email,
+            FirstName = user.FirstName
+        };
+    }
+
+        public async Task<AuthResponseDto> RegisterAthleteAsync(RegisterRequestDto dto)
+    {
+        if (_context.Users.Any(u => u.Email == dto.Email))
+            throw new Exception("Email already in use!");
+
+        var user = new User
+        {
+            FirstName = dto.FirstName,
+            LastName = dto.LastName,
+            Email = dto.Email,
+            Phone = dto.Phone,
+            RoleId = 3,
             IsBanned = false,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow

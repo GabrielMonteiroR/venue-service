@@ -24,8 +24,4 @@ public class RegisterRequestDto
     [RegularExpression(@"^\(?[1-9]{2}\)? ?9?[6-9]\d{3}-?\d{4}$",
         ErrorMessage = "Telefone inválido para padrão brasileiro.")]
     public string Phone { get; set; }
-
-    [Required(ErrorMessage = "RoleId é obrigatório.")]
-    [Range(1, 3, ErrorMessage = "RoleId deve ser entre 1 e 3.")]
-    public int RoleId { get; set; }
 }

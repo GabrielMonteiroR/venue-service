@@ -15,13 +15,23 @@ public class AuthController : ControllerBase
         _authService = authService;
     }
 
-    [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterRequestDto dto)
+    [HttpPost("register-owner")]
+    public async Task<IActionResult> RegisterAthlete([FromBody] RegisterRequestDto dto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var response = await _authService.RegisterAsync(dto);
+        var response = await _authService.RegisterAthleteAsync(dto);
+        return Ok(response);
+    }
+
+    [HttpPost("register-athlete")]
+    public async Task<IActionResult> RegisterOwner([FromBody] RegisterRequestDto dto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var response = await _authService.RegisterAthleteAsync(dto);
         return Ok(response);
     }
 
