@@ -198,7 +198,7 @@ namespace venue_service.Src.Services
             }
         }
 
-        public async Task<VenueResponseDto> ListVenuesByOwner(int id)
+        public async Task<VenuesResponseDto> ListVenuesByOwner(int id)
         {
             try
             {
@@ -209,12 +209,32 @@ namespace venue_service.Src.Services
                 }
 
                 var venues = await _context.Venues.Where(v => v.OwnerId == id).ToListAsync();
-                if (venues.IsNullOrEmpty())
+                if (venues.Count == 0)
                 {
                     throw new HttpResponseException(HttpStatusCode.NoContent, "No Content", "No venues found");
                 }
 
+                var venueDtos = venues.Select(v => new VenueResponseDto
+                {
+                    Id = v.Id,
+                    Name = v.Name,
+                    Address = v.Address,
+                    Capacity = v.Capacity,
+                    Latitude = v.Latitude,
+                    Longitude = v.Longitude,
+                    Description = v.Description,
+                    AllowLocalPayment = v.AllowLocalPayment,
+                    VenueTypeId = v.VenueTypeId,
+                    Rules = v.Rules,
+                    OwnerId = v.OwnerId
+                }).ToList();
 
+                return new VenuesResponseDto
+                {
+                    Message = "Venues retrieved successfully",
+                    Data = venueDtos
+                };
+            }
             catch (Exception ex)
             {
                 throw new HttpResponseException(HttpStatusCode.InternalServerError, "Internal Server Error", ex.Message);
