@@ -8,4 +8,5 @@ public interface IVenueService
     Task<VenuesResponseDto> ListVenuesAsync();
     Task<VenuesResponseDto> DeleteVenuesAsync(int[] ids);
     Task<VenueResponseDto> UpdateVenueAsync(int id, UpdateVenueRequestDto dto);
+    Task<VenueResponseDto> ListVenuesByOwner(int id);
 }

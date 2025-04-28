@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Net;
 using venue_service.Src.Contexts;
 using venue_service.Src.Dtos;
@@ -90,7 +91,7 @@ namespace venue_service.Src.Services
                 {
                     throw new HttpResponseException(HttpStatusCode.NoContent, "No Content", "No venues found");
                 }
-                
+
                 return new VenuesResponseDto
                 {
                     Message = "Venues retrieved successfully",
@@ -160,7 +161,7 @@ namespace venue_service.Src.Services
                     throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Owner not found");
                 }
 
-                if(owner.Id != venue.OwnerId)
+                if (owner.Id != venue.OwnerId)
                 {
                     throw new HttpResponseException(HttpStatusCode.Forbidden, "Forbidden", "You are not allowed to update this venue");
                 }
@@ -175,7 +176,7 @@ namespace venue_service.Src.Services
                 venue.VenueTypeId = dto.VenueTypeId;
                 venue.Rules = dto.Rules;
 
-                await _context.SaveChangesAsync(); 
+                await _context.SaveChangesAsync();
 
                 return new VenueResponseDto
                 {
@@ -191,6 +192,29 @@ namespace venue_service.Src.Services
                 };
 
             }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "Internal Server Error", ex.Message);
+            }
+        }
+
+        public async Task<VenueResponseDto> ListVenuesByOwner(int id)
+        {
+            try
+            {
+                var owner = await _context.Users.FirstOrDefaultAsync(o => o.Id == id);
+                if (owner is null)
+                {
+                    throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Owner not found");
+                }
+
+                var venues = await _context.Venues.Where(v => v.OwnerId == id).ToListAsync();
+                if (venues.IsNullOrEmpty())
+                {
+                    throw new HttpResponseException(HttpStatusCode.NoContent, "No Content", "No venues found");
+                }
+
+
             catch (Exception ex)
             {
                 throw new HttpResponseException(HttpStatusCode.InternalServerError, "Internal Server Error", ex.Message);
