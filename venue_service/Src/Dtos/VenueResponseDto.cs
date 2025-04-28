@@ -1,7 +1,10 @@
-﻿namespace venue_service.Src.Dtos
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace venue_service.Src.Dtos
 {
     public class VenueResponseDto
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
         public int Capacity { get; set; }

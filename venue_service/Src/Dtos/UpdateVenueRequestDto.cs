@@ -11,6 +11,6 @@
         public bool AllowLocalPayment { get; set; }
         public int VenueTypeId { get; set; }
         public string Rules { get; set; }
-        public int OwnerId { get; }
+        public int? OwnerId { get; set; }
     }
 }
