@@ -16,4 +16,3 @@ namespace venue_service.Src.Dtos
         public DateTime? DeletedAt { get; set; }
     }
 }
-`
