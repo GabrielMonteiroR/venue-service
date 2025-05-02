@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using venue_service.Src.Dtos;
 using venue_service.Src.Services;
 
 namespace venue_service.Src.Controllers
@@ -21,7 +22,12 @@ namespace venue_service.Src.Controllers
             return Ok(userInfo);
         }
 
-        
+        [HttpPut]
+        public async Task<IActionResult> UpdateUserInfo([FromQuery] int id, [FromBody] UserResponseDto userDto)
+        {
+            var updatedUser = await _profileService.UpdateUserInfoAsync(id, userDto);
+            return Ok(updatedUser);
+        }
 
 
     }
