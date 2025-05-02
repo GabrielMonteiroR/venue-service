@@ -1,4 +1,7 @@
-﻿using venue_service.Src.Contexts;
+﻿using System.Net;
+using venue_service.Src.Contexts;
+using venue_service.Src.Dtos;
+using venue_service.Src.Exceptions;
 
 namespace venue_service.Src.Services
 {
@@ -11,6 +14,27 @@ namespace venue_service.Src.Services
             _context = context;
         }
 
-        public async Task<>
+        public async Task<UserResponseDto> GetUserInfoByIdAsync(int id)
+        {
+            try
+            {
+                var user = await _context.Users.FindAsync(id);
+                if (user is null) throw new HttpResponseException(HttpStatusCode.NotFound,"User not found",$"User with id {id} not found.");
+
+                return new UserResponseDto
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    Phone = user.Phone,
+                    RoleId = user.RoleId,
+                    IsBanned = user.IsBanned
+                };
+            } catch (Exception ex)
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while retrieving user information.", ex.Message);
+            }
+        }
     }
 }
