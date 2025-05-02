@@ -21,6 +21,7 @@ namespace venue_service.Src.Controllers
             return Ok(venueTypes);
         }
 
+
         
     }
 }

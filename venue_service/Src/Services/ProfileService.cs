@@ -49,6 +49,7 @@ namespace venue_service.Src.Services
                 user.Phone = userDto.Phone;
                 user.RoleId = userDto.RoleId;
                 user.IsBanned = userDto.IsBanned;
+                user.UpdatedAt = DateTime.UtcNow;
 
                 _context.Users.Update(user);
                 await _context.SaveChangesAsync();

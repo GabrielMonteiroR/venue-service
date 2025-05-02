@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace venue_service.Src.Dtos
+﻿namespace venue_service.Src.Dtos
 {
-    public class UserResponseDto
+    public class UpdateUserDto
     {
         public int Id { get; set; }
         public string FirstName { get; set; }
@@ -11,6 +9,5 @@ namespace venue_service.Src.Dtos
         public string Phone { get; set; }
         public int RoleId { get; set; }
         public bool IsBanned { get; set; }
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
 }
