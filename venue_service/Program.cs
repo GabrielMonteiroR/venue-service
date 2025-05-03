@@ -6,6 +6,7 @@ using venue_service.Src.Contexts;
 using venue_service.Src.Middlewares;
 using venue_service.Src.Services;
 using Src.Services;
+using venue_service.Src.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,6 +56,7 @@ builder.Services.AddScoped<IVenueService, VenueService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<IVenueAvaliabilityTime, VenueAvaliabilityTimeService>();
 builder.Services.AddScoped<IVenueType, VenueTypeService>();
+builder.Services.AddScoped<ProfileService>();
 
 var app = builder.Build();
 
