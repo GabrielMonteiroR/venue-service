@@ -23,7 +23,7 @@ namespace venue_service.Src.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateUserInfo([FromQuery] int id, [FromBody] UserResponseDto userDto)
+        public async Task<IActionResult> UpdateUserInfo([FromQuery] int id, [FromBody] UpdateUserDto userDto)
         {
             var updatedUser = await _profileService.UpdateUserInfoAsync(id, userDto);
             return Ok(updatedUser);

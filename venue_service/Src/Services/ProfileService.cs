@@ -37,7 +37,7 @@ namespace venue_service.Src.Services
             }
         }
 
-    public async Task<UserResponseDto> UpdateUserInfoAsync(int id, UserResponseDto userDto)
+    public async Task<UserResponseDto> UpdateUserInfoAsync(int id, UpdateUserDto userDto)
         {
             try
             {
