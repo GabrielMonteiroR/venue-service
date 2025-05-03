@@ -8,9 +8,9 @@ namespace venue_service.Src.Controllers
     [Route("api/user")]
     public class UserController : ControllerBase
     {
-        private readonly ProfileService _profileService;
+        private readonly UserService _profileService;
 
-        public UserController(ProfileService profileService)
+        public UserController(UserService profileService)
         {
             _profileService = profileService;
         }

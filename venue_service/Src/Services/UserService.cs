@@ -5,11 +5,11 @@ using venue_service.Src.Exceptions;
 
 namespace venue_service.Src.Services
 {
-    public class ProfileService
+    public class UserService
     {
         private readonly DatabaseContext _context;
 
-        public ProfileService(DatabaseContext context)
+        public UserService(DatabaseContext context)
         {
             _context = context;
         }
@@ -47,7 +47,6 @@ namespace venue_service.Src.Services
                 user.LastName = userDto.LastName;
                 user.Email = userDto.Email;
                 user.Phone = userDto.Phone;
-                user.RoleId = userDto.RoleId;
                 user.IsBanned = userDto.IsBanned;
                 user.UpdatedAt = DateTime.UtcNow;
 

@@ -56,7 +56,7 @@ builder.Services.AddScoped<IVenueService, VenueService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<IVenueAvaliabilityTime, VenueAvaliabilityTimeService>();
 builder.Services.AddScoped<IVenueType, VenueTypeService>();
-builder.Services.AddScoped<ProfileService>();
+builder.Services.AddScoped<UserService>();
 
 var app = builder.Build();
 
