@@ -100,5 +100,9 @@ namespace venue_service.Src.Services
             }
         }
 
-    }
+        public async Task<VenueAvailabilityTime> UpdateAvaliabilityTime(int id, UpdateVenueAvaliabilityDto dto)
+        {
+            
+
+        }
 }
