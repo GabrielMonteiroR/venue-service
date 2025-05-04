@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using venue_service.Src.Dtos;
 using venue_service.Src.Services;
 
 namespace venue_service.Src.Controllers
@@ -20,6 +21,13 @@ namespace venue_service.Src.Controllers
         {
             var avaliableTimes = await _venueAvaliabilityTimeService.ListAvaliableTimesByVenue(venueId);
             return Ok(avaliableTimes);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateAvaliabilityTime([FromQuery] int id, [FromBody] UpdateVenueAvaliabilityDto newTimeDto)
+        {
+            var updatedTime = await _venueAvaliabilityTimeService.UpdateAvaliabilityTime(id, newTimeDto);
+            return Ok(updatedTime);
         }
     }
 }
