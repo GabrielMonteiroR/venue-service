@@ -93,16 +93,42 @@ namespace venue_service.Src.Services
                 {
                     Message = avaliableTimes.Any() ? $"Available times found." : $"No available times for venue with id {venueId}.",
                     venueAvailabilityTimeResponseDtos = avaliableTimes
-                }; 
-            } catch (Exception ex)
+                };
+            }
+            catch (Exception ex)
             {
                 throw new HttpResponseException(HttpStatusCode.InternalServerError, "Unexpected error", ex.Message);
             }
         }
 
-        public async Task<VenueAvailabilityTime> UpdateAvaliabilityTime(int id, UpdateVenueAvaliabilityDto dto)
+        public async Task<VenueAvailabilityTime> UpdateAvaliabilityTime(int id, UpdateVenueAvaliabilityDto newTimeDto)
         {
-            
+            try
+            {
+                var OldAvaliableTime = await _context.VenueAvailabilities.FindAsync(id);
+                if (OldAvaliableTime is null)
+                {
+                    throw new HttpResponseException(HttpStatusCode.NotFound, "Not found", $"No availability found with ID {id}");
+                };
+                
+
+                OldAvaliableTime.StartDate = newTimeDto.StartDate;
+                OldAvaliableTime.EndDate = newTimeDto.EndDate;
+                OldAvaliableTime.Price = newTimeDto.Price;
+
+                return new VenueAvailabilityTime
+                {
+                    StartDate = OldAvaliableTime.StartDate,
+                    EndDate = OldAvaliableTime.EndDate,
+                    VenueId = OldAvaliableTime.VenueId,
+                    Price = OldAvaliableTime.Price
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "Unexpected error", ex.Message);
+            }
 
         }
+    }
 }
