@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using NpgsqlTypes;
 using venue_service.Src.Dtos;
 using venue_service.Src.Services;
 
@@ -14,6 +15,20 @@ namespace venue_service.Src.Controllers
         public VenueAvaliabilityController(IVenueAvaliabilityTime venueAvaliabilityTime)
         {
             _venueAvaliabilityTimeService = venueAvaliabilityTime;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateAvaliableTime([FromBody] CreateVenueAvaliabilityDto dto)
+        {
+            var avaliableTime = await _venueAvaliabilityTimeService.CreateVenueAvailabilityTimeAsync(dto);
+            return Ok(avaliableTime);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteAvaliableTime([FromQuery] int id)
+        {
+            var timesToDelete = _venueAvaliabilityTimeService.DeleteVenueAvailabilityTimeAsync(id);
+            return Ok(timesToDelete);
         }
 
         [HttpGet]
