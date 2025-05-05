@@ -60,6 +60,14 @@ public class DatabaseContext : DbContext
             .WithMany(v => v.VenueSports)
             .HasForeignKey(vs => vs.VenueId);
 
+        modelBuilder.Entity<VenueAvailabilityTime>()
+           .Property(v => v.Price)
+           .HasColumnType("numeric");
+
+        modelBuilder.Entity<VenueAvailabilityTime>()
+            .Property(v => v.UserId)
+            .HasColumnName("reserved_by");
+
         modelBuilder.Entity<Venue_Sport>()
             .HasOne(vs => vs.Sport)
             .WithMany()

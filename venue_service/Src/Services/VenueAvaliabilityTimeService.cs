@@ -115,7 +115,9 @@ namespace venue_service.Src.Services
                     StartDate = OldAvaliableTime.StartDate,
                     EndDate = OldAvaliableTime.EndDate,
                     VenueId = OldAvaliableTime.VenueId,
-                    Price = OldAvaliableTime.Price
+                    Price = OldAvaliableTime.Price,
+                   TimeStatus = OldAvaliableTime.TimeStatus,
+                   IsReserved = OldAvaliableTime.IsReserved
                 };
             }
             catch (Exception ex)
