@@ -81,7 +81,10 @@ namespace venue_service.Src.Services
                         StartDate = v.StartDate,
                         EndDate = v.EndDate,
                         VenueId = v.VenueId,
-                        Price = v.Price
+                        Price = v.Price,
+                        IsReserved = v.IsReserved,
+                        TimeStatus = v.TimeStatus,
+                        UserId = v.UserId
                     })
                     .ToListAsync();
 
@@ -111,8 +114,6 @@ namespace venue_service.Src.Services
                 OldAvaliableTime.StartDate = newTimeDto.StartDate;
                 OldAvaliableTime.EndDate = newTimeDto.EndDate;
                 OldAvaliableTime.Price = newTimeDto.Price;
-                OldAvaliableTime.IsReserved = newTimeDto.IsReserved;
-                OldAvaliableTime.TimeStatus = newTimeDto.TimeStatus;
 
                 return new VenueAvailabilityTime
                 {
