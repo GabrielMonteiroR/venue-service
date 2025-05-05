@@ -16,6 +16,11 @@ namespace venue_service.Src.Services
             _context = context;
         }
 
+        public Task<VenueAvailabilityTimeResponseDto> AssignAvaliableTime(int userId)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<VenueAvailabilityTimeResponseDto> CreateVenueAvailabilityTimeAsync(CreateVenueAvaliabilityDto dto)
         {
             try
