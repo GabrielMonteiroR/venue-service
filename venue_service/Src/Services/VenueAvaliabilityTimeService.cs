@@ -16,7 +16,7 @@ namespace venue_service.Src.Services
             _context = context;
         }
 
-        public async Task<VenueAvailabilityTimeResponseDto> CreateVenueAvailabilityTime(CreateVenueAvaliabilityDto dto)
+        public async Task<VenueAvailabilityTimeResponseDto> CreateVenueAvailabilityTimeAsync(CreateVenueAvaliabilityDto dto)
         {
             try
             {
@@ -50,10 +50,6 @@ namespace venue_service.Src.Services
             }
         }
 
-        public async Task<VenueAvailabilityTimeResponseDto> CreateVenueAvailabilityTimeAsync(CreateVenueAvaliabilityDto dto)
-        {
-            return await CreateVenueAvailabilityTime(dto);
-        }
 
         public async Task<bool> DeleteVenueAvailabilityTimeAsync(int id)
         {
@@ -110,6 +106,8 @@ namespace venue_service.Src.Services
                 OldAvaliableTime.StartDate = newTimeDto.StartDate;
                 OldAvaliableTime.EndDate = newTimeDto.EndDate;
                 OldAvaliableTime.Price = newTimeDto.Price;
+                OldAvaliableTime.IsReserved = newTimeDto.IsReserved;
+                OldAvaliableTime.TimeStatus = newTimeDto.TimeStatus;
 
                 return new VenueAvailabilityTime
                 {
