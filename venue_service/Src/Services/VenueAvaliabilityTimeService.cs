@@ -16,27 +16,25 @@ namespace venue_service.Src.Services
             _context = context;
         }
 
-        public async Task<VenueAvailabilityTimeResponseDto> CreateVenueAvailabilityTime(CreateVenueAvaliabilityDto dto)
+        public Task<VenueAvailabilityTimeResponseDto> AssignAvaliableTime(int userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<VenueAvailabilityTimeResponseDto> CreateVenueAvailabilityTimeAsync(CreateVenueAvaliabilityDto dto)
         {
             try
             {
-                if (dto is null)
-                    throw new HttpResponseException(HttpStatusCode.BadRequest, "Invalid data", "The provided availability data is null.");
-
                 var newAvailability = new VenueAvailabilityTime
                 {
                     StartDate = dto.StartDate,
                     EndDate = dto.EndDate,
                     VenueId = dto.VenueId,
                     Price = dto.Price,
+                    IsReserved = false,
+                    TimeStatus = "NULL" 
                 };
 
-                if (newAvailability.IsReserved)
-                {
-                    throw new HttpResponseException(
-                        HttpStatusCode.BadRequest, "Venue already reserved", $"The venue with ID {newAvailability.VenueId} is already reserved for this time."
-                    );
-                }
                 _context.VenueAvailabilities.Add(newAvailability);
                 await _context.SaveChangesAsync();
 
@@ -45,7 +43,8 @@ namespace venue_service.Src.Services
                     StartDate = newAvailability.StartDate,
                     EndDate = newAvailability.EndDate,
                     VenueId = newAvailability.VenueId,
-                    Price = dto.Price
+                    Price = newAvailability.Price,
+                    Id = newAvailability.Id
                 };
 
                 return responseDto;
@@ -56,10 +55,6 @@ namespace venue_service.Src.Services
             }
         }
 
-        public async Task<VenueAvailabilityTimeResponseDto> CreateVenueAvailabilityTimeAsync(CreateVenueAvaliabilityDto dto)
-        {
-            return await CreateVenueAvailabilityTime(dto);
-        }
 
         public async Task<bool> DeleteVenueAvailabilityTimeAsync(int id)
         {
@@ -82,10 +77,14 @@ namespace venue_service.Src.Services
                     .Where(v => v.VenueId == venueId)
                     .Select(v => new VenueAvailabilityTimeResponseDto
                     {
+                        Id = v.Id,
                         StartDate = v.StartDate,
                         EndDate = v.EndDate,
                         VenueId = v.VenueId,
-                        Price = v.Price
+                        Price = v.Price,
+                        IsReserved = v.IsReserved,
+                        TimeStatus = v.TimeStatus,
+                        UserId = v.UserId
                     })
                     .ToListAsync();
 
@@ -93,12 +92,49 @@ namespace venue_service.Src.Services
                 {
                     Message = avaliableTimes.Any() ? $"Available times found." : $"No available times for venue with id {venueId}.",
                     venueAvailabilityTimeResponseDtos = avaliableTimes
-                }; 
-            } catch (Exception ex)
+                };
+            }
+            catch (Exception ex)
             {
                 throw new HttpResponseException(HttpStatusCode.InternalServerError, "Unexpected error", ex.Message);
             }
         }
 
+        public async Task<VenueAvailabilityTime> UpdateAvaliabilityTime(int id, UpdateVenueAvaliabilityDto newTimeDto)
+        {
+            try
+            {
+                var OldAvaliableTime = await _context.VenueAvailabilities.FindAsync(id);
+                if (OldAvaliableTime is null)
+                {
+                    throw new HttpResponseException(HttpStatusCode.NotFound, "Not found", $"No availability found with ID {id}");
+                };
+                
+
+                OldAvaliableTime.StartDate = newTimeDto.StartDate;
+                OldAvaliableTime.EndDate = newTimeDto.EndDate;
+                OldAvaliableTime.Price = newTimeDto.Price;
+
+                return new VenueAvailabilityTime
+                {
+                    Id = OldAvaliableTime.Id,
+                    StartDate = OldAvaliableTime.StartDate,
+                    EndDate = OldAvaliableTime.EndDate,
+                    VenueId = OldAvaliableTime.VenueId,
+                    Price = OldAvaliableTime.Price,
+                   TimeStatus = OldAvaliableTime.TimeStatus,
+                   IsReserved = OldAvaliableTime.IsReserved
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(
+                    HttpStatusCode.InternalServerError,
+                    "Unexpected error",
+                    ex.InnerException?.Message ?? ex.Message
+                );
+            }
+
+        }
     }
 }

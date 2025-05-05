@@ -36,5 +36,8 @@ namespace venue_service.Src.Models
         [Required]
         [Column("is_reserved")]
         public bool IsReserved { get; set; }
+
+        [Column("reserved_by")]
+        public int? UserId { get; set; }
     }
 }
