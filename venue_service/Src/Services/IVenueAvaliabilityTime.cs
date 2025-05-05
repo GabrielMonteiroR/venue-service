@@ -9,5 +9,6 @@ namespace venue_service.Src.Services
         Task<VenueAvaliabilityTimesResponseDto> ListAvaliableTimesByVenue(int venueId);
         Task<VenueAvailabilityTime> UpdateAvaliabilityTime(int id, UpdateVenueAvaliabilityDto newTimeDto);
         Task<bool> DeleteVenueAvailabilityTimeAsync(int id);
+        Task<VenueAvailabilityTimeResponseDto> AssignAvaliableTime(int userId);
     }
 }
