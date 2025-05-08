@@ -1,4 +1,4 @@
-﻿namespace venue_service.Src.Services
+﻿namespace venue_service.Src.Services.ImageService
 {
     public interface IStorageService
     {
