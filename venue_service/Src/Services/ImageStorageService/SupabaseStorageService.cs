@@ -49,5 +49,18 @@ namespace venue_service.Src.Services.ImageStorageService
             }
         }
 
+        public async Task<bool> DeleteImageAsync(string bucket, string path)
+        {
+            var requestUri = $"{_options.Url}/storage/v1/object/{bucket}/{path}";
+
+            var request = new HttpRequestMessage(HttpMethod.Delete, requestUri);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _options.ApiKey);
+
+            var response = await _httpClient.SendAsync(request);
+
+            return response.IsSuccessStatusCode;
+        }
+
+
     }
 }
