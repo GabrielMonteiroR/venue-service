@@ -61,6 +61,19 @@ namespace venue_service.Src.Services.ImageStorageService
             return response.IsSuccessStatusCode;
         }
 
+        public (string Bucket, string Path)? ParseSupabaseUrl(string url)
+        {
+            var parts = url.Split("/object/");
+            if (parts.Length != 2) return null;
+
+            var segments = parts[1].Split('/');
+            var bucket = segments[0];
+            var path = string.Join("/", segments.Skip(1));
+
+            return (bucket, path);
+        }
+
+
 
     }
 }
