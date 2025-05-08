@@ -5,16 +5,19 @@ using venue_service.Src.Contexts;
 using venue_service.Src.Dtos;
 using venue_service.Src.Exceptions;
 using venue_service.Src.Models;
+using venue_service.Src.Services.ImageService;
 
 namespace venue_service.Src.Services
 {
     public class VenueService : IVenueService
     {
         private readonly DatabaseContext _context;
+        private readonly IStorageService _storageService;
 
-        public VenueService(DatabaseContext context)
+        public VenueService(DatabaseContext context, IStorageService storageService)
         {
             _context = context;
+            _storageService = storageService;
         }
 
         public async Task<VenueResponseDto> CreateVenueAsync(CreateVenueRequestDto dto)
@@ -35,11 +38,31 @@ namespace venue_service.Src.Services
                     OwnerId = dto.OwnerId
                 };
 
-                if (venue is null)
-                    throw new HttpResponseException(HttpStatusCode.BadRequest, "Invalid data", "The provided venue data is null.");
-
                 _context.Venues.Add(venue);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(); 
+
+                var images = new List<VenueImage>();
+
+                foreach (var image in dto.Images)
+                {
+                    var fileName = $"{Guid.NewGuid()}_{image.FileName}";
+                    var url = await _storageService.UploadImageAsync(image, "venue-images", fileName);
+
+                    if (url != null)
+                    {
+                        images.Add(new VenueImage
+                        {
+                            VenueId = venue.Id,
+                            ImageURL = url
+                        });
+                    }
+                }
+
+                if (images.Any())
+                {
+                    _context.VenueImages.AddRange(images);
+                    await _context.SaveChangesAsync();
+                }
 
                 return new VenueResponseDto
                 {
@@ -61,6 +84,7 @@ namespace venue_service.Src.Services
                 throw new HttpResponseException(HttpStatusCode.InternalServerError, "Internal Server Error", ex.Message);
             }
         }
+
 
         public async Task<VenuesResponseDto> ListVenuesAsync()
         {
