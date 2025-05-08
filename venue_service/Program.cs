@@ -7,6 +7,9 @@ using venue_service.Src.Middlewares;
 using venue_service.Src.Services;
 using Src.Services;
 using venue_service.Src.Models;
+using venue_service.Src.Config;
+using venue_service.Src.Services.ImageService;
+using venue_service.Src.Services.ImageStorageService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -80,6 +83,12 @@ if (app.Environment.IsDevelopment())
 // Ativando autenticação e autorização
 app.UseAuthentication();
 app.UseAuthorization();
+
+builder.Services.Configure<SupabaseStorageOptions>(
+    builder.Configuration.GetSection("Supabase"));
+
+builder.Services.AddHttpClient<IStorageService, SupabaseStorageService>();
+
 
 // Mapeamento de Controllers
 app.MapControllers();
