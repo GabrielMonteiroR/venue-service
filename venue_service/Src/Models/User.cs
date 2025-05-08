@@ -30,6 +30,8 @@ public class User
     [Column("password")]
     public string Password { get; set; }
 
+    public string? ProfileImageUrl { get; set; }
+
     [MaxLength(20)]
     [Column("phone")]
     public string Phone { get; set; }
