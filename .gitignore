@@ -363,3 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 /venue_service/appsettings.json
 /venue_service/appsettings.json
+/venue_service/appsettings.Development.json
+/venue_service/appsettings.Production.json
