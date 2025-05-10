@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using venue_service.Src.Contexts;
 using venue_service.Src.Dtos.Auth;
 using venue_service.Src.Models;
+using venue_service.Src.Services.ImageService;
 
 namespace venue_service.Src.Services;
 
@@ -15,11 +16,13 @@ public class AuthService
     private readonly DatabaseContext _context;
     private readonly IConfiguration _configuration;
     private readonly PasswordHasher<User> _passwordHasher;
+    private readonly IStorageService _storageService;
 
-    public AuthService(DatabaseContext context, IConfiguration configuration)
+    public AuthService(DatabaseContext context, IConfiguration configuration, IStorageService storageService)
     {
         _context = context;
         _configuration = configuration;
+        _storageService = storageService;
         _passwordHasher = new PasswordHasher<User>();
     }
 
@@ -28,17 +31,25 @@ public class AuthService
         if (_context.Users.Any(u => u.Email == dto.Email))
             throw new Exception("Email already in use!");
 
+        string? imageUrl = null;
+        if (dto.Image != null)
+        {
+            imageUrl = await _storageService.UploadProfileImageAsync(dto.Image);
+        }
+
         var user = new User
         {
             FirstName = dto.FirstName,
             LastName = dto.LastName,
             Email = dto.Email,
             Phone = dto.Phone,
-            RoleId = 2,
+            ProfileImageUrl = imageUrl,
+            RoleId = 2, 
             IsBanned = false,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
+
         user.Password = _passwordHasher.HashPassword(user, dto.Password);
 
         _context.Users.Add(user);
@@ -52,10 +63,17 @@ public class AuthService
         };
     }
 
-        public async Task<AuthResponseDto> RegisterAthleteAsync(RegisterRequestDto dto)
+
+    public async Task<AuthResponseDto> RegisterAthleteAsync(RegisterRequestDto dto)
     {
         if (_context.Users.Any(u => u.Email == dto.Email))
             throw new Exception("Email already in use!");
+
+        string? imageUrl = null;
+        if (dto.Image != null)
+        {
+            imageUrl = await _storageService.UploadProfileImageAsync(dto.Image);
+        }
 
         var user = new User
         {
@@ -63,6 +81,7 @@ public class AuthService
             LastName = dto.LastName,
             Email = dto.Email,
             Phone = dto.Phone,
+            ProfileImageUrl = imageUrl,
             RoleId = 3,
             IsBanned = false,
             CreatedAt = DateTime.UtcNow,

@@ -19,7 +19,7 @@ namespace venue_service.Src.Services.ImageStorageService
             _options = options;
         }
 
-        public async Task<string?> UploadImageAsync(IFormFile file, string bucket, string path)
+        private async Task<string?> UploadImageAsync(IFormFile file, string bucket, string path)
         {
             try
             {
@@ -73,5 +73,27 @@ namespace venue_service.Src.Services.ImageStorageService
 
             return (bucket, path);
         }
+
+        public async Task<string?> UploadProfileImageAsync(IFormFile file)
+        {
+            var fileName = $"{Guid.NewGuid()}_{file.FileName}";
+            return await UploadImageAsync(file, "profile-images", fileName);
+        }
+
+        public async Task<List<string>> UploadVenueImagesAsync(List<IFormFile> files)
+        {
+            var urls = new List<string>();
+
+            foreach (var file in files)
+            {
+                var fileName = $"{Guid.NewGuid()}_{file.FileName}";
+                var url = await UploadImageAsync(file, "venue-images", fileName);
+                if (url != null) urls.Add(url);
+            }
+
+            return urls;
+        }
+
+
     }
 }

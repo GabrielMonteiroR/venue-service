@@ -2,8 +2,10 @@
 {
     public interface IStorageService
     {
-        Task<string> UploadImageAsync(IFormFile file, string bucket, string path);
+        Task<string?> UploadProfileImageAsync(IFormFile file);
+        Task<List<string>> UploadVenueImagesAsync(List<IFormFile> files);
         Task<bool> DeleteImageAsync(string bucket, string path);
         (string Bucket, string Path)? ParseSupabaseUrl(string url);
     }
+
 }
