@@ -21,8 +21,7 @@ builder.Configuration
 
 // Ambiente e Connection String
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-Console.WriteLine($"🧪 Ambiente atual: {builder.Environment.EnvironmentName}");
-Console.WriteLine($"📦 Connection string lida: {builder.Configuration.GetConnectionString("DefaultConnection") ?? "NULA"}");
+Console.WriteLine($"🧪 ENVIROMENT: {builder.Environment.EnvironmentName}");
 
 // Contexto do banco de dados
 builder.Services.AddDbContext<DatabaseContext>(options =>
