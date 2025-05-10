@@ -12,6 +12,7 @@ namespace venue_service.Src.Dtos
         public double Longitude { get; set; }
         public string Description { get; set; }
         public bool AllowLocalPayment { get; set; }
+        public List<string> Images { get; set; } = new();
         public int VenueTypeId { get; set; }
         public string Rules { get; set; }
         public int OwnerId { get; set; }

@@ -289,6 +289,7 @@ public class DatabaseContext : DbContext
             new VenueImage
             {
                 Id = 1,
+                FileName = "image-venue.png",
                 ImageURL = "https://example.com/image1.jpg",
                 VenueId = 1
             }

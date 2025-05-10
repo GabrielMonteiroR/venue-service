@@ -5,31 +5,40 @@ using System.Text;
 using venue_service.Src.Contexts;
 using venue_service.Src.Middlewares;
 using venue_service.Src.Services;
+using venue_service.Src.Config;
+using venue_service.Src.Services.ImageService;
+using venue_service.Src.Services.ImageStorageService;
+using Microsoft.Extensions.Options;
 using Src.Services;
-using venue_service.Src.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configuração dos arquivos JSON
 builder.Configuration
     .AddJsonFile("appsettings.json", optional: false)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
     .AddEnvironmentVariables();
 
-
-// Pegando a connection string do appsettings
+// Ambiente e Connection String
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+Console.WriteLine($"Ambiente: {builder.Environment.EnvironmentName}");
+Console.WriteLine($"Connection string: {connectionString}");
 
+// Contexto do banco de dados
 builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseNpgsql(connectionString)
 );
 
-
-// Injetando os Controllers
+// Controllers
 builder.Services.AddControllers();
 
-// Swagger
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// Removido Swagger
+// builder.Services.AddEndpointsApiExplorer();
+// builder.Services.AddSwaggerGen(c =>
+// {
+//     c.SwaggerDoc("v1", new() { Title = "Venue Service API", Version = "v1" });
+//     c.CustomSchemaIds(type => type.FullName);
+// });
 
 // JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -50,7 +59,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
-// Injetando os Services
+// Configurações customizadas via IOptions<T>
+builder.Services.Configure<SupabaseStorageOptions>(
+    builder.Configuration.GetSection("Supabase")
+);
+
+// Injeção de Services (respeitando dependências)
 builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IVenueService, VenueService>();
 builder.Services.AddScoped<AuthService>();
@@ -58,32 +72,45 @@ builder.Services.AddScoped<IVenueAvaliabilityTime, VenueAvaliabilityTimeService>
 builder.Services.AddScoped<IVenueType, VenueTypeService>();
 builder.Services.AddScoped<UserService>();
 
+// Storage de Imagens
+builder.Services.AddScoped<IStorageService, SupabaseStorageService>();
+
+// HttpClient (para Supabase)
+builder.Services.AddHttpClient();
+
+// Build da aplicação
 var app = builder.Build();
 
+// Migrações do banco
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
-    db.Database.Migrate(); 
+    db.Database.Migrate();
 }
 
-
-// Middleware de tratamento de erros
+// Middleware de erro global
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
-// Swagger ativado somente em ambiente de desenvolvimento
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// Removido Swagger
+// if (app.Environment.IsDevelopment())
+// {
+//     app.UseSwagger();
+//     app.UseSwaggerUI();
+// }
 
-// Ativando autenticação e autorização
+// Segurança
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Mapeamento de Controllers
+// CORS liberado (ajuste no futuro para produção!)
+app.UseCors(policy => policy
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+);
+
+// Mapear endpoints dos Controllers
 app.MapControllers();
 
-app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-
+// Rodar aplicação
 app.Run();

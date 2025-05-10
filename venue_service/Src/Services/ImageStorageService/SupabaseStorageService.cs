@@ -1,0 +1,100 @@
+﻿using venue_service.Src.Config;
+using venue_service.Src.Services.ImageService;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using System.Net.Http.Headers;
+using venue_service.Src.Exceptions;
+using System.Net;
+
+namespace venue_service.Src.Services.ImageStorageService
+{
+    public class SupabaseStorageService : IStorageService
+    {
+        private readonly HttpClient _httpClient;
+        private readonly SupabaseStorageOptions _options;
+
+
+        public SupabaseStorageService(HttpClient httpClient, IOptions<SupabaseStorageOptions> options)
+        {
+            _httpClient = httpClient;
+            _options = options.Value;
+        }
+
+        public async Task<string?> UploadImageAsync(IFormFile file, string bucket, string path)
+        {
+            try
+            {
+                var requestUrl = $"{_options.Url}/storage/v1/object/{bucket}/{path}";
+
+                using var streamContent = new StreamContent(file.OpenReadStream());
+                streamContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+
+                var request = new HttpRequestMessage(HttpMethod.Post, requestUrl)
+                {
+                    Content = streamContent
+                };
+
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _options.ApiKey);
+
+                var response = await _httpClient.SendAsync(request);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return null;
+                }
+
+                return $"{_options.Url}/storage/v1/object/public/{bucket}/{path}";
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "Internal Server Error", ex.Message);
+            }
+        }
+
+        public async Task<bool> DeleteImageAsync(string bucket, string path)
+        {
+            var requestUri = $"{_options.Url}/storage/v1/object/{bucket}/{path}";
+
+            var request = new HttpRequestMessage(HttpMethod.Delete, requestUri);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _options.ApiKey);
+
+            var response = await _httpClient.SendAsync(request);
+
+            return response.IsSuccessStatusCode;
+        }
+
+        public (string Bucket, string Path)? ParseSupabaseUrl(string url)
+        {
+            var parts = url.Split("/object/");
+            if (parts.Length != 2) return null;
+
+            var segments = parts[1].Split('/');
+            var bucket = segments[0];
+            var path = string.Join("/", segments.Skip(1));
+
+            return (bucket, path);
+        }
+
+        public async Task<string?> UploadProfileImageAsync(IFormFile file)
+        {
+            var fileName = $"{Guid.NewGuid()}_{file.FileName}";
+            return await UploadImageAsync(file, "profile-images", fileName);
+        }
+
+        public async Task<List<string>> UploadVenueImagesAsync(List<IFormFile> files)
+        {
+            var urls = new List<string>();
+
+            foreach (var file in files)
+            {
+                var fileName = $"{Guid.NewGuid()}_{file.FileName}";
+                var url = await UploadImageAsync(file, "venue-images", fileName);
+                if (url != null) urls.Add(url);
+            }
+
+            return urls;
+        }
+
+
+    }
+}

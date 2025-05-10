@@ -11,6 +11,11 @@ namespace venue_service.Src.Models
         public int Id { get; set; }
 
         [Required]
+        [MaxLength(100)]
+        [Column("file_name")]
+        public string FileName { get; set; }
+
+        [Required]
         [MaxLength(300)]
         [Column("image_url")]
         public string ImageURL { get; set; }

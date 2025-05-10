@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using venue_service.Src.Dtos;
 using venue_service.Src.Services;
+using venue_service.Src.Services.ImageService;
 
 namespace venue_service.Src.Controllers
 {
@@ -9,6 +10,7 @@ namespace venue_service.Src.Controllers
     public class UserController : ControllerBase
     {
         private readonly UserService _profileService;
+        private readonly IStorageService _storageService;
 
         public UserController(UserService profileService)
         {
@@ -28,6 +30,7 @@ namespace venue_service.Src.Controllers
             var updatedUser = await _profileService.UpdateUserInfoAsync(id, userDto);
             return Ok(updatedUser);
         }
+
 
 
     }
