@@ -12,6 +12,7 @@ namespace venue_service.Src.Models
 
         [Required]
         [MaxLength(100)]
+        [Column("file_name")]
         public string FileName { get; set; }
 
         [Required]

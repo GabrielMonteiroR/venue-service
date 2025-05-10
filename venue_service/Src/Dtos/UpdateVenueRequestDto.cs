@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace venue_service.Src.DTOs;
+namespace venue_service.Src.Dtos;
 
 public class UpdateVenueRequestDto
 {

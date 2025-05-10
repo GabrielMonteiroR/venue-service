@@ -10,6 +10,7 @@ using venue_service.Src.Models;
 using venue_service.Src.Config;
 using venue_service.Src.Services.ImageService;
 using venue_service.Src.Services.ImageStorageService;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,14 +19,14 @@ builder.Configuration
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
     .AddEnvironmentVariables();
 
-
 // Pegando a connection string do appsettings
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+Console.WriteLine($"📂 Ambiente: {builder.Environment.EnvironmentName}");
+Console.WriteLine($"🔗 Connection string: {connectionString}");
 
 builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseNpgsql(connectionString)
 );
-
 
 // Injetando os Controllers
 builder.Services.AddControllers();
@@ -61,14 +62,18 @@ builder.Services.AddScoped<IVenueAvaliabilityTime, VenueAvaliabilityTimeService>
 builder.Services.AddScoped<IVenueType, VenueTypeService>();
 builder.Services.AddScoped<UserService>();
 
+// Configuração Supabase e Storage Service
+builder.Services.Configure<SupabaseStorageOptions>(
+    builder.Configuration.GetSection("Supabase"));
+builder.Services.AddHttpClient<IStorageService, SupabaseStorageService>();
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
-    db.Database.Migrate(); 
+    db.Database.Migrate();
 }
-
 
 // Middleware de tratamento de erros
 app.UseMiddleware<ErrorHandlingMiddleware>();
@@ -84,15 +89,10 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 
-builder.Services.Configure<SupabaseStorageOptions>(
-    builder.Configuration.GetSection("Supabase"));
-
-builder.Services.AddHttpClient<IStorageService, SupabaseStorageService>();
-
+// CORS
+app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
 // Mapeamento de Controllers
 app.MapControllers();
-
-app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
 app.Run();

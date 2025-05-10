@@ -43,7 +43,8 @@ namespace venue_service.Src.Services.ImageStorageService
                 }
 
                 return $"{_options.Url}/storage/v1/object/public/{bucket}/{path}";
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 throw new HttpResponseException(HttpStatusCode.InternalServerError, "Internal Server Error", ex.Message);
             }
@@ -72,8 +73,5 @@ namespace venue_service.Src.Services.ImageStorageService
 
             return (bucket, path);
         }
-
-
-
     }
 }

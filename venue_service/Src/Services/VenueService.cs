@@ -3,7 +3,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.Net;
 using venue_service.Src.Contexts;
 using venue_service.Src.Dtos;
-using venue_service.Src.DTOs;
 using venue_service.Src.Exceptions;
 using venue_service.Src.Models;
 using venue_service.Src.Services.ImageService;
@@ -202,7 +201,7 @@ namespace venue_service.Src.Services
 
                     foreach (var img in existingImages)
                     {
-                        var parsed = ParseSupabaseUrl(img.ImageURL);
+                        var parsed = _storageService.ParseSupabaseUrl(img.ImageURL);
                         if (parsed != null)
                         {
                             await _storageService.DeleteImageAsync(parsed.Value.Bucket, parsed.Value.Path);
