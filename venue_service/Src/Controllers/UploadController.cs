@@ -3,8 +3,9 @@ using venue_service.Src.Services.ImageService;
 
 namespace venue_service.Src.Controllers
 {
-    [Route("upload-images")]
+
     [ApiController]
+    [Route("upload-images")]
     public class UploadController : ControllerBase
     {
         private readonly IStorageService _storageService;

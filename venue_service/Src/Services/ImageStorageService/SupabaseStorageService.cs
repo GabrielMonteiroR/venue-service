@@ -13,13 +13,14 @@ namespace venue_service.Src.Services.ImageStorageService
         private readonly HttpClient _httpClient;
         private readonly SupabaseStorageOptions _options;
 
-        public SupabaseStorageService(HttpClient httpClient, SupabaseStorageOptions options)
+
+        public SupabaseStorageService(HttpClient httpClient, IOptions<SupabaseStorageOptions> options)
         {
             _httpClient = httpClient;
-            _options = options;
+            _options = options.Value;
         }
 
-        private async Task<string?> UploadImageAsync(IFormFile file, string bucket, string path)
+        public async Task<string?> UploadImageAsync(IFormFile file, string bucket, string path)
         {
             try
             {
