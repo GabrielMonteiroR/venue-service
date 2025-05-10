@@ -9,7 +9,6 @@ using venue_service.Src.Config;
 using venue_service.Src.Services.ImageService;
 using venue_service.Src.Services.ImageStorageService;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
 using Src.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,13 +32,13 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
 // Controllers
 builder.Services.AddControllers();
 
-// Swagger
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new() { Title = "Venue Service API", Version = "v1" });
-    c.CustomSchemaIds(type => type.FullName);
-});
+// Removido Swagger
+// builder.Services.AddEndpointsApiExplorer();
+// builder.Services.AddSwaggerGen(c =>
+// {
+//     c.SwaggerDoc("v1", new() { Title = "Venue Service API", Version = "v1" });
+//     c.CustomSchemaIds(type => type.FullName);
+// });
 
 // JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -92,12 +91,12 @@ using (var scope = app.Services.CreateScope())
 // Middleware de erro global
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
-// Swagger apenas no dev
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// Removido Swagger
+// if (app.Environment.IsDevelopment())
+// {
+//     app.UseSwagger();
+//     app.UseSwaggerUI();
+// }
 
 // Segurança
 app.UseAuthentication();
