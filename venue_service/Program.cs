@@ -75,7 +75,17 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<IStorageService, SupabaseStorageService>();
 
 // HttpClient (para Supabase)
-builder.Services.AddHttpClient();
+builder.Services.AddHttpClient<IStorageService, SupabaseStorageService>((serviceProvider, client) =>
+{
+    var config = serviceProvider
+        .GetRequiredService<IOptions<SupabaseStorageOptions>>().Value;
+
+    if (string.IsNullOrWhiteSpace(config.Url))
+        throw new InvalidOperationException("Supabase Url não configurada.");
+
+    client.BaseAddress = new Uri(config.Url);
+});
+
 
 // Build da aplicação
 var app = builder.Build();
