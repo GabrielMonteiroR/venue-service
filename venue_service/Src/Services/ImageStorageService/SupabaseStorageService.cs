@@ -13,26 +13,25 @@ namespace venue_service.Src.Services.ImageStorageService
         private readonly HttpClient _httpClient;
         private readonly SupabaseStorageOptions _options;
 
-
         public SupabaseStorageService(HttpClient httpClient, IOptions<SupabaseStorageOptions> options)
         {
             _httpClient = httpClient;
             _options = options.Value;
+
+            if (string.IsNullOrWhiteSpace(_options.Url) || string.IsNullOrWhiteSpace(_options.ApiKey))
+                throw new InvalidOperationException("Supabase URL ou API Key não configurada corretamente.");
         }
 
         public async Task<string?> UploadImageAsync(IFormFile file, string bucket, string path)
         {
             try
             {
-                var requestUrl = $"{_options.Url}/storage/v1/object/{bucket}/{path}";
-
-                if (string.IsNullOrWhiteSpace(_options.Url))
-                    throw new InvalidOperationException("Supabase Url não configurada. Verifique appsettings ou variáveis de ambiente.");
+                var relativePath = $"/storage/v1/object/{bucket}/{path}";
 
                 using var streamContent = new StreamContent(file.OpenReadStream());
                 streamContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
 
-                var request = new HttpRequestMessage(HttpMethod.Post, requestUrl)
+                var request = new HttpRequestMessage(HttpMethod.Post, relativePath)
                 {
                     Content = streamContent
                 };
@@ -42,23 +41,21 @@ namespace venue_service.Src.Services.ImageStorageService
                 var response = await _httpClient.SendAsync(request);
 
                 if (!response.IsSuccessStatusCode)
-                {
                     return null;
-                }
 
                 return $"{_options.Url}/storage/v1/object/public/{bucket}/{path}";
             }
             catch (Exception ex)
             {
-                throw new HttpResponseException(HttpStatusCode.InternalServerError, "Internal Server Error", ex.Message);
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "Erro ao enviar imagem para o Supabase", ex.Message);
             }
         }
 
         public async Task<bool> DeleteImageAsync(string bucket, string path)
         {
-            var requestUri = $"{_options.Url}/storage/v1/object/{bucket}/{path}";
+            var relativePath = $"/storage/v1/object/{bucket}/{path}";
 
-            var request = new HttpRequestMessage(HttpMethod.Delete, requestUri);
+            var request = new HttpRequestMessage(HttpMethod.Delete, relativePath);
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _options.ApiKey);
 
             var response = await _httpClient.SendAsync(request);
@@ -97,7 +94,5 @@ namespace venue_service.Src.Services.ImageStorageService
 
             return urls;
         }
-
-
     }
 }
