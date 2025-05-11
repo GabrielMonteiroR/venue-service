@@ -26,6 +26,9 @@ namespace venue_service.Src.Services.ImageStorageService
             {
                 var requestUrl = $"{_options.Url}/storage/v1/object/{bucket}/{path}";
 
+                if (string.IsNullOrWhiteSpace(_options.Url))
+                    throw new InvalidOperationException("Supabase Url não configurada. Verifique appsettings ou variáveis de ambiente.");
+
                 using var streamContent = new StreamContent(file.OpenReadStream());
                 streamContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
 
