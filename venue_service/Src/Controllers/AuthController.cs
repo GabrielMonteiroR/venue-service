@@ -15,7 +15,7 @@ public class AuthController : ControllerBase
         _authService = authService;
     }
 
-    [HttpPost("register-owner")]
+    [HttpPost("register-athlete")]
     public async Task<IActionResult> RegisterAthlete([FromBody] RegisterRequestDto dto)
     {
         if (!ModelState.IsValid)
@@ -25,7 +25,7 @@ public class AuthController : ControllerBase
         return Ok(response);
     }
 
-    [HttpPost("register-athlete")]
+    [HttpPost("register-owner")]
     public async Task<IActionResult> RegisterOwner([FromBody] RegisterRequestDto dto)
     {
         if (!ModelState.IsValid)
