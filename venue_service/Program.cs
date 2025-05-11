@@ -21,7 +21,15 @@ builder.Configuration
 
 // Ambiente e Connection String
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-Console.WriteLine($"🧪 ENVIROMENT: {builder.Environment.EnvironmentName}");
+var supabaseUrl = builder.Configuration["Supabase:Url"];
+var supabaseApiKey = builder.Configuration["Supabase:ApiKey"];
+
+Console.WriteLine($"🧪 ENVIRONMENT: {builder.Environment.EnvironmentName}");
+Console.WriteLine($"📦 Connection string lida: {connectionString}");
+Console.WriteLine($"🔗 Supabase URL: {supabaseUrl}");
+Console.WriteLine($"🔑 Supabase API Key: {(string.IsNullOrEmpty(supabaseApiKey) ? "NÃO CONFIGURADA" : "***")}");
+
+
 
 // Contexto do banco de dados
 builder.Services.AddDbContext<DatabaseContext>(options =>
