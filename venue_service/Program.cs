@@ -66,10 +66,12 @@ builder.Services.Configure<SupabaseStorageOptions>(
 // Injeção de Services (respeitando dependências)
 builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IVenueService, VenueService>();
-builder.Services.AddScoped<AuthService>();G
+builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<IVenueAvaliabilityTime, VenueAvaliabilityTimeService>();
 builder.Services.AddScoped<IVenueType, VenueTypeService>();
 builder.Services.AddScoped<UserService>();
+
+// Storage de Imagens
 
 // HttpClient (para Supabase)
 builder.Services.AddHttpClient<IStorageService, SupabaseStorageService>((serviceProvider, client) =>
