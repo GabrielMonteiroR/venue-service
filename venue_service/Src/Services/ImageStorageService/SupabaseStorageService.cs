@@ -18,6 +18,8 @@ namespace venue_service.Src.Services.ImageStorageService
             _httpClient = httpClient;
             _options = options.Value;
 
+            Console.WriteLine($"🔧 Supabase URL carregada: {_options.Url}");
+
             if (string.IsNullOrWhiteSpace(_options.Url) || string.IsNullOrWhiteSpace(_options.ApiKey))
                 throw new InvalidOperationException("Supabase URL ou API Key não configurada corretamente.");
         }
