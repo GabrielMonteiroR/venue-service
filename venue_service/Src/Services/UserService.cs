@@ -72,7 +72,7 @@ namespace venue_service.Src.Services
             }
         }
 
-        public async Task<string> updateProfileImage(int userId, string newImageUrl)
+        public async Task<UpdateUserProfileImageResponseDto> updateProfileImage(int userId, string newImageUrl)
         {
             try
             {
@@ -81,7 +81,14 @@ namespace venue_service.Src.Services
 
                 user.ProfileImageUrl = newImageUrl;
 
-                return user.ProfileImageUrl;
+                var response = new UpdateUserProfileImageResponseDto
+                {
+                    Id = user.Id,
+                    Message = "Profile image updated successfully",
+                    newProfileImageUrl = newImageUrl
+                };
+
+                return response;
 
             }
             catch (Exception ex)
