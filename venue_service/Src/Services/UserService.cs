@@ -27,6 +27,7 @@ namespace venue_service.Src.Services
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Email = user.Email,
+                    ProfileImage = user.ProfileImageUrl,
                     Phone = user.Phone,
                     RoleId = user.RoleId,
                     IsBanned = user.IsBanned
