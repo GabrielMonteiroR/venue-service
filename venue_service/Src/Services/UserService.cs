@@ -72,20 +72,20 @@ namespace venue_service.Src.Services
             }
         }
 
-        public async Task<UpdateUserProfileImageResponseDto> updateProfileImage(int userId, string newImageUrl)
+        public async Task<UpdateUserProfileImageResponseDto> updateProfileImage(int userId, UpdateUserImageDto dto)
         {
             try
             {
                 var user = await _context.Users.FindAsync(userId);
                 if (user is null) throw new HttpResponseException(HttpStatusCode.NotFound, "User not found", $"User with id {userId} not found.");
 
-                user.ProfileImageUrl = newImageUrl;
+                user.ProfileImageUrl = dto.ImageUrl;
 
                 var response = new UpdateUserProfileImageResponseDto
                 {
                     Id = user.Id,
                     Message = "Profile image updated successfully",
-                    newProfileImageUrl = newImageUrl
+                    newProfileImageUrl = dto.ImageUrl
                 };
 
                 return response;
