@@ -32,13 +32,14 @@ namespace venue_service.Src.Services
                     RoleId = user.RoleId,
                     IsBanned = user.IsBanned
                 };
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while retrieving user information.", ex.Message);
             }
         }
 
-    public async Task<UserResponseDto> UpdateUserInfoAsync(int id, UpdateUserDto userDto)
+        public async Task<UserResponseDto> UpdateUserInfoAsync(int id, UpdateUserDto userDto)
         {
             try
             {
@@ -68,6 +69,24 @@ namespace venue_service.Src.Services
             catch (Exception ex)
             {
                 throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while updating user information.", ex.Message);
+            }
+        }
+
+        public async Task<string> updateProfileImage(int userId, string newImageUrl)
+        {
+            try
+            {
+                var user = await _context.Users.FindAsync(userId);
+                if (user is null) throw new HttpResponseException(HttpStatusCode.NotFound, "User not found", $"User with id {userId} not found.");
+
+                user.ProfileImageUrl = newImageUrl;
+
+                return user.ProfileImageUrl;
+
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while updating user profile image.", ex.Message);
             }
         }
     }
