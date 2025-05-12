@@ -31,7 +31,12 @@ namespace venue_service.Src.Controllers
             return Ok(updatedUser);
         }
 
-
+        [HttpPatch("profile-image")]
+        public async Task<IActionResult> UpdateProfileImage(int id, string imageUrl)
+        {
+            var updatedUser = await _profileService.updateProfileImage(id, imageUrl);
+            return Ok(updatedUser);
+        }
 
     }
 }

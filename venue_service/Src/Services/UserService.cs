@@ -27,17 +27,19 @@ namespace venue_service.Src.Services
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Email = user.Email,
+                    ProfileImage = user.ProfileImageUrl,
                     Phone = user.Phone,
                     RoleId = user.RoleId,
                     IsBanned = user.IsBanned
                 };
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while retrieving user information.", ex.Message);
             }
         }
 
-    public async Task<UserResponseDto> UpdateUserInfoAsync(int id, UpdateUserDto userDto)
+        public async Task<UserResponseDto> UpdateUserInfoAsync(int id, UpdateUserDto userDto)
         {
             try
             {
@@ -67,6 +69,31 @@ namespace venue_service.Src.Services
             catch (Exception ex)
             {
                 throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while updating user information.", ex.Message);
+            }
+        }
+
+        public async Task<UpdateUserProfileImageResponseDto> updateProfileImage(int userId, string newImageUrl)
+        {
+            try
+            {
+                var user = await _context.Users.FindAsync(userId);
+                if (user is null) throw new HttpResponseException(HttpStatusCode.NotFound, "User not found", $"User with id {userId} not found.");
+
+                user.ProfileImageUrl = newImageUrl;
+
+                var response = new UpdateUserProfileImageResponseDto
+                {
+                    Id = user.Id,
+                    Message = "Profile image updated successfully",
+                    newProfileImageUrl = newImageUrl
+                };
+
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while updating user profile image.", ex.Message);
             }
         }
     }
