@@ -42,8 +42,14 @@ namespace venue_service.Src.Services.ImageStorageService
 
                 var response = await _httpClient.SendAsync(request);
 
+                // DEBUG TEMPORÁRIO
+                var body = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"📤 Upload status: {response.StatusCode}");
+                Console.WriteLine($"📤 Upload body: {body}");
+
                 if (!response.IsSuccessStatusCode)
                     return null;
+                ;
 
                 return $"{_options.Url}/storage/v1/object/public/{bucket}/{path}";
             }
