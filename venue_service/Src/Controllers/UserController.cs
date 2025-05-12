@@ -32,7 +32,7 @@ namespace venue_service.Src.Controllers
         }
 
         [HttpPatch("profile-image")]
-        public async Task<IActionResult> UpdateProfileImage(int id, string imageUrl)
+        public async Task<IActionResult> UpdateProfileImage([FromQuery] int id, [FromBody] string imageUrl)
         {
             var updatedUser = await _profileService.updateProfileImage(id, imageUrl);
             return Ok(updatedUser);
