@@ -31,7 +31,11 @@ namespace venue_service.Src.Services.ImageStorageService
                 var relativePath = $"/storage/v1/object/{bucket}/{path}";
 
                 using var streamContent = new StreamContent(file.OpenReadStream());
-                streamContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+                streamContent.Headers.ContentType =
+    !string.IsNullOrWhiteSpace(file.ContentType)
+    ? new MediaTypeHeaderValue(file.ContentType)
+    : new MediaTypeHeaderValue("image/jpeg");
+
 
                 var request = new HttpRequestMessage(HttpMethod.Post, relativePath)
                 {
@@ -42,10 +46,7 @@ namespace venue_service.Src.Services.ImageStorageService
 
                 var response = await _httpClient.SendAsync(request);
 
-                // DEBUG TEMPORÁRIO
                 var body = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"📤 Upload status: {response.StatusCode}");
-                Console.WriteLine($"📤 Upload body: {body}");
 
                 if (!response.IsSuccessStatusCode)
                     return null;
