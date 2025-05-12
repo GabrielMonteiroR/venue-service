@@ -72,7 +72,7 @@ namespace venue_service.Src.Services
             }
         }
 
-        public async Task<UpdateUserProfileImageResponseDto> updateProfileImage(int userId, UpdateUserImageDto dto)
+        public async Task<UpdateUserProfileImageResponseDto> UpdateProfileImage(int userId, UpdateUserImageDto dto)
         {
             try
             {
@@ -80,6 +80,8 @@ namespace venue_service.Src.Services
                 if (user is null) throw new HttpResponseException(HttpStatusCode.NotFound, "User not found", $"User with id {userId} not found.");
 
                 user.ProfileImageUrl = dto.ImageUrl;
+
+                await _context.SaveChangesAsync();
 
                 var response = new UpdateUserProfileImageResponseDto
                 {
