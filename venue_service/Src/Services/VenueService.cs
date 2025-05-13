@@ -208,8 +208,9 @@ namespace venue_service.Src.Services
                         {
                             newImages.Add(new VenueImage
                             {
-                                VenueId = venue.Id,
-                                ImageUrl = url
+                                ImageUrl = url,
+                                FileName = Path.GetFileName(new Uri(url).LocalPath),
+                                VenueId = id
                             });
                         }
                     }
