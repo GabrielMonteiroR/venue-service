@@ -290,7 +290,7 @@ public class DatabaseContext : DbContext
             {
                 Id = 1,
                 FileName = "image-venue.png",
-                ImageURL = "https://example.com/image1.jpg",
+                ImageUrl = "https://example.com/image1.jpg",
                 VenueId = 1
             }
         );

@@ -60,7 +60,7 @@ namespace venue_service.Src.Services.ImageStorageService
             }
         }
 
-        public async Task<bool> DeleteImageAsync(string bucket, string path)
+        public async Task<bool> DeleteFileAsync(string bucket, string path)
         {
             var relativePath = $"/storage/v1/object/{bucket}/{path}";
 

@@ -18,7 +18,7 @@ namespace venue_service.Src.Models
         [Required]
         [MaxLength(300)]
         [Column("image_url")]
-        public string ImageURL { get; set; }
+        public string ImageUrl { get; set; }
 
         [ForeignKey("VenueId")]
         [Column("venue_id")]
