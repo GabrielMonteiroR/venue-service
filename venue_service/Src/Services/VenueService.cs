@@ -38,26 +38,14 @@ namespace venue_service.Src.Services
                     OwnerId = dto.OwnerId
                 };
 
+                venue.VenueImages = dto.ImageUrls.Select(url => new VenueImage
+                {
+                    ImageURL = url,
+                    Venue = venue
+                }).ToList();
+
                 _context.Venues.Add(venue);
                 await _context.SaveChangesAsync();
-
-                if (dto.Images != null && dto.Images.Any())
-                {
-                    var urls = await _storageService.UploadVenueImagesAsync(dto.Images);
-                    var venueImages = urls.Select(url => new VenueImage
-                    {
-                        VenueId = venue.Id,
-                        ImageURL = url
-                    }).ToList();
-
-                    _context.VenueImages.AddRange(venueImages);
-                    await _context.SaveChangesAsync();
-                }
-
-                var images = await _context.VenueImages
-                    .Where(img => img.VenueId == venue.Id)
-                    .Select(img => img.ImageURL)
-                    .ToListAsync();
 
                 return new VenueResponseDto
                 {
@@ -72,14 +60,15 @@ namespace venue_service.Src.Services
                     VenueTypeId = venue.VenueTypeId,
                     Rules = venue.Rules,
                     OwnerId = venue.OwnerId,
-                    Images = images
+                    ImageUrls = venue.VenueImages.Select(i => i.ImageURL).ToList()
                 };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new HttpResponseException(HttpStatusCode.InternalServerError, "Internal Server Error", ex.Message);
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "Error while registering the venue.", "An unexpected error occurred while creating the venue.", DateTime.UtcNow.ToString());
             }
         }
+
 
         public async Task<VenuesResponseDto> ListVenuesAsync()
         {
@@ -105,7 +94,7 @@ namespace venue_service.Src.Services
                     VenueTypeId = v.VenueTypeId,
                     Rules = v.Rules,
                     OwnerId = v.OwnerId,
-                    Images = v.VenueImages?.Select(i => i.ImageURL).ToList() ?? new List<string>()
+                    ImageUrls = v.VenueImages?.Select(i => i.ImageURL).ToList() ?? new List<string>()
                 }).ToList();
 
                 return new VenuesResponseDto
@@ -163,7 +152,7 @@ namespace venue_service.Src.Services
                         VenueTypeId = v.VenueTypeId,
                         Rules = v.Rules,
                         OwnerId = v.OwnerId,
-                        Images = v.VenueImages?.Select(i => i.ImageURL).ToList() ?? new List<string>()
+                        ImageUrls = v.VenueImages?.Select(i => i.ImageURL).ToList() ?? new List<string>()
                     }).ToList()
                 };
             }
@@ -247,7 +236,7 @@ namespace venue_service.Src.Services
                     VenueTypeId = venue.VenueTypeId,
                     Rules = venue.Rules,
                     OwnerId = venue.OwnerId,
-                    Images = updatedImages
+                    ImageUrls = updatedImages
                 };
             }
             catch (Exception ex)
@@ -284,7 +273,7 @@ namespace venue_service.Src.Services
                     VenueTypeId = v.VenueTypeId,
                     Rules = v.Rules,
                     OwnerId = v.OwnerId,
-                    Images = v.VenueImages?.Select(i => i.ImageURL).ToList() ?? new List<string>()
+                    ImageUrls = v.VenueImages?.Select(i => i.ImageURL).ToList() ?? new List<string>()
                 }).ToList();
 
                 return new VenuesResponseDto
