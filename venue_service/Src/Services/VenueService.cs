@@ -40,7 +40,7 @@ namespace venue_service.Src.Services
 
                 venue.VenueImages = dto.ImageUrls.Select(url => new VenueImage
                 {
-                    ImageURL = url,
+                    ImageUrl = url,
                     Venue = venue
                 }).ToList();
 
@@ -60,7 +60,7 @@ namespace venue_service.Src.Services
                     VenueTypeId = venue.VenueTypeId,
                     Rules = venue.Rules,
                     OwnerId = venue.OwnerId,
-                    ImageUrls = venue.VenueImages.Select(i => i.ImageURL).ToList()
+                    ImageUrls = venue.VenueImages.Select(i => i.ImageUrl).ToList()
                 };
             }
             catch (Exception)
@@ -94,7 +94,7 @@ namespace venue_service.Src.Services
                     VenueTypeId = v.VenueTypeId,
                     Rules = v.Rules,
                     OwnerId = v.OwnerId,
-                    ImageUrls = v.VenueImages?.Select(i => i.ImageURL).ToList() ?? new List<string>()
+                    ImageUrls = v.VenueImages?.Select(i => i.ImageUrl).ToList() ?? new List<string>()
                 }).ToList();
 
                 return new VenuesResponseDto
@@ -126,7 +126,7 @@ namespace venue_service.Src.Services
                 {
                     foreach (var image in venue.VenueImages)
                     {
-                        var parsed = _storageService.ParseSupabaseUrl(image.ImageURL);
+                        var parsed = _storageService.ParseSupabaseUrl(image.ImageUrl);
                         if (parsed != null)
                             await _storageService.DeleteFileAsync(parsed.Value.Bucket, parsed.Value.Path);
                     }
@@ -152,7 +152,7 @@ namespace venue_service.Src.Services
                         VenueTypeId = v.VenueTypeId,
                         Rules = v.Rules,
                         OwnerId = v.OwnerId,
-                        ImageUrls = v.VenueImages?.Select(i => i.ImageURL).ToList() ?? new List<string>()
+                        ImageUrls = v.VenueImages?.Select(i => i.ImageUrl).ToList() ?? new List<string>()
                     }).ToList()
                 };
             }
@@ -191,7 +191,7 @@ namespace venue_service.Src.Services
                 {
                     foreach (var img in venue.VenueImages)
                     {
-                        var parsed = _storageService.ParseSupabaseUrl(img.ImageURL);
+                        var parsed = _storageService.ParseSupabaseUrl(img.ImageUrl);
                         if (parsed != null)
                             await _storageService.DeleteFileAsync(parsed.Value.Bucket, parsed.Value.Path);
                     }
@@ -208,7 +208,7 @@ namespace venue_service.Src.Services
                             newImages.Add(new VenueImage
                             {
                                 VenueId = venue.Id,
-                                ImageURL = url
+                                ImageUrl = url
                             });
                         }
                     }
@@ -220,7 +220,7 @@ namespace venue_service.Src.Services
 
                 var updatedImages = await _context.VenueImages
                     .Where(img => img.VenueId == venue.Id)
-                    .Select(img => img.ImageURL)
+                    .Select(img => img.ImageUrl)
                     .ToListAsync();
 
                 return new VenueResponseDto
@@ -273,7 +273,7 @@ namespace venue_service.Src.Services
                     VenueTypeId = v.VenueTypeId,
                     Rules = v.Rules,
                     OwnerId = v.OwnerId,
-                    ImageUrls = v.VenueImages?.Select(i => i.ImageURL).ToList() ?? new List<string>()
+                    ImageUrls = v.VenueImages?.Select(i => i.ImageUrl).ToList() ?? new List<string>()
                 }).ToList();
 
                 return new VenuesResponseDto
@@ -299,14 +299,14 @@ namespace venue_service.Src.Services
 
             foreach (var image in venue.VenueImages)
             {
-                await _storageService.DeleteFileAsync("venue-images", image.ImageURL);
+                await _storageService.DeleteFileAsync("venue-images", image.ImageUrl);
             }
 
             _context.VenueImages.RemoveRange(venue.VenueImages);
 
             venue.VenueImages = dto.ImageUrls.Select(url => new VenueImage
             {
-                ImageURL = url,
+                ImageUrl = url,
                 VenueId = dto.VenueId
             }).ToList();
 
@@ -315,7 +315,7 @@ namespace venue_service.Src.Services
             return new UpdateVenueImageResponseDto
             {
                 VenueId = venue.Id,
-                NewImageUrls = venue.VenueImages.Select(i => i.ImageURL).ToList(),
+                NewImageUrls = venue.VenueImages.Select(i => i.ImageUrl).ToList(),
                 Message = "Images updated successfully."
             };
         }
