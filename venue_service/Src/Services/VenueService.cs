@@ -41,6 +41,7 @@ namespace venue_service.Src.Services
                 venue.VenueImages = dto.ImageUrls.Select(url => new VenueImage
                 {
                     ImageUrl = url,
+                    FileName = Path.GetFileName(new Uri(url).LocalPath),
                     Venue = venue
                 }).ToList();
 
