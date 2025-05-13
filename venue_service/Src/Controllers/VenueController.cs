@@ -49,5 +49,13 @@ namespace venue_service.Src.Controllers
             var result = await _venueService.ListVenuesByOwner(id);
             return Ok(result);
         }
+
+        [HttpPatch("image")]
+        public async Task<IActionResult> UpdateVenueImage([FromBody] UpdateVenueImageDto dto)
+        {
+            var result = await _venueService.UpdateVenueImageAsync(dto);
+            return Ok(result);
+        }
+
     }
 }
