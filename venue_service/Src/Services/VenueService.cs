@@ -139,7 +139,7 @@ namespace venue_service.Src.Services
                     {
                         var parsed = _storageService.ParseSupabaseUrl(image.ImageURL);
                         if (parsed != null)
-                            await _storageService.DeleteImageAsync(parsed.Value.Bucket, parsed.Value.Path);
+                            await _storageService.DeleteFileAsync(parsed.Value.Bucket, parsed.Value.Path);
                     }
                 }
 
@@ -204,7 +204,7 @@ namespace venue_service.Src.Services
                     {
                         var parsed = _storageService.ParseSupabaseUrl(img.ImageURL);
                         if (parsed != null)
-                            await _storageService.DeleteImageAsync(parsed.Value.Bucket, parsed.Value.Path);
+                            await _storageService.DeleteFileAsync(parsed.Value.Bucket, parsed.Value.Path);
                     }
 
                     _context.VenueImages.RemoveRange(venue.VenueImages);
@@ -298,5 +298,38 @@ namespace venue_service.Src.Services
                 throw new HttpResponseException(HttpStatusCode.InternalServerError, "Internal Server Error", ex.Message);
             }
         }
+
+        public async Task<UpdateVenueImageResponseDto> UpdateVenueImageAsync(UpdateVenueImageDto dto)
+        {
+            var venue = await _context.Venues
+                .Include(v => v.VenueImages)
+                .FirstOrDefaultAsync(v => v.Id == dto.VenueId);
+
+            if (venue == null)
+                throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Venue not found", "The specified venue could not be located.");
+
+            foreach (var image in venue.VenueImages)
+            {
+                await _storageService.DeleteFileAsync("venue-images", image.ImageURL);
+            }
+
+            _context.VenueImages.RemoveRange(venue.VenueImages);
+
+            venue.VenueImages = dto.ImageUrls.Select(url => new VenueImage
+            {
+                ImageURL = url,
+                VenueId = dto.VenueId
+            }).ToList();
+
+            await _context.SaveChangesAsync();
+
+            return new UpdateVenueImageResponseDto
+            {
+                VenueId = venue.Id,
+                NewImageUrls = venue.VenueImages.Select(i => i.ImageURL).ToList(),
+                Message = "Images updated successfully."
+            };
+        }
+
     }
 }
