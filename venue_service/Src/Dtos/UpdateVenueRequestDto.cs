@@ -13,7 +13,5 @@ public class UpdateVenueRequestDto
     public bool AllowLocalPayment { get; set; }
     public int VenueTypeId { get; set; }
     public string Rules { get; set; }
-    public int? OwnerId { get; set; }
 
-    public List<IFormFile>? Images { get; set; } = new();
 }

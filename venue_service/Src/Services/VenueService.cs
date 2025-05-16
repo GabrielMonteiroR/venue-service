@@ -167,16 +167,10 @@ namespace venue_service.Src.Services
         {
             try
             {
-                var venue = await _context.Venues.Include(v => v.VenueImages).FirstOrDefaultAsync(v => v.Id == id);
+                var venue = await _context.Venues.FindAsync(id);
+
                 if (venue is null)
-                    throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Venue not found");
-
-                var owner = await _context.Users.FirstOrDefaultAsync(u => u.Id == dto.OwnerId);
-                if (owner is null)
-                    throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Owner not found");
-
-                if (owner.Id != venue.OwnerId)
-                    throw new HttpResponseException(HttpStatusCode.Forbidden, "Forbidden", "You are not allowed to update this venue");
+                    throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Venue not found", "The specified venue could not be located.");
 
                 venue.Name = dto.Name;
                 venue.Address = dto.Address;
@@ -188,39 +182,9 @@ namespace venue_service.Src.Services
                 venue.VenueTypeId = dto.VenueTypeId;
                 venue.Rules = dto.Rules;
 
-                if (dto.Images != null && dto.Images.Any())
-                {
-                    foreach (var img in venue.VenueImages)
-                    {
-                        var parsed = _storageService.ParseSupabaseUrl(img.ImageUrl);
-                        if (parsed != null)
-                            await _storageService.DeleteFileAsync(parsed.Value.Bucket, parsed.Value.Path);
-                    }
-
-                    _context.VenueImages.RemoveRange(venue.VenueImages);
-
-                    var newImages = new List<VenueImage>();
-                    foreach (var image in dto.Images)
-                    {
-                        var fileName = $"{Guid.NewGuid()}_{image.FileName}";
-                        var url = await _storageService.UploadImageAsync(image, "venue-images", fileName);
-                        if (url is not null)
-                        {
-                            newImages.Add(new VenueImage
-                            {
-                                ImageUrl = url,
-                                FileName = Path.GetFileName(new Uri(url).LocalPath),
-                                VenueId = id
-                            });
-                        }
-                    }
-
-                    _context.VenueImages.AddRange(newImages);
-                }
-
                 await _context.SaveChangesAsync();
 
-                var updatedImages = await _context.VenueImages
+                var imageUrls = await _context.VenueImages
                     .Where(img => img.VenueId == venue.Id)
                     .Select(img => img.ImageUrl)
                     .ToListAsync();
@@ -238,7 +202,7 @@ namespace venue_service.Src.Services
                     VenueTypeId = venue.VenueTypeId,
                     Rules = venue.Rules,
                     OwnerId = venue.OwnerId,
-                    ImageUrls = updatedImages
+                    ImageUrls = imageUrls
                 };
             }
             catch (Exception ex)
@@ -246,6 +210,7 @@ namespace venue_service.Src.Services
                 throw new HttpResponseException(HttpStatusCode.InternalServerError, "Internal Server Error", ex.Message);
             }
         }
+
 
         public async Task<VenuesResponseDto> ListVenuesByOwner(int id)
         {

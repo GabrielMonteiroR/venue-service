@@ -51,7 +51,7 @@ namespace venue_service.Src.Controllers
         }
 
         [HttpPatch("image")]
-        public async Task<IActionResult> UpdateVenueImage([FromBody] UpdateVenueImageDto dto)
+        public async Task<IActionResult> UpdateVenueImages([FromBody] UpdateVenueImageDto dto)
         {
             var result = await _venueService.UpdateVenueImageAsync(dto);
             return Ok(result);
