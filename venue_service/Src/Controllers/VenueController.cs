@@ -57,5 +57,13 @@ namespace venue_service.Src.Controllers
             return Ok(result);
         }
 
+        [HttpDelete("image")]
+        public async Task<IActionResult> DeleteVenueImage([FromQuery] string url, [FromQuery] int venueId)
+        {
+            await _venueService.DeleteVenueImageAsync(venueId, url);
+            return NoContent();
+        }
+
+
     }
 }

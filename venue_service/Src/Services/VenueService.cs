@@ -287,5 +287,26 @@ namespace venue_service.Src.Services
             };
         }
 
+        public async Task DeleteVenueImageAsync(int venueId, string imageUrl)
+        {
+            var venue = await _context.Venues
+                .Include(v => v.VenueImages)
+                .FirstOrDefaultAsync(v => v.Id == venueId);
+
+            if (venue == null)
+                throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Venue not found");
+
+            var image = venue.VenueImages.FirstOrDefault(i => i.ImageUrl == imageUrl);
+            if (image == null)
+                throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Image not found");
+
+            var parsed = _storageService.ParseSupabaseUrl(image.ImageUrl);
+            if (parsed != null)
+                await _storageService.DeleteFileAsync(parsed.Value.Bucket, parsed.Value.Path);
+
+            _context.VenueImages.Remove(image);
+            await _context.SaveChangesAsync();
+        }
+
     }
 }
