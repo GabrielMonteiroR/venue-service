@@ -285,7 +285,7 @@ namespace venue_service.Src.Services
                 {
                     VenueId = dto.VenueId,
                     NewImageUrls = newImages.Select(i => i.ImageUrl).ToList(),
-                    Message = "Imagens adicionadas com sucesso."
+                    Message = "Images added successfully."
                 };
             }
             catch (Exception ex)
