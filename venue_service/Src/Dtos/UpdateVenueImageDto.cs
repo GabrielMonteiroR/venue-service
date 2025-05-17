@@ -1,7 +1,8 @@
-﻿namespace venue_service.Src.Dtos;
-
-public class UpdateVenueImageDto
+﻿namespace venue_service.Src.Dtos
 {
-    public int VenueId { get; set; }
-    public List<string> ImageUrls { get; set; } = new();
+    public class UpdateVenueImageDto
+    {
+        public int VenueId { get; set; }
+        public List<string> ImageUrls { get; set; } = new();
+    }
 }

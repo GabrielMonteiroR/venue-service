@@ -50,10 +50,10 @@ namespace venue_service.Src.Controllers
             return Ok(result);
         }
 
-        [HttpPatch("image")]
-        public async Task<IActionResult> UpdateVenueImages([FromBody] UpdateVenueImageDto dto)
+        [HttpPatch("image/add")]
+        public async Task<IActionResult> AddVenueImages([FromBody] UpdateVenueImageDto dto)
         {
-            var result = await _venueService.UpdateVenueImageAsync(dto);
+            var result = await _venueService.AddVenueImagesAsync(dto);
             return Ok(result);
         }
 

@@ -255,36 +255,43 @@ namespace venue_service.Src.Services
             }
         }
 
-        public async Task<UpdateVenueImageResponseDto> UpdateVenueImageAsync(UpdateVenueImageDto dto)
+
+        public async Task<UpdateVenueImageResponseDto> AddVenueImagesAsync(UpdateVenueImageDto dto)
         {
-            var venue = await _context.Venues
-                .Include(v => v.VenueImages)
-                .FirstOrDefaultAsync(v => v.Id == dto.VenueId);
-
-            if (venue == null)
-                throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Venue not found", "The specified venue could not be located.");
-
-            foreach (var image in venue.VenueImages)
+            try
             {
-                await _storageService.DeleteFileAsync("venue-images", image.ImageUrl);
+                var venue = await _context.Venues
+                    .Include(v => v.VenueImages)
+                    .FirstOrDefaultAsync(v => v.Id == dto.VenueId);
+
+                if (venue == null)
+                    throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Venue not found");
+
+                var newImages = dto.ImageUrls.Select(url => new VenueImage
+                {
+                    VenueId = dto.VenueId,
+                    ImageUrl = url,
+                    FileName = Path.GetFileName(new Uri(url).LocalPath)
+                }).ToList();
+
+                foreach (var image in newImages)
+                {
+                    venue.VenueImages.Add(image);
+                }
+
+                await _context.SaveChangesAsync();
+
+                return new UpdateVenueImageResponseDto
+                {
+                    VenueId = dto.VenueId,
+                    NewImageUrls = newImages.Select(i => i.ImageUrl).ToList(),
+                    Message = "Imagens adicionadas com sucesso."
+                };
             }
-
-            _context.VenueImages.RemoveRange(venue.VenueImages);
-
-            venue.VenueImages = dto.ImageUrls.Select(url => new VenueImage
+            catch (Exception ex)
             {
-                ImageUrl = url,
-                VenueId = dto.VenueId
-            }).ToList();
-
-            await _context.SaveChangesAsync();
-
-            return new UpdateVenueImageResponseDto
-            {
-                VenueId = venue.Id,
-                NewImageUrls = venue.VenueImages.Select(i => i.ImageUrl).ToList(),
-                Message = "Images updated successfully."
-            };
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "Internal Server Error", ex.Message);
+            }
         }
 
         public async Task DeleteVenueImageAsync(int venueId, string imageUrl)
