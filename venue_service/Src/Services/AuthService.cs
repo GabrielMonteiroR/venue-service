@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using venue_service.Src.Contexts;
 using venue_service.Src.Dtos.Auth;
+using venue_service.Src.Enums;
 using venue_service.Src.Models;
 using venue_service.Src.Services.ImageService;
 
@@ -44,8 +45,7 @@ public class AuthService
             Email = dto.Email,
             Phone = dto.Phone,
             ProfileImageUrl = imageUrl,
-            RoleId = 2, 
-            IsBanned = false,
+            RoleId = (int)UserRoleEnum.OWNER, 
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
@@ -82,8 +82,7 @@ public class AuthService
             Email = dto.Email,
             Phone = dto.Phone,
             ProfileImageUrl = imageUrl,
-            RoleId = 3,
-            IsBanned = false,
+            RoleId = (int)UserRoleEnum.ATHLETE,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
