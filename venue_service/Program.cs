@@ -10,6 +10,7 @@ using venue_service.Src.Services.ImageService;
 using venue_service.Src.Services.ImageStorageService;
 using Microsoft.Extensions.Options;
 using Src.Services;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,9 +33,12 @@ Console.WriteLine($"🔑 Supabase API Key: {(string.IsNullOrEmpty(supabaseApiKey
 
 
 // Contexto do banco de dados
-builder.Services.AddDbContext<DatabaseContext>(options =>
-    options.UseNpgsql(connectionString)
-);
+builder.Services.AddDbContext<VenueContext>(options =>
+    options.UseNpgsql(connectionString));
+
+
+
+
 
 // Controllers
 builder.Services.AddControllers();
