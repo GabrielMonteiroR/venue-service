@@ -36,6 +36,9 @@ Console.WriteLine($"🔑 Supabase API Key: {(string.IsNullOrEmpty(supabaseApiKey
 builder.Services.AddDbContext<VenueContext>(options =>
     options.UseNpgsql(connectionString));
 
+builder.Services.AddDbContext<UserContext>(options =>
+    options.UseNpgsql(connectionString));
+
 
 
 
