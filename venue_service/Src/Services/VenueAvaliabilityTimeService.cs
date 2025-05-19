@@ -9,9 +9,9 @@ namespace venue_service.Src.Services
 {
     public class VenueAvaliabilityTimeService : IVenueAvaliabilityTime
     {
-        private readonly DatabaseContext _context;
+        private readonly VenueContext _context;
 
-        public VenueAvaliabilityTimeService(DatabaseContext context)
+        public VenueAvaliabilityTimeService(VenueContext context)
         {
             _context = context;
         }
