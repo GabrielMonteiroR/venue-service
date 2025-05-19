@@ -5,30 +5,30 @@ namespace venue_service.Src.Dtos.Auth;
 
 public class RegisterUserRequestDto
 {
-    [Required(ErrorMessage = "Nome é obrigatório.")]
+    [Required(ErrorMessage = "First name is required.")]
     [StringLength(100, MinimumLength = 2)]
     public string FirstName { get; set; }
 
-    [Required(ErrorMessage = "Sobrenome é obrigatório.")]
+    [Required(ErrorMessage = "Last name is required.")]
     [StringLength(100, MinimumLength = 2)]
     public string LastName { get; set; }
 
-    [Required(ErrorMessage = "Email é obrigatório.")]
-    [EmailAddress(ErrorMessage = "Email inválido.")]
+    [Required(ErrorMessage = "Email is required.")]
+    [EmailAddress(ErrorMessage = "Invalid email.")]
     public string Email { get; set; }
 
     public IFormFile? Image { get; set; }
 
-    [Required(ErrorMessage = "Senha é obrigatória.")]
-    [MinLength(6, ErrorMessage = "A senha deve ter no mínimo 6 caracteres.")]
+    [Required(ErrorMessage = "Password is required.")]
+    [MinLength(6, ErrorMessage = "Password must be at least 6 characters.")]
     public string Password { get; set; }
 
-    [Required(ErrorMessage = "Telefone é obrigatório.")]
+    [Required(ErrorMessage = "Phone is required.")]
     [RegularExpression(@"^\(?[1-9]{2}\)? ?9?[6-9]\d{3}-?\d{4}$",
-        ErrorMessage = "Telefone inválido para padrão brasileiro.")]
+        ErrorMessage = "Invalid phone for Brazilian format.")]
     public string Phone { get; set; }
 
-    [Required(ErrorMessage = "CPF é obrigatório.")]
-    [CPF(ErrorMessage = "CPF inválido.")]
+    [Required(ErrorMessage = "CPF is required.")]
+    [CPF(ErrorMessage = "Invalid CPF.")]
     public string Cpf { get; set; }
 }
