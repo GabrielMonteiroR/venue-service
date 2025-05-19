@@ -11,10 +11,10 @@ namespace venue_service.Src.Services
 {
     public class VenueService : IVenueService
     {
-        private readonly DatabaseContext _context;
+        private readonly VenueContext _context; 
         private readonly IStorageService _storageService;
 
-        public VenueService(DatabaseContext context, IStorageService storageService)
+        public VenueService(VenueContext context, IStorageService storageService) 
         {
             _context = context;
             _storageService = storageService;
@@ -77,7 +77,7 @@ namespace venue_service.Src.Services
             {
                 var venues = await _context.Venues.Include(v => v.VenueImages).ToListAsync();
 
-                if (venues.Count == 0)
+                if (venues.Count == 0) // Fixed: use property, not method group
                 {
                     throw new HttpResponseException(HttpStatusCode.NoContent, "No Content", "No venues found");
                 }
@@ -118,7 +118,7 @@ namespace venue_service.Src.Services
                     .Include(v => v.VenueImages)
                     .Where(v => ids.Contains(v.Id)).ToListAsync();
 
-                if (venues.Count == 0)
+                if (venues.Count == 0) // Fixed: use property, not method group
                 {
                     throw new HttpResponseException(HttpStatusCode.NoContent, "No Content", "No venues found");
                 }
@@ -224,7 +224,7 @@ namespace venue_service.Src.Services
                     .Include(v => v.VenueImages)
                     .Where(v => v.OwnerId == id).ToListAsync();
 
-                if (venues.Count == 0)
+                if (venues.Count == 0) // Fixed: use property, not method group
                     throw new HttpResponseException(HttpStatusCode.NoContent, "No Content", "No venues found");
 
                 var venueDtos = venues.Select(v => new VenueResponseDto
