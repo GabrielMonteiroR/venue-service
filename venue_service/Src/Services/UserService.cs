@@ -7,18 +7,18 @@ namespace venue_service.Src.Services
 {
     public class UserService
     {
-        private readonly DatabaseContext _context;
+        private readonly UserContext _userContext;
 
-        public UserService(DatabaseContext context)
+        public UserService(UserContext context)
         {
-            _context = context;
+            _userContext = context;
         }
 
         public async Task<UserResponseDto> GetUserInfoByIdAsync(int id)
         {
             try
             {
-                var user = await _context.Users.FindAsync(id);
+                var user = await _userContext.Users.FindAsync(id);
                 if (user is null) throw new HttpResponseException(HttpStatusCode.NotFound, "User not found", $"User with id {id} not found.");
 
                 return new UserResponseDto
@@ -43,7 +43,7 @@ namespace venue_service.Src.Services
         {
             try
             {
-                var user = await _context.Users.FindAsync(id);
+                var user = await _userContext.Users.FindAsync(id);
                 if (user is null) throw new HttpResponseException(HttpStatusCode.NotFound, "User not found", $"User with id {id} not found.");
                 user.FirstName = userDto.FirstName;
                 user.LastName = userDto.LastName;
@@ -52,8 +52,8 @@ namespace venue_service.Src.Services
                 user.IsBanned = userDto.IsBanned;
                 user.UpdatedAt = DateTime.UtcNow;
 
-                _context.Users.Update(user);
-                await _context.SaveChangesAsync();
+                _userContext.Users.Update(user);
+                await _userContext.SaveChangesAsync();
 
                 return new UserResponseDto
                 {
@@ -76,12 +76,12 @@ namespace venue_service.Src.Services
         {
             try
             {
-                var user = await _context.Users.FindAsync(userId);
+                var user = await _userContext.Users.FindAsync(userId);
                 if (user is null) throw new HttpResponseException(HttpStatusCode.NotFound, "User not found", $"User with id {userId} not found.");
 
                 user.ProfileImageUrl = dto.ImageUrl;
 
-                await _context.SaveChangesAsync();
+                await _userContext.SaveChangesAsync();
 
                 var response = new UpdateUserProfileImageResponseDto
                 {
