@@ -13,14 +13,14 @@ namespace venue_service.Src.Services;
 
 public class AuthService
 {
-    private readonly DatabaseContext _context;
+    private readonly UserContext _userContext;
     private readonly IConfiguration _configuration;
     private readonly PasswordHasher<User> _passwordHasher;
     private readonly IStorageService _storageService;
 
-    public AuthService(DatabaseContext context, IConfiguration configuration, IStorageService storageService)
+    public AuthService(UserContext context, IConfiguration configuration, IStorageService storageService)
     {
-        _context = context;
+        _userContext = context;
         _configuration = configuration;
         _storageService = storageService;
         _passwordHasher = new PasswordHasher<User>();
@@ -28,7 +28,7 @@ public class AuthService
 
     public async Task<AuthResponseDto> RegisterOwnerAsync(RegisterRequestDto dto)
     {
-        if (_context.Users.Any(u => u.Email == dto.Email))
+        if (_userContext.Users.Any(u => u.Email == dto.Email))
             throw new Exception("Email already in use!");
 
         string? imageUrl = null;
@@ -52,8 +52,8 @@ public class AuthService
 
         user.Password = _passwordHasher.HashPassword(user, dto.Password);
 
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+        _userContext.Users.Add(user);
+        await _userContext.SaveChangesAsync();
 
         return new AuthResponseDto
         {
@@ -66,7 +66,7 @@ public class AuthService
 
     public async Task<AuthResponseDto> RegisterAthleteAsync(RegisterRequestDto dto)
     {
-        if (_context.Users.Any(u => u.Email == dto.Email))
+        if (_userContext.Users.Any(u => u.Email == dto.Email))
             throw new Exception("Email already in use!");
 
         string? imageUrl = null;
@@ -90,8 +90,8 @@ public class AuthService
 
         user.Password = _passwordHasher.HashPassword(user, dto.Password);
 
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+        _userContext.Users.Add(user);
+        await _userContext.SaveChangesAsync();
 
         return new AuthResponseDto
         {
@@ -103,7 +103,7 @@ public class AuthService
 
     public AuthResponseDto Login(LoginRequestDto dto)
     {
-        var user = _context.Users
+        var user = _userContext.Users
             .Include(u => u.Role) 
             .FirstOrDefault(u => u.Email == dto.Email)
             ?? throw new Exception("Invalid user or password.");
