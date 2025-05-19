@@ -27,12 +27,12 @@ namespace venue_service.Src.Services
             {
                 var newAvailability = new VenueAvailabilityTime
                 {
-                    StartDate = dto.StartDate,
-                    EndDate = dto.EndDate,
                     VenueId = dto.VenueId,
+                    StartDate = DateTime.SpecifyKind(dto.StartDate, DateTimeKind.Utc),
+                    EndDate = DateTime.SpecifyKind(dto.EndDate, DateTimeKind.Utc),
                     Price = dto.Price,
-                    IsReserved = false,
-                    TimeStatus = "NULL" 
+                    TimeStatus = "TimeStatusEnum.Disponivel",
+                    IsReserved = false
                 };
 
                 _context.VenueAvailabilities.Add(newAvailability);
@@ -104,26 +104,25 @@ namespace venue_service.Src.Services
         {
             try
             {
-                var OldAvaliableTime = await _context.VenueAvailabilities.FindAsync(id);
-                if (OldAvaliableTime is null)
-                {
+                var existing = await _context.VenueAvailabilities.FindAsync(id);
+                if (existing is null)
                     throw new HttpResponseException(HttpStatusCode.NotFound, "Not found", $"No availability found with ID {id}");
-                };
-                
 
-                OldAvaliableTime.StartDate = newTimeDto.StartDate;
-                OldAvaliableTime.EndDate = newTimeDto.EndDate;
-                OldAvaliableTime.Price = newTimeDto.Price;
+                existing.StartDate = DateTime.SpecifyKind(newTimeDto.StartDate, DateTimeKind.Utc);
+                existing.EndDate = DateTime.SpecifyKind(newTimeDto.EndDate, DateTimeKind.Utc);
+                existing.Price = newTimeDto.Price;
+
+                await _context.SaveChangesAsync();
 
                 return new VenueAvailabilityTime
                 {
-                    Id = OldAvaliableTime.Id,
-                    StartDate = OldAvaliableTime.StartDate,
-                    EndDate = OldAvaliableTime.EndDate,
-                    VenueId = OldAvaliableTime.VenueId,
-                    Price = OldAvaliableTime.Price,
-                   TimeStatus = OldAvaliableTime.TimeStatus,
-                   IsReserved = OldAvaliableTime.IsReserved
+                    Id = existing.Id,
+                    StartDate = existing.StartDate,
+                    EndDate = existing.EndDate,
+                    VenueId = existing.VenueId,
+                    Price = existing.Price,
+                    TimeStatus = existing.TimeStatus,
+                    IsReserved = existing.IsReserved
                 };
             }
             catch (Exception ex)
@@ -134,7 +133,7 @@ namespace venue_service.Src.Services
                     ex.InnerException?.Message ?? ex.Message
                 );
             }
-
         }
+
     }
 }
