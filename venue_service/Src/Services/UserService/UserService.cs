@@ -3,7 +3,7 @@ using venue_service.Src.Contexts;
 using venue_service.Src.Dtos.User;
 using venue_service.Src.Exceptions;
 
-namespace venue_service.Src.Services.User
+namespace venue_service.Src.Services.UserService
 {
     public class UserService
     {
@@ -30,7 +30,7 @@ namespace venue_service.Src.Services.User
                     ProfileImage = user.ProfileImageUrl,
                     Phone = user.Phone,
                     RoleId = user.RoleId,
-                    IsBanned = user.IsBanned
+                    
                 };
             }
             catch (Exception ex)

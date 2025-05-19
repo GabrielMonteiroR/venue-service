@@ -11,7 +11,7 @@ using Microsoft.Extensions.Configuration;
 using venue_service.Src.Services.Atuh;
 using venue_service.Src.Services.Reservation;
 using venue_service.Src.Services.Venue;
-using venue_service.Src.Services.User;
+using venue_service.Src.Services.UserService;
 using venue_service.Src.Iterfaces.ImageStorage;
 using venue_service.Src.Iterfaces.Reservation;
 using venue_service.Src.Iterfaces.Venue;

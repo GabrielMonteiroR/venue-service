@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using venue_service.Src.Contexts;
 using venue_service.Src.Dtos.Auth;
-using venue_service.Src.Enums;
 using venue_service.Src.Iterfaces.ImageStorage;
 using venue_service.Src.Models.User;
+using venue_service.Src.Services.User;
 
-namespace venue_service.Src.Services.Atuh;
+namespace venue_service.Src.Services.Auth;
 
 public class AuthService
 {
@@ -24,7 +24,7 @@ public class AuthService
         _userContext = context;
         _configuration = configuration;
         _storageService = storageService;
-        _passwordHasher = new PasswordHasher<User>();
+        _passwordHasher = new PasswordHasher<UserService>();
     }
 
     public async Task<AuthResponseDto> RegisterOwnerAsync(RegisterOwnerRequestDto dto)
@@ -100,7 +100,7 @@ public class AuthService
         };
     }
 
-    public AuthResponseDto Login(LoginRequestDto dto)
+    public async Task<AuthResponseDto> Login(LoginRequestDto dto)
     {
         var user = _userContext.User
             .Include(u => u.Role) 

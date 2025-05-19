@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using venue_service.Src.Dtos.User;
 using venue_service.Src.Iterfaces.ImageStorage;
-using venue_service.Src.Services.User;
+using venue_service.Src.Services.UserService;
 
 namespace venue_service.Src.Controllers.User
 {
