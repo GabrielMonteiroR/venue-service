@@ -39,7 +39,8 @@ builder.Services.AddDbContext<VenueContext>(options =>
 builder.Services.AddDbContext<UserContext>(options =>
     options.UseNpgsql(connectionString));
 
-
+builder.Services.AddDbContext<ReservationContext>(options =>
+    options.UseNpgsql(connectionString));
 
 
 
