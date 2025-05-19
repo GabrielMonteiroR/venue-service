@@ -11,16 +11,6 @@ namespace venue_service.Src.Models
         [Column("id")]
         public int Id { get; set; }
 
-        [Required]
-        [MaxLength(100)]
-        [Column("equipament_name")]
-        public string EquipamentName { get; set; }
-
-        [ForeignKey("EquipamentBrandId")]
-        [Column("equipament_brand_id")]
-        public int EquipamentBrandId { get; set; }
-        public EquipamentBrand EquipamentBrand { get; set; }
-
         [ForeignKey("EquipamentTypeId")]
         [Column("equipament_type_id")]
         public int EquipamentTypeId { get; set; }
