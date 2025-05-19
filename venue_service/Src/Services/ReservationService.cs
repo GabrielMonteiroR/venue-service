@@ -11,19 +11,21 @@ namespace Src.Services;
 
 public class ReservationService : IReservationService
 {
-    private readonly DatabaseContext _context;
+    private readonly ReservationContext _reservationContext;
+    private readonly UserContext _userContext;
+    private readonly VenueContext _venueContext;
 
-    public ReservationService(DatabaseContext context)
+    public ReservationService(ReservationContext context)
     {
-        _context = context;
+        _reservationContext = context;
     }
 
     public async Task<ReservationResponseDto> CreateReservationAsync(CreateReservationDto dto, int userId)
     {
-        var userExists = await _context.Users.AnyAsync(u => u.Id == userId);
-        var venueExists = await _context.Venues.AnyAsync(v => v.Id == dto.VenueId);
-        var availabilityExists = await _context.VenueAvailabilities.AnyAsync(lat => lat.Id == dto.VenueAvailabilityTimeId);
-        var paymentMethodExists = await _context.PaymentMethods.AnyAsync(pm => pm.Id == dto.PaymentMethodId);
+        var userExists = await _userContext.Users.AnyAsync(u => u.Id == userId);
+        var venueExists = await _venueContext.Venues.AnyAsync(v => v.Id == dto.VenueId);
+        var availabilityExists = await _venueContext.VenueAvailabilities.AnyAsync(lat => lat.Id == dto.VenueAvailabilityTimeId);
+        var paymentMethodExists = await _reservationContext.PaymentMethods.AnyAsync(pm => pm.Id == dto.PaymentMethodId);
 
         if (!userExists) throw new HttpResponseException(HttpStatusCode.BadRequest, "Validation Error", "User does not exist");
         if (!venueExists) throw new HttpResponseException(HttpStatusCode.BadRequest, "Validation Error", "Venue does not exist");
@@ -41,8 +43,8 @@ public class ReservationService : IReservationService
             UpdatedAt = DateTime.UtcNow
         };
 
-        _context.Reservations.Add(reservation);
-        await _context.SaveChangesAsync();
+        _reservationContext.Reservations.Add(reservation);
+        await _reservationContext.SaveChangesAsync();
 
         return new ReservationResponseDto
         {
@@ -58,7 +60,7 @@ public class ReservationService : IReservationService
     {
         try
         {
-            var reservations = await _context.Reservations
+            var reservations = await _reservationContext.Reservations
                                               .Where(r => r.UserId == userId)
                                               .ToListAsync();
 
@@ -87,42 +89,4 @@ public class ReservationService : IReservationService
 
     }
 
-//    public async Task<ReservationResponseDto> UpdateReservationAsync(int id, UpdateReservationDto dto)
-//{
-//    var reservation = await _context.Reservations
-//                                    .Include(r => r.User)
-//                                    .Include(r => r.Venue)
-//                                    .FirstOrDefaultAsync(r => r.Id == id);
-
-//    if (reservation == null)
-//    {
-//        throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Reservation not found");
-//    }
-
-//    reservation.Status = dto.Status;
-//    reservation.VenueId = dto.VenueId;
-//    reservation.VenueAvailabilityTimeId = dto.VenueAvailabilityTimeId;
-//    reservation.PaymentMethodId = dto.PaymentMethodId;
-//    reservation.UpdatedAt = DateTime.UtcNow;
-
-//    _context.Reservations.Update(reservation);
-//    await _context.SaveChangesAsync();
-
-//    return _mapper.Map<ReservationResponseDto>(reservation);
-//}
-
-//public async Task<bool> DeleteReservationAsync(int id)
-//{
-//    var reservation = await _context.Reservations.FindAsync(id);
-
-//    if (reservation == null)
-//    {
-//        throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Reservation not found");
-//    }
-
-//    _context.Reservations.Remove(reservation);
-//    await _context.SaveChangesAsync();
-
-//    return true;
-//}
 }
