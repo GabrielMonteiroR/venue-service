@@ -13,6 +13,7 @@ public class EquipamentContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Ignore<Venue_Sport>();
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<EquipamentType>().ToTable("equipament_types");

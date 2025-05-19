@@ -1,4 +1,4 @@
-﻿using venue_service.Src.Dtos;
+﻿using venue_service.Src.Dtos.Venue;
 using venue_service.Src.Models;
 
 namespace venue_service.Src.Services

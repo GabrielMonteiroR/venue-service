@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using venue_service.Src.Contexts;
-using venue_service.Src.Dtos;
+using venue_service.Src.Dtos.Venue;
 using venue_service.Src.Exceptions;
 
 namespace venue_service.Src.Services

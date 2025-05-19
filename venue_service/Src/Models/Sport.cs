@@ -15,6 +15,5 @@ namespace venue_service.Src.Models
         [Column("name")]
         public string Name { get; set; }
 
-        public ICollection<Venue_Sport> VenueSports { get; set; }
     }
 }

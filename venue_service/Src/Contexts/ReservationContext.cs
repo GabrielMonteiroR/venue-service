@@ -13,6 +13,7 @@ public class ReservationContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Ignore<Venue_Sport>();
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<Reservation>().ToTable("reservations");
