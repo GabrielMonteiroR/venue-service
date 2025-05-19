@@ -7,18 +7,18 @@ namespace venue_service.Src.Services
 {
     public class VenueTypeService : IVenueType
     {
-        private readonly DatabaseContext _context;
+        private readonly VenueContext _venueContext;
 
-        public VenueTypeService(DatabaseContext context)
+        public VenueTypeService(VenueContext context)
         {
-            _context = context;
+            _venueContext = context;
         }
 
         public async Task<VenueTypesResponseDto> GetAllVenueTypes()
         {
             try
             {
-                var venueTypes = await _context.VenueType.ToListAsync();
+                var venueTypes = await _venueContext.VenueTypes.ToListAsync();
 
                 if (venueTypes is null || !venueTypes.Any())
                 {
