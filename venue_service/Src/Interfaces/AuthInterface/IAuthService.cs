@@ -6,5 +6,5 @@ public interface IAuthService
 {
     Task<AuthResponseDto> RegisterOwnerAsync(RegisterOwnerRequestDto dto);
     Task<AuthResponseDto> RegisterAthleteAsync(RegisterUserRequestDto dto);
-    AuthResponseDto Login(LoginRequestDto dto);
+    Task<AuthResponseDto> Login(LoginRequestDto dto);
 }
