@@ -121,9 +121,6 @@ public class AuthService
             Email = user.Email,
             Phone = user.Phone,
             RoleId = user.RoleId,
-            RoleName = user.Role?.Name ?? "Unknown",
-
-            IsBanned = user.IsBanned,
             CreatedAt = user.CreatedAt,
             UpdatedAt = user.UpdatedAt
         };
