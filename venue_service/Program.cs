@@ -42,7 +42,8 @@ builder.Services.AddDbContext<UserContext>(options =>
 builder.Services.AddDbContext<ReservationContext>(options =>
     options.UseNpgsql(connectionString));
 
-
+builder.Services.AddDbContext<EquipamentContext>(options =>
+    options.UseNpgsql(connectionString));
 
 // Controllers
 builder.Services.AddControllers();
