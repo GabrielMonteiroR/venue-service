@@ -18,7 +18,7 @@ namespace venue_service.Src.Services
         {
             try
             {
-                var user = await _userContext.Users.FindAsync(id);
+                var user = await _userContext.User.FindAsync(id);
                 if (user is null) throw new HttpResponseException(HttpStatusCode.NotFound, "User not found", $"User with id {id} not found.");
 
                 return new UserResponseDto
@@ -43,7 +43,7 @@ namespace venue_service.Src.Services
         {
             try
             {
-                var user = await _userContext.Users.FindAsync(id);
+                var user = await _userContext.User.FindAsync(id);
                 if (user is null) throw new HttpResponseException(HttpStatusCode.NotFound, "User not found", $"User with id {id} not found.");
                 user.FirstName = userDto.FirstName;
                 user.LastName = userDto.LastName;
@@ -52,7 +52,7 @@ namespace venue_service.Src.Services
                 user.IsBanned = userDto.IsBanned;
                 user.UpdatedAt = DateTime.UtcNow;
 
-                _userContext.Users.Update(user);
+                _userContext.User.Update(user);
                 await _userContext.SaveChangesAsync();
 
                 return new UserResponseDto
@@ -76,7 +76,7 @@ namespace venue_service.Src.Services
         {
             try
             {
-                var user = await _userContext.Users.FindAsync(userId);
+                var user = await _userContext.User.FindAsync(userId);
                 if (user is null) throw new HttpResponseException(HttpStatusCode.NotFound, "User not found", $"User with id {userId} not found.");
 
                 user.ProfileImageUrl = dto.ImageUrl;

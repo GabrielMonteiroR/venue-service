@@ -8,8 +8,8 @@ public class UserContext : DbContext
 {
     public UserContext(DbContextOptions<UserContext> options) : base(options) { }
 
-    public DbSet<User> Users => Set<User>();
-    public DbSet<Role> Roles => Set<Role>();
+    public DbSet<User> User => Set<User>();
+    public DbSet<Role> Role => Set<Role>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

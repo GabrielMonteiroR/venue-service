@@ -11,12 +11,13 @@ namespace venue_service.Src.Services
 {
     public class VenueService : IVenueService
     {
-        private readonly VenueContext _context; 
+        private readonly VenueContext _venueContext;
+        private readonly UserContext _userContext;
         private readonly IStorageService _storageService;
 
         public VenueService(VenueContext context, IStorageService storageService) 
         {
-            _context = context;
+            _venueContext = context;
             _storageService = storageService;
         }
 
@@ -45,8 +46,8 @@ namespace venue_service.Src.Services
                     Venue = venue
                 }).ToList();
 
-                _context.Venues.Add(venue);
-                await _context.SaveChangesAsync();
+                _venueContext.Venues.Add(venue);
+                await _venueContext.SaveChangesAsync();
 
                 return new VenueResponseDto
                 {
@@ -75,9 +76,9 @@ namespace venue_service.Src.Services
         {
             try
             {
-                var venues = await _context.Venues.Include(v => v.VenueImages).ToListAsync();
+                var venues = await _venueContext.Venues.Include(v => v.VenueImages).ToListAsync();
 
-                if (venues.Count == 0) // Fixed: use property, not method group
+                if (venues.Count == 0) 
                 {
                     throw new HttpResponseException(HttpStatusCode.NoContent, "No Content", "No venues found");
                 }
@@ -114,7 +115,7 @@ namespace venue_service.Src.Services
         {
             try
             {
-                var venues = await _context.Venues
+                var venues = await _venueContext.Venues
                     .Include(v => v.VenueImages)
                     .Where(v => ids.Contains(v.Id)).ToListAsync();
 
@@ -133,9 +134,9 @@ namespace venue_service.Src.Services
                     }
                 }
 
-                _context.VenueImages.RemoveRange(venues.SelectMany(v => v.VenueImages));
-                _context.Venues.RemoveRange(venues);
-                await _context.SaveChangesAsync();
+                _venueContext.VenueImages.RemoveRange(venues.SelectMany(v => v.VenueImages));
+                _venueContext.Venues.RemoveRange(venues);
+                await _venueContext.SaveChangesAsync();
 
                 return new VenuesResponseDto
                 {
@@ -167,7 +168,7 @@ namespace venue_service.Src.Services
         {
             try
             {
-                var venue = await _context.Venues.FindAsync(id);
+                var venue = await _venueContext.Venues.FindAsync(id);
 
                 if (venue is null)
                     throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Venue not found", "The specified venue could not be located.");
@@ -182,9 +183,9 @@ namespace venue_service.Src.Services
                 venue.VenueTypeId = dto.VenueTypeId;
                 venue.Rules = dto.Rules;
 
-                await _context.SaveChangesAsync();
+                await _venueContext.SaveChangesAsync();
 
-                var imageUrls = await _context.VenueImages
+                var imageUrls = await _venueContext.VenueImages
                     .Where(img => img.VenueId == venue.Id)
                     .Select(img => img.ImageUrl)
                     .ToListAsync();
@@ -216,11 +217,11 @@ namespace venue_service.Src.Services
         {
             try
             {
-                var owner = await _context.Users.FirstOrDefaultAsync(o => o.Id == id);
+                var owner = await _userContext.User.FirstOrDefaultAsync(o => o.Id == id);
                 if (owner is null)
                     throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Owner not found");
 
-                var venues = await _context.Venues
+                var venues = await _venueContext.Venues
                     .Include(v => v.VenueImages)
                     .Where(v => v.OwnerId == id).ToListAsync();
 
@@ -260,7 +261,7 @@ namespace venue_service.Src.Services
         {
             try
             {
-                var venue = await _context.Venues
+                var venue = await _venueContext.Venues
                     .Include(v => v.VenueImages)
                     .FirstOrDefaultAsync(v => v.Id == dto.VenueId);
 
@@ -279,7 +280,7 @@ namespace venue_service.Src.Services
                     venue.VenueImages.Add(image);
                 }
 
-                await _context.SaveChangesAsync();
+                await _venueContext.SaveChangesAsync();
 
                 return new UpdateVenueImageResponseDto
                 {
@@ -296,7 +297,7 @@ namespace venue_service.Src.Services
 
         public async Task DeleteVenueImageAsync(int venueId, string imageUrl)
         {
-            var venue = await _context.Venues
+            var venue = await _venueContext.Venues
                 .Include(v => v.VenueImages)
                 .FirstOrDefaultAsync(v => v.Id == venueId);
 
@@ -311,8 +312,8 @@ namespace venue_service.Src.Services
             if (parsed != null)
                 await _storageService.DeleteFileAsync(parsed.Value.Bucket, parsed.Value.Path);
 
-            _context.VenueImages.Remove(image);
-            await _context.SaveChangesAsync();
+            _venueContext.VenueImages.Remove(image);
+            await _venueContext.SaveChangesAsync();
         }
 
     }
