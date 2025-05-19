@@ -104,9 +104,13 @@ var app = builder.Build();
 // Migrações do banco
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
-    db.Database.Migrate();
+    scope.ServiceProvider.GetRequiredService<VenueContext>().Database.Migrate();
+    scope.ServiceProvider.GetRequiredService<UserContext>().Database.Migrate();
+    scope.ServiceProvider.GetRequiredService<ReservationContext>().Database.Migrate();
+    scope.ServiceProvider.GetRequiredService<EquipamentContext>().Database.Migrate();
+    scope.ServiceProvider.GetRequiredService<SportContext>().Database.Migrate();
 }
+
 
 // Middleware de erro global
 app.UseMiddleware<ErrorHandlingMiddleware>();
