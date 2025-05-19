@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using venue_service.Src.Dtos.Auth;
-using venue_service.Src.Services;
+using venue_service.Src.Services.Atuh;
 
 namespace venue_service.Src.Controllers.Authentication;
 

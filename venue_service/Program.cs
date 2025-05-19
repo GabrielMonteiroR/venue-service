@@ -4,13 +4,17 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using venue_service.Src.Contexts;
 using venue_service.Src.Middlewares;
-using venue_service.Src.Services;
 using venue_service.Src.Config;
-using venue_service.Src.Services.ImageService;
 using venue_service.Src.Services.ImageStorageService;
 using Microsoft.Extensions.Options;
-using Src.Services;
 using Microsoft.Extensions.Configuration;
+using venue_service.Src.Services.Atuh;
+using venue_service.Src.Services.Reservation;
+using venue_service.Src.Services.Venue;
+using venue_service.Src.Services.User;
+using venue_service.Src.Iterfaces.ImageStorage;
+using venue_service.Src.Iterfaces.Reservation;
+using venue_service.Src.Iterfaces.Venue;
 
 var builder = WebApplication.CreateBuilder(args);
 

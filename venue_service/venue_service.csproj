@@ -27,9 +27,7 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
-    <Folder Include="Src\Models\Sport\" />
-    <Folder Include="Src\Models\User\" />
-    <Folder Include="Src\Models\Venue\" />
+    <Folder Include="Src\Iterfaces\Auth\" />
   </ItemGroup>
 
   <ItemGroup>

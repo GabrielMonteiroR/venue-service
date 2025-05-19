@@ -1,6 +1,6 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
-using venue_service.Src.Models;
+using venue_service.Src.Models.Venue;
 
 namespace venue_service.Src.Contexts;
 

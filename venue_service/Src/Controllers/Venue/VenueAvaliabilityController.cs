@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using NpgsqlTypes;
 using venue_service.Src.Dtos.Venue;
-using venue_service.Src.Services;
+using venue_service.Src.Iterfaces.Venue;
 
 namespace venue_service.Src.Controllers.Venue
 {

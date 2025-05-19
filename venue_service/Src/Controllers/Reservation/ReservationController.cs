@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using venue_service.Src.Dtos.Reservation;
-using venue_service.Src.Services;
+using venue_service.Src.Iterfaces.Reservation;
 
 namespace venue_service.Src.Controllers.Reservation
 {
