@@ -22,6 +22,15 @@ public class User
     public string LastName { get; set; }
 
     [Required]
+    [MaxLength(14)]
+    [Column("cpf")]
+    public string Cpf { get; set; }
+
+    [MaxLength(14)]
+    [Column("cnpj")]
+    public string? Cnpj { get; set; }
+
+    [Required]
     [MaxLength(150)]
     [Column("email")]
     public string Email { get; set; }
@@ -40,9 +49,6 @@ public class User
     public Role Role { get; set; }
     [Column("role_id")]
     public int RoleId { get; set; }
-
-    [Column("is_banned")]
-    public bool IsBanned { get; set; }
 
     [Column("created_at")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
