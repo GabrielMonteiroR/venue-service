@@ -26,7 +26,7 @@ public class AuthService
         _passwordHasher = new PasswordHasher<User>();
     }
 
-    public async Task<AuthResponseDto> RegisterOwnerAsync(RegisterRequestDto dto)
+    public async Task<AuthResponseDto> RegisterOwnerAsync(RegisterOwnerRequestDto dto)
     {
         if (_userContext.User.Any(u => u.Email == dto.Email))
             throw new Exception("Email already in use!");
@@ -64,7 +64,7 @@ public class AuthService
     }
 
 
-    public async Task<AuthResponseDto> RegisterAthleteAsync(RegisterRequestDto dto)
+    public async Task<AuthResponseDto> RegisterAthleteAsync(RegisterUserRequestDto dto)
     {
         if (_userContext.User.Any(u => u.Email == dto.Email))
             throw new Exception("Email already in use!");

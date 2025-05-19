@@ -11,11 +11,6 @@ namespace venue_service.Src.Models
         [Column("id")]
         public int Id { get; set; }
 
-        [ForeignKey("EquipamentTypeId")]
-        [Column("equipament_type_id")]
-        public int EquipamentTypeId { get; set; }
-        public EquipamentType EquipamentType { get; set; }
-
         [Column("quantity")]
         public int Quantity { get; set; }
 

@@ -49,7 +49,6 @@ namespace venue_service.Src.Services
                 user.LastName = userDto.LastName;
                 user.Email = userDto.Email;
                 user.Phone = userDto.Phone;
-                user.IsBanned = userDto.IsBanned;
                 user.UpdatedAt = DateTime.UtcNow;
 
                 _userContext.User.Update(user);
