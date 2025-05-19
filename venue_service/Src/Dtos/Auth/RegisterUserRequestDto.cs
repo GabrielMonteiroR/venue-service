@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using DocsBRValidator.Attributes;
+using venue_service.Src.Attributes;
 
 namespace venue_service.Src.Dtos.Auth;
 
