@@ -45,16 +45,11 @@ builder.Services.AddDbContext<ReservationContext>(options =>
 builder.Services.AddDbContext<EquipamentContext>(options =>
     options.UseNpgsql(connectionString));
 
+builder.Services.AddDbContext<SportContext>(options =>
+    options.UseNpgsql(connectionString));
+
 // Controllers
 builder.Services.AddControllers();
-
-// Removido Swagger
-// builder.Services.AddEndpointsApiExplorer();
-// builder.Services.AddSwaggerGen(c =>
-// {
-//     c.SwaggerDoc("v1", new() { Title = "Venue Service API", Version = "v1" });
-//     c.CustomSchemaIds(type => type.FullName);
-// });
 
 // JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
