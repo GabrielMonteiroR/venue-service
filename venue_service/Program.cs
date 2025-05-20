@@ -24,6 +24,8 @@ builder.Configuration
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
     .AddEnvironmentVariables();
 
+var accessToken = builder.Configuration["MercadoPago:AccessToken"];
+
 // Ambiente e Connection String
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 var supabaseUrl = builder.Configuration["Supabase:Url"];
@@ -33,8 +35,6 @@ Console.WriteLine($"🧪 ENVIRONMENT: {builder.Environment.EnvironmentName}");
 Console.WriteLine($"📦 Connection string lida: {connectionString}");
 Console.WriteLine($"🔗 Supabase URL: {supabaseUrl}");
 Console.WriteLine($"🔑 Supabase API Key: {(string.IsNullOrEmpty(supabaseApiKey) ? "NÃO CONFIGURADA" : "***")}");
-
-
 
 // Contexto do banco de dados
 builder.Services.AddDbContext<VenueContext>(options =>
