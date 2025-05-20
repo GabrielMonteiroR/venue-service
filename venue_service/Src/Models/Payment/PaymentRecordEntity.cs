@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using venue_service.Src.Models.Reservation;
 
 namespace venue_service.Src.Models.Payment
 {

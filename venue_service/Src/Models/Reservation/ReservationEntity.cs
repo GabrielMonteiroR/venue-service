@@ -25,12 +25,12 @@ public class ReservationEntity
     [Column("venue_availability_time_id")]
     public int VenueAvailabilityTimeId { get; set; }
 
-    [ForeignKey("PaymentId")]
-    [Column("payment_id")]
-    public int PaymentId { get; set; }
+    [ForeignKey("PaymentMethodId")]
+    [Column("payment_method_id")]
+    public int PaymentMethodId { get; set; }
     public PaymentMethodEntity PaymentMethod { get; set; }
 
-    public PaymentRecordEntity PaymentRecord { get; set; }
+    public PaymentRecordEntity? PaymentRecord { get; set; }
 
     [Required]
     [MaxLength(50)]
