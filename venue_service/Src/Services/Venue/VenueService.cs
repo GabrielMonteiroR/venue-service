@@ -7,6 +7,7 @@ using venue_service.Src.Exceptions;
 using venue_service.Src.Iterfaces.ImageStorage;
 using venue_service.Src.Iterfaces.Venue;
 using venue_service.Src.Models;
+using venue_service.Src.Models.Venue;
 
 namespace venue_service.Src.Services.Venue
 {
@@ -26,7 +27,7 @@ namespace venue_service.Src.Services.Venue
         {
             try
             {
-                var venue = new Venue
+                var venue = new VenueEntity
                 {
                     Name = dto.Name,
                     Address = dto.Address,
@@ -40,7 +41,7 @@ namespace venue_service.Src.Services.Venue
                     OwnerId = dto.OwnerId
                 };
 
-                venue.VenueImages = dto.ImageUrls.Select(url => new VenueImage
+                venue.VenueImages = dto.ImageUrls.Select(url => new VenueImageEntity
                 {
                     ImageUrl = url,
                     FileName = Path.GetFileName(new Uri(url).LocalPath),
@@ -269,7 +270,7 @@ namespace venue_service.Src.Services.Venue
                 if (venue == null)
                     throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Venue not found");
 
-                var newImages = dto.ImageUrls.Select(url => new VenueImage
+                var newImages = dto.ImageUrls.Select(url => new VenueImageEntity
                 {
                     VenueId = dto.VenueId,
                     ImageUrl = url,

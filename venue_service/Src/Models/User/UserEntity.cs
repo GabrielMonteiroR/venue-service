@@ -1,6 +1,7 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using venue_service.Src.Models.User.User;
 
 namespace venue_service.Src.Models.User;
 
@@ -46,7 +47,7 @@ public class UserEntity
     public string Phone { get; set; }
 
     [ForeignKey("RoleId")]
-    public Role Role { get; set; }
+    public RoleEntity Role { get; set; }
     [Column("role_id")]
     public int RoleId { get; set; }
 
