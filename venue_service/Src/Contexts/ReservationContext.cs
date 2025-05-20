@@ -11,7 +11,7 @@ public class ReservationContext : DbContext
     public ReservationContext(DbContextOptions<ReservationContext> options) : base(options) { }
 
     public DbSet<ReservationEntity> Reservations => Set<ReservationEntity>();
-    public DbSet<PaymentMethodEntity> PaymentMethods => Set<PaymentMethodEntity>();
+    public DbSet<PaymentEntity> PaymentMethods => Set<PaymentEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -19,7 +19,7 @@ public class ReservationContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<ReservationEntity>().ToTable("reservations");
-        modelBuilder.Entity<PaymentMethodEntity>().ToTable("payment_methods");
+        modelBuilder.Entity<PaymentEntity>().ToTable("payment_methods");
 
         modelBuilder.Entity<ReservationEntity>()
             .HasOne(r => r.User)
@@ -32,9 +32,9 @@ public class ReservationContext : DbContext
             .HasForeignKey(r => r.VenueId);
 
         modelBuilder.Entity<ReservationEntity>()
-            .HasOne(r => r.PaymentMethod)
+            .HasOne(r => r.Payment)
             .WithMany(pm => pm.Reservations)
-            .HasForeignKey(r => r.PaymentMethodId)
+            .HasForeignKey(r => r.PaymentId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

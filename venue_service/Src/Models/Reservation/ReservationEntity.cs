@@ -33,10 +33,10 @@ namespace venue_service.Src.Models.Reservation
         [Column("venue_availability_time_id")]
         public int VenueAvailabilityTimeId { get; set; }
 
-        [ForeignKey("PaymentMethodId")]
-        [Column("payment_method_id")]
-        public int PaymentMethodId { get; set; }
-        public PaymentMethodEntity PaymentMethod { get; set; }
+        [ForeignKey("PaymentId")]
+        [Column("payment_id")]
+        public int PaymentId { get; set; }
+        public PaymentEntity Payment { get; set; }
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } 

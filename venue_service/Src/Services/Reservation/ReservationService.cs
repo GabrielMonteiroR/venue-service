@@ -38,7 +38,7 @@ public class ReservationService : IReservationService
         reservation.UserId = userId;
         reservation.VenueId = dto.VenueId;
         reservation.VenueAvailabilityTimeId = dto.VenueAvailabilityTimeId;
-        reservation.PaymentMethodId = dto.PaymentMethodId;
+        reservation.PaymentId = dto.PaymentMethodId;
         reservation.Status = (int)ReservationStatusEnum.PENDING;
 
         _reservationContext.Reservations.Add(reservation);
