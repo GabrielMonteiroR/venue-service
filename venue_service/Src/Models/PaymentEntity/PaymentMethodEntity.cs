@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace venue_service.Src.Models.Payment
 {
     [Table("payment_methods")]
-    public class PaymentMethod
+    public class PaymentMethodEntity
     {
         [Key]
         [Column("id")]

@@ -8,12 +8,12 @@ public class SportContext : DbContext
 {
     public SportContext(DbContextOptions<SportContext> options) : base(options) { }
 
-    public DbSet<Sport> Sports => Set<Sport>();
+    public DbSet<SportEntity> Sports => Set<SportEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Sport>().ToTable("sports");
+        modelBuilder.Entity<SportEntity>().ToTable("sports");
     }
 }

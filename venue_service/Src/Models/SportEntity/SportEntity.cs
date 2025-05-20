@@ -1,20 +1,19 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace venue_service.Src.Models.User.User
+namespace venue_service.Src.Models.Sport
 {
-    [Table("roles")]
-    public class Role
+    [Table("sports")]
+    public class SportEntity
     {
         [Key]
         [Column("id")]
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(50)]
+        [MaxLength(100)]
         [Column("name")]
         public string Name { get; set; }
 
-        public ICollection<User> Users { get; set; }
     }
 }

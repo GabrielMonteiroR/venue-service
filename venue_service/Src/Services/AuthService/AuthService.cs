@@ -16,7 +16,7 @@ public class AuthService
 {
     private readonly UserContext _userContext;
     private readonly IConfiguration _configuration;
-    private readonly PasswordHasher<User> _passwordHasher;
+    private readonly PasswordHasher<UserEntity> _passwordHasher;
     private readonly IStorageService _storageService;
 
     public AuthService(UserContext context, IConfiguration configuration, IStorageService storageService)
@@ -38,7 +38,7 @@ public class AuthService
             imageUrl = await _storageService.UploadProfileImageAsync(dto.Image);
         }
 
-        var user = new User
+        var user = new UserEntity
         {
             FirstName = dto.FirstName,
             LastName = dto.LastName,
@@ -75,7 +75,7 @@ public class AuthService
             imageUrl = await _storageService.UploadProfileImageAsync(dto.Image);
         }
 
-        var user = new User
+        var user = new UserEntity
         {
             FirstName = dto.FirstName,
             LastName = dto.LastName,
@@ -126,7 +126,7 @@ public class AuthService
         };
     }
 
-    private string GenerateToken(User user)
+    private string GenerateToken(UserEntity user)
     {
         var claims = new[]
         {

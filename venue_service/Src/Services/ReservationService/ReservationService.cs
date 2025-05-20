@@ -5,7 +5,7 @@ using venue_service.Src.Dtos.Reservation;
 using venue_service.Src.Enums;
 using venue_service.Src.Exceptions;
 using venue_service.Src.Iterfaces.Reservation;
-using venue_service.Src.Models;
+using venue_service.Src.Models.Reservation; 
 
 namespace venue_service.Src.Services.Reservation;
 
@@ -32,16 +32,14 @@ public class ReservationService : IReservationService
         if (!availabilityExists) throw new HttpResponseException(HttpStatusCode.BadRequest, "Validation Error", "Availability not found");
         if (!paymentMethodExists) throw new HttpResponseException(HttpStatusCode.BadRequest, "Validation Error", "Payment Method invalid");
 
-        var reservation = new Reservation
-        {
-            UserId = userId,
-            VenueId = dto.VenueId,
-            VenueAvailabilityTimeId = dto.VenueAvailabilityTimeId,
-            PaymentMethodId = dto.PaymentMethodId,
-            Status = ReservationStatusEnum.PENDING.ToString(),
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        };
+        var reservation = new ReservationEntity();
+        reservation.CreatedAt = DateTime.UtcNow;
+        reservation.UpdatedAt = DateTime.UtcNow;
+        reservation.UserId = userId;
+        reservation.VenueId = dto.VenueId;
+        reservation.VenueAvailabilityTimeId = dto.VenueAvailabilityTimeId;
+        reservation.PaymentMethodId = dto.PaymentMethodId;
+        reservation.Status = (int)ReservationStatusEnum.PENDING;
 
         _reservationContext.Reservations.Add(reservation);
         await _reservationContext.SaveChangesAsync();

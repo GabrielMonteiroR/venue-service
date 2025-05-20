@@ -5,7 +5,7 @@ using venue_service.Src.Models.Payment;
 namespace venue_service.Src.Models.Reservation
 {
     [Table("reservations")]
-    public class Reservation
+    public class ReservationEntity
     {
         [Key]
         [Column("id")]
@@ -25,7 +25,7 @@ namespace venue_service.Src.Models.Reservation
         [Required]
         [MaxLength(50)]
         [Column("status")]
-        public string Status { get; set; }
+        public int Status { get; set; }
 
         [Required]
         [Column("venue_availability_time_id")]
@@ -34,7 +34,7 @@ namespace venue_service.Src.Models.Reservation
         [ForeignKey("PaymentMethodId")]
         [Column("payment_method_id")]
         public int PaymentMethodId { get; set; }
-        public PaymentMethod PaymentMethod { get; set; }
+        public PaymentMethodEntity PaymentMethod { get; set; }
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } 

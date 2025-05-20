@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace venue_service.Src.Models.User;
 
 [Table("users")]
-public class User
+public class UserEntity
 {
     [Key]
     [Column("id")]

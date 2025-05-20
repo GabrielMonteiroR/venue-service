@@ -8,14 +8,14 @@ public class UserContext : DbContext
 {
     public UserContext(DbContextOptions<UserContext> options) : base(options) { }
 
-    public DbSet<User> User => Set<User>();
+    public DbSet<UserEntity> User => Set<UserEntity>();
     public DbSet<Role> Role => Set<Role>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<User>().ToTable("users");
+        modelBuilder.Entity<UserEntity>().ToTable("users");
         modelBuilder.Entity<Role>().ToTable("roles");
 
         modelBuilder.Entity<Role>()

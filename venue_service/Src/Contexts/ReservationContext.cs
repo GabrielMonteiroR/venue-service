@@ -10,28 +10,28 @@ public class ReservationContext : DbContext
 {
     public ReservationContext(DbContextOptions<ReservationContext> options) : base(options) { }
 
-    public DbSet<Reservation> Reservations => Set<Reservation>();
-    public DbSet<PaymentMethod> PaymentMethods => Set<PaymentMethod>();
+    public DbSet<ReservationEntity> Reservations => Set<ReservationEntity>();
+    public DbSet<PaymentMethodEntity> PaymentMethods => Set<PaymentMethodEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Ignore<Venue_Sport>();
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Reservation>().ToTable("reservations");
-        modelBuilder.Entity<PaymentMethod>().ToTable("payment_methods");
+        modelBuilder.Entity<ReservationEntity>().ToTable("reservations");
+        modelBuilder.Entity<PaymentMethodEntity>().ToTable("payment_methods");
 
-        modelBuilder.Entity<Reservation>()
+        modelBuilder.Entity<ReservationEntity>()
             .HasOne(r => r.User)
             .WithMany()
             .HasForeignKey(r => r.UserId);
 
-        modelBuilder.Entity<Reservation>()
+        modelBuilder.Entity<ReservationEntity>()
             .HasOne(r => r.Venue)
             .WithMany()
             .HasForeignKey(r => r.VenueId);
 
-        modelBuilder.Entity<Reservation>()
+        modelBuilder.Entity<ReservationEntity>()
             .HasOne(r => r.PaymentMethod)
             .WithMany(pm => pm.Reservations)
             .HasForeignKey(r => r.PaymentMethodId)
