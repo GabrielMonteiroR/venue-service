@@ -15,6 +15,6 @@ namespace venue_service.Src.Models.User.User
         [Column("name")]
         public string Name { get; set; }
 
-        public ICollection<User> Users { get; set; }
+        public ICollection<UserEntity> Users { get; set; }
     }
 }

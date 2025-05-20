@@ -4,8 +4,7 @@ using venue_service.Src.Contexts;
 using venue_service.Src.Dtos.Reservation;
 using venue_service.Src.Enums;
 using venue_service.Src.Exceptions;
-using venue_service.Src.Iterfaces.Reservation;
-using venue_service.Src.Models.Reservation; 
+using venue_service.Src.Iterfaces.Reservation; 
 
 namespace venue_service.Src.Services.Reservation;
 
@@ -38,7 +37,7 @@ public class ReservationService : IReservationService
         reservation.UserId = userId;
         reservation.VenueId = dto.VenueId;
         reservation.VenueAvailabilityTimeId = dto.VenueAvailabilityTimeId;
-        reservation.PaymentId = dto.PaymentMethodId;
+        reservation.PaymentMethodId = dto.PaymentMethodId;
         reservation.Status = (int)ReservationStatusEnum.PENDING;
 
         _reservationContext.Reservations.Add(reservation);

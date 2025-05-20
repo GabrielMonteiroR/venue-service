@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using venue_service.Src.Dtos.Auth;
-using venue_service.Src.Services.Atuh;
+using venue_service.Src.Services.Auth;
 
 namespace venue_service.Src.Controllers.Authentication;
 
@@ -16,7 +16,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register-athlete")]
-    public async Task<IActionResult> RegisterAthlete([FromBody] RegisterRequestDto dto)
+    public async Task<IActionResult> RegisterAthlete([FromBody] RegisterUserRequestDto dto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -26,7 +26,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register-owner")]
-    public async Task<IActionResult> RegisterOwner([FromBody] RegisterRequestDto dto)
+    public async Task<IActionResult> RegisterOwner([FromBody] RegisterOwnerRequestDto dto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
