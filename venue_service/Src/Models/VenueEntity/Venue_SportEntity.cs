@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using venue_service.Src.Models.Sport;
 
 namespace venue_service.Src.Models.Venue
 {
@@ -13,6 +14,6 @@ namespace venue_service.Src.Models.Venue
         [ForeignKey("SportId")]
         [Column("sport_id")]
         public int SportId { get; set; }
-        public Sport Sport { get; set; }
+        public SportEntity Sport { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using venue_service.Src.Models.Payment;
 using venue_service.Src.Models.User;
+using venue_service.Src.Models.Venue;
 
 namespace venue_service.Src.Models.Reservation
 {

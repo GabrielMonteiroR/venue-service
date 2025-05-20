@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using venue_service.Src.Models.User;
 
 namespace venue_service.Src.Models.Venue
 {
@@ -49,7 +50,7 @@ namespace venue_service.Src.Models.Venue
         [ForeignKey("OwnerId")]
         [Column("owner_id")]
         public int OwnerId { get; set; }
-        public User Owner { get; set; }
+        public UserEntity Owner { get; set; }
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
