@@ -3,7 +3,7 @@ using venue_service.Src.Contexts;
 using venue_service.Src.Dtos.User;
 using venue_service.Src.Exceptions;
 
-namespace venue_service.Src.Services.UserService
+namespace venue_service.Src.Services.User
 {
     public class UserService
     {
@@ -62,7 +62,6 @@ namespace venue_service.Src.Services.UserService
                     Email = user.Email,
                     Phone = user.Phone,
                     RoleId = user.RoleId,
-                    IsBanned = user.IsBanned
                 };
             }
             catch (Exception ex)
