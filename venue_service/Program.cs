@@ -4,12 +4,17 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using venue_service.Src.Contexts;
 using venue_service.Src.Middlewares;
-using venue_service.Src.Services;
 using venue_service.Src.Config;
-using venue_service.Src.Services.ImageService;
 using venue_service.Src.Services.ImageStorageService;
 using Microsoft.Extensions.Options;
-using Src.Services;
+using Microsoft.Extensions.Configuration;
+using venue_service.Src.Services.Atuh;
+using venue_service.Src.Services.Reservation;
+using venue_service.Src.Services.Venue;
+using venue_service.Src.Services.UserService;
+using venue_service.Src.Iterfaces.ImageStorage;
+using venue_service.Src.Iterfaces.Reservation;
+using venue_service.Src.Iterfaces.Venue;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +23,8 @@ builder.Configuration
     .AddJsonFile("appsettings.json", optional: false)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
     .AddEnvironmentVariables();
+
+var accessToken = builder.Configuration["MercadoPago:AccessToken"];
 
 // Ambiente e Connection String
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -29,23 +36,24 @@ Console.WriteLine($"📦 Connection string lida: {connectionString}");
 Console.WriteLine($"🔗 Supabase URL: {supabaseUrl}");
 Console.WriteLine($"🔑 Supabase API Key: {(string.IsNullOrEmpty(supabaseApiKey) ? "NÃO CONFIGURADA" : "***")}");
 
-
-
 // Contexto do banco de dados
-builder.Services.AddDbContext<DatabaseContext>(options =>
-    options.UseNpgsql(connectionString)
-);
+builder.Services.AddDbContext<VenueContext>(options =>
+    options.UseNpgsql(connectionString));
+
+builder.Services.AddDbContext<UserContext>(options =>
+    options.UseNpgsql(connectionString));
+
+builder.Services.AddDbContext<ReservationContext>(options =>
+    options.UseNpgsql(connectionString));
+
+builder.Services.AddDbContext<EquipamentContext>(options =>
+    options.UseNpgsql(connectionString));
+
+builder.Services.AddDbContext<SportContext>(options =>
+    options.UseNpgsql(connectionString));
 
 // Controllers
 builder.Services.AddControllers();
-
-// Removido Swagger
-// builder.Services.AddEndpointsApiExplorer();
-// builder.Services.AddSwaggerGen(c =>
-// {
-//     c.SwaggerDoc("v1", new() { Title = "Venue Service API", Version = "v1" });
-//     c.CustomSchemaIds(type => type.FullName);
-// });
 
 // JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -100,9 +108,13 @@ var app = builder.Build();
 // Migrações do banco
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
-    db.Database.Migrate();
+    scope.ServiceProvider.GetRequiredService<VenueContext>().Database.Migrate();
+    scope.ServiceProvider.GetRequiredService<UserContext>().Database.Migrate();
+    scope.ServiceProvider.GetRequiredService<ReservationContext>().Database.Migrate();
+    scope.ServiceProvider.GetRequiredService<EquipamentContext>().Database.Migrate();
+    scope.ServiceProvider.GetRequiredService<SportContext>().Database.Migrate();
 }
+
 
 // Middleware de erro global
 app.UseMiddleware<ErrorHandlingMiddleware>();
