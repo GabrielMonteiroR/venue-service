@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace venue_service.Src.Models.Venue
 {
     [Table("venues")]
-    public class Venue
+    public class VenueEntity
     {
         [Key]
         [Column("id")]
@@ -39,7 +39,7 @@ namespace venue_service.Src.Models.Venue
         [ForeignKey("VenueTypeId")]
         [Column("venue_type_id")]
         public int VenueTypeId { get; set; }
-        public VenueType VenueType { get; set; }
+        public VenueTypeEntity VenueType { get; set; }
 
 
         [MaxLength(500)]
@@ -60,10 +60,10 @@ namespace venue_service.Src.Models.Venue
         [Column("deleted_at")]
         public DateTime? DeletedAt { get; set; }
 
-        public ICollection<VenueImage> VenueImages { get; set; }
-        public ICollection<VenueEquipament> VenueEquipaments { get; set; }
-        public ICollection<Venue_Sport> VenueSports { get; set; }
-        public ICollection<VenueContactInfo> VenueContactInfos { get; set; }
-        public ICollection<VenueAvailabilityTime>? VenueAvailabilityTimes { get; set; }
+        public ICollection<VenueImageEntity> VenueImages { get; set; }
+        public ICollection<VenueEquipamentEntity> VenueEquipaments { get; set; }
+        public ICollection<Venue_SportEntity> VenueSports { get; set; }
+        public ICollection<VenueContactInfoEntity> VenueContactInfos { get; set; }
+        public ICollection<VenueAvailabilityTimeEntity>? VenueAvailabilityTimes { get; set; }
     }
 }

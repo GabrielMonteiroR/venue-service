@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using venue_service.Src.Models.Payment;
+using venue_service.Src.Models.User;
 
 namespace venue_service.Src.Models.Reservation
 {
@@ -14,12 +15,12 @@ namespace venue_service.Src.Models.Reservation
         [ForeignKey("UserId")]
         [Column("user_id")]
         public int UserId { get; set; }
-        public User User { get; set; }
+        public UserEntity User { get; set; }
 
         [ForeignKey("VenueId")]
         [Column("venue_id")]
         public int VenueId { get; set; }
-        public Venue Venue { get; set; }
+        public VenueEntity Venue { get; set; }
 
 
         [Required]

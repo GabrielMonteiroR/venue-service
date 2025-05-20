@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace venue_service.Src.Models.Venue
 {
-    [Table("venue_status")]
-    public class VenueStatus
+    [Table("venue_types")]
+    public class VenueTypeEntity
     {
         [Key]
         [Column("id")]

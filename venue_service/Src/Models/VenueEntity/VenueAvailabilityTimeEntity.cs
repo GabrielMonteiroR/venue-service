@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace venue_service.Src.Models.Venue
 {
     [Table("venue_availability_times")]
-    public class VenueAvailabilityTime
+    public class VenueAvailabilityTimeEntity
     {
         [Key]
         [Column("id")]

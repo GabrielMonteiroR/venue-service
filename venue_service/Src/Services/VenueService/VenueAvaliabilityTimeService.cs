@@ -26,7 +26,7 @@ namespace venue_service.Src.Services.Venue
         {
             try
             {
-                var newAvailability = new VenueAvailabilityTime
+                var newAvailability = new VenueAvailabilityTimeEntity
                 {
                     VenueId = dto.VenueId,
                     StartDate = DateTime.SpecifyKind(dto.StartDate, DateTimeKind.Utc),
@@ -101,7 +101,7 @@ namespace venue_service.Src.Services.Venue
             }
         }
 
-        public async Task<VenueAvailabilityTime> UpdateAvaliabilityTime(int id, UpdateVenueAvaliabilityDto newTimeDto)
+        public async Task<VenueAvailabilityTimeEntity> UpdateAvaliabilityTime(int id, UpdateVenueAvaliabilityDto newTimeDto)
         {
             try
             {
@@ -115,7 +115,7 @@ namespace venue_service.Src.Services.Venue
 
                 await _context.SaveChangesAsync();
 
-                return new VenueAvailabilityTime
+                return new VenueAvailabilityTimeEntity
                 {
                     Id = existing.Id,
                     StartDate = existing.StartDate,

@@ -8,16 +8,16 @@ public class EquipamentContext : DbContext
 {
     public EquipamentContext(DbContextOptions<EquipamentContext> options) : base(options) { }
 
-    public DbSet<VenueEquipament> VenueEquipaments => Set<VenueEquipament>();
+    public DbSet<VenueEquipamentEntity> VenueEquipaments => Set<VenueEquipamentEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Ignore<Venue_Sport>();
+        modelBuilder.Ignore<Venue_SportEntity>();
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<VenueEquipament>().ToTable("venue_equipaments");
+        modelBuilder.Entity<VenueEquipamentEntity>().ToTable("venue_equipaments");
 
-        modelBuilder.Entity<VenueEquipament>()
+        modelBuilder.Entity<VenueEquipamentEntity>()
             .HasOne(ve => ve.Venue)
             .WithMany(v => v.VenueEquipaments)
             .HasForeignKey(ve => ve.VenueId);
