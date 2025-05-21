@@ -6,6 +6,7 @@ using venue_service.Src.Enums;
 using venue_service.Src.Exceptions;
 using venue_service.Src.Iterfaces.Reservation;
 using venue_service.Src.Iterfaces.Venue;
+using venue_service.Src.Models.Payment;
 
 namespace venue_service.Src.Services.Reservation;
 
@@ -71,7 +72,7 @@ public class ReservationService : IReservationService
                 VenueId = dto.VenueId,
                 VenueAvailabilityTimeId = dto.VenueAvailabilityTimeId,
                 PaymentMethodId = dto.PaymentMethodId,
-                Status = (int)ReservationStatusEnum.PENDING,
+                PaidAt = status == "approved" ? DateTime.UtcNow : null
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
@@ -90,11 +91,12 @@ public class ReservationService : IReservationService
                     Status = status,
                     MercadoPagoPaymentId = mercadoPagoId,
                     CreatedAt = DateTime.UtcNow,
-                    PaidAt = status == ReservationStatusEnum.CONFIRMED ? DateTime.UtcNow : null
+                    PaidAt = status == "approved" ? DateTime.UtcNow : null 
+                };
 
-                    _reservationContext.PaymentRecords.Add(paymentRecord);
-                    await _reservationContext.SaveChangesAsync();
-                }
+                _reservationContext.PaymentRecords.Add(paymentRecord);
+                await _reservationContext.SaveChangesAsync();
+
                 return new ReservationResponseDto
                 {
                     Id = reservation.Id,

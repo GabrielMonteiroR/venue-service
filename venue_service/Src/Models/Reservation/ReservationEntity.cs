@@ -11,35 +11,42 @@ public class ReservationEntity
     [Column("id")]
     public int Id { get; set; }
 
-    [ForeignKey("UserId")]
+    [Required]
     [Column("user_id")]
     public int UserId { get; set; }
+
+    [ForeignKey("UserId")]
     public UserEntity User { get; set; }
 
-    [ForeignKey("VenueId")]
+    [Required]
     [Column("venue_id")]
     public int VenueId { get; set; }
+
+    [ForeignKey("VenueId")]
     public VenueEntity Venue { get; set; }
 
     [Required]
     [Column("venue_availability_time_id")]
     public int VenueAvailabilityTimeId { get; set; }
 
-    [ForeignKey("PaymentMethodId")]
+    [Required]
     [Column("payment_method_id")]
     public int PaymentMethodId { get; set; }
+
+    [ForeignKey("PaymentMethodId")]
     public PaymentMethodEntity PaymentMethod { get; set; }
 
     public PaymentRecordEntity? PaymentRecord { get; set; }
 
     [Required]
-    [MaxLength(50)]
     [Column("status")]
     public int Status { get; set; }
 
+    [Required]
     [Column("created_at")]
     public DateTime CreatedAt { get; set; }
 
+    [Required]
     [Column("updated_at")]
     public DateTime UpdatedAt { get; set; }
 
