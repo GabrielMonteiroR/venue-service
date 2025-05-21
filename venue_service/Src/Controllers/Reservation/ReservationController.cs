@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using venue_service.Src.Dtos.Reservation;
-using venue_service.Src.Iterfaces.Reservation;
+using venue_service.Src.Interfaces.Reservation;
 
 namespace venue_service.Src.Controllers.Reservation
 {
@@ -21,9 +20,7 @@ namespace venue_service.Src.Controllers.Reservation
         [HttpPost("reservations")]
         public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto dto)
         {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-            await _reservationService.CreateReservationAsync(dto, userId);
+            await _reservationService.CreateReservationAsync(dto);
             return Ok();
         }
     }
