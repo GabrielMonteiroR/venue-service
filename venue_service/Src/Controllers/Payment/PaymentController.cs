@@ -17,8 +17,8 @@ namespace venue_service.Src.Controllers.Payment
             _reservationService = reservationService;
         }
 
-        [HttpPatch("/pay")]
-        public async Task<IActionResult> PayReservation([FromQuery] int reservationId, [FromBody] PaymentRequestDto dto)
+        [HttpPatch("{reservationId}/pay")]
+        public async Task<IActionResult> PayReservation(int reservationId, [FromBody] PaymentRequestDto dto)
         {
             var result = await _reservationService.PayReservationAsync(reservationId, dto);
             return Ok(result);
