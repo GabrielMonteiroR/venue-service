@@ -151,6 +151,27 @@ public class ReservationService : IReservationService
 
     }
 
+    public async Task<ReservationPaymentStatusDto> GetPaymentStatusAsync(int reservationId)
+    {
+        var reservation = await _reservationContext.Reservations
+            .Include(r => r.PaymentRecord)
+            .FirstOrDefaultAsync(r => r.Id == reservationId);
+
+        if (reservation == null)
+            throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Reservation not found");
+
+        var record = reservation.PaymentRecord;
+
+        return new ReservationPaymentStatusDto
+        {
+            ReservationId = reservationId,
+            HasPayment = record != null,
+            PaymentStatus = record?.Status,
+            PaidAt = record?.PaidAt
+        };
+    }
+
+
     public async Task<ReservationPaymentResponseDto> PayReservationAsync(int reservationId, PaymentRequestDto dto)
     {
         var reservation = await _reservationContext.Reservations
