@@ -4,8 +4,9 @@ using venue_service.Src.Contexts;
 using venue_service.Src.Dtos.Reservation;
 using venue_service.Src.Enums;
 using venue_service.Src.Exceptions;
-using venue_service.Src.Iterfaces.Reservation;
-using venue_service.Src.Iterfaces.Venue;
+using venue_service.Src.Interfaces.Payment;
+using venue_service.Src.Interfaces.Reservation;
+using venue_service.Src.Interfaces.Venue;
 using venue_service.Src.Models.Payment;
 
 namespace venue_service.Src.Services.Reservation;
@@ -39,32 +40,24 @@ public class ReservationService : IReservationService
         {
             var userExists = await _userContext.User.FindAsync(dto.UserId);
             var venueExists = await _venueContext.Venues.FindAsync(dto.VenueId);
-            var availabilityExists = await _venueContext.VenueAvailabilities.FindAsync(dto.VenueAvailabilityTimeId);
+            var availability = await _venueContext.VenueAvailabilities.FindAsync(dto.VenueAvailabilityTimeId);
 
             if (userExists is null)
-            {
                 throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "User not found");
-            }
+
             if (venueExists is null)
-            {
                 throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Venue not found");
-            }
-            if (availabilityExists is null)
-            {
+
+            if (availability is null)
                 throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Availability not found");
-            }
 
             var isAvailable = await _venueAvailabilityTimeService.IsThisTimeAvailableToBook(dto.VenueAvailabilityTimeId);
 
             if (!isAvailable)
-            {
                 throw new HttpResponseException(HttpStatusCode.Conflict, "Conflict", "This time is not available");
-            }
 
             if (!Enum.IsDefined(typeof(PaymentMethodEnum), dto.PaymentMethodId))
-            {
-                throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Payment method not found");
-            }
+                throw new HttpResponseException(HttpStatusCode.BadRequest, "Validation Error", "Invalid payment method");
 
             var reservation = new ReservationEntity
             {
@@ -72,7 +65,7 @@ public class ReservationService : IReservationService
                 VenueId = dto.VenueId,
                 VenueAvailabilityTimeId = dto.VenueAvailabilityTimeId,
                 PaymentMethodId = dto.PaymentMethodId,
-                PaidAt = status == "approved" ? DateTime.UtcNow : null
+                Status = (int)ReservationStatusEnum.PENDING,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
@@ -82,7 +75,11 @@ public class ReservationService : IReservationService
 
             if (!string.IsNullOrWhiteSpace(dto.CardToken) && !string.IsNullOrWhiteSpace(dto.UserEmail))
             {
-                var (status, mercadoPagoId) = await _paymentService.CreatePaymentAsync( dto.UserEmail, dto.CardToken, availability.Price, "Reserva de espaço esportivo");
+                var (status, mercadoPagoId) = await _paymentService.CreatePaymentAsync(
+                    dto.UserEmail,
+                    dto.CardToken,
+                    availability.Price,
+                    "Reserva de espaço esportivo");
 
                 var paymentRecord = new PaymentRecordEntity
                 {
@@ -91,31 +88,33 @@ public class ReservationService : IReservationService
                     Status = status,
                     MercadoPagoPaymentId = mercadoPagoId,
                     CreatedAt = DateTime.UtcNow,
-                    PaidAt = status == "approved" ? DateTime.UtcNow : null 
+                    PaidAt = status == "approved" ? DateTime.UtcNow : null
                 };
 
                 _reservationContext.PaymentRecords.Add(paymentRecord);
                 await _reservationContext.SaveChangesAsync();
-
-                return new ReservationResponseDto
-                {
-                    Id = reservation.Id,
-                    UserId = reservation.UserId,
-                    VenueId = reservation.VenueId,
-                    PaymentMethodId = reservation.PaymentMethodId,
-                    Status = reservation.Status,
-                    CreatedAt = reservation.CreatedAt,
-                };
-
             }
 
-
+            return new ReservationResponseDto
+            {
+                Id = reservation.Id,
+                UserId = reservation.UserId,
+                VenueId = reservation.VenueId,
+                PaymentMethodId = reservation.PaymentMethodId,
+                Status = reservation.Status,
+                CreatedAt = reservation.CreatedAt
+            };
         }
         catch (Exception ex)
         {
-            throw new HttpResponseException(HttpStatusCode.InternalServerError, "Unexpected error", ex.Message);
+            throw new HttpResponseException(
+                HttpStatusCode.InternalServerError,
+                "Unexpected error",
+                ex.InnerException?.Message ?? ex.Message
+            );
         }
     }
+
 
     public async Task<ReservationsResponseDto> GetReservationsByUserIdAsync(int userId)
     {

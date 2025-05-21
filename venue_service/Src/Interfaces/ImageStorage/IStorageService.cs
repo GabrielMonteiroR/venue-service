@@ -1,4 +1,4 @@
-﻿namespace venue_service.Src.Iterfaces.ImageStorage
+﻿namespace venue_service.Src.Interfaces.ImageStorage
 {
     public interface IStorageService
     {

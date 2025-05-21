@@ -12,11 +12,11 @@ using venue_service.Src.Services.Auth;
 using venue_service.Src.Services.Reservation;
 using venue_service.Src.Services.Venue;
 using venue_service.Src.Services.User;
-using venue_service.Src.Iterfaces.ImageStorage;
 using venue_service.Src.Iterfaces.Reservation;
 using venue_service.Src.Iterfaces.Venue;
 using venue_service.Src.Interfaces.Payment;
 using venue_service.Src.Services.Payment;
+using venue_service.Src.Interfaces.ImageStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 
