@@ -32,7 +32,7 @@ public class ReservationService : IReservationService
     }
 
 
-public async Task<ReservationResponseDto> CreateReservationAsync(CreateReservationDto dto)
+    public async Task<ReservationResponseDto> CreateReservationAsync(CreateReservationDto dto)
     {
         try
         {
@@ -40,11 +40,11 @@ public async Task<ReservationResponseDto> CreateReservationAsync(CreateReservati
             var venueExists = await _venueContext.Venues.FindAsync(dto.VenueId);
             var availabilityExists = await _venueContext.VenueAvailabilities.FindAsync(dto.VenueAvailabilityTimeId);
 
-            if(userExists is null)
+            if (userExists is null)
             {
                 throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "User not found");
             }
-            if(venueExists is null)
+            if (venueExists is null)
             {
                 throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Venue not found");
             }
@@ -55,8 +55,61 @@ public async Task<ReservationResponseDto> CreateReservationAsync(CreateReservati
 
             var isAvailable = await _venueAvailabilityTimeService.IsThisTimeAvailableToBook(dto.VenueAvailabilityTimeId);
 
+            if (!isAvailable)
+            {
+                throw new HttpResponseException(HttpStatusCode.Conflict, "Conflict", "This time is not available");
+            }
 
-        } catch(Exception ex)
+            if (!Enum.IsDefined(typeof(PaymentMethodEnum), dto.PaymentMethodId))
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Payment method not found");
+            }
+
+            var reservation = new ReservationEntity
+            {
+                UserId = dto.UserId,
+                VenueId = dto.VenueId,
+                VenueAvailabilityTimeId = dto.VenueAvailabilityTimeId,
+                PaymentMethodId = dto.PaymentMethodId,
+                Status = (int)ReservationStatusEnum.PENDING,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            _reservationContext.Reservations.Add(reservation);
+            await _reservationContext.SaveChangesAsync();
+
+            if (!string.IsNullOrWhiteSpace(dto.CardToken) && !string.IsNullOrWhiteSpace(dto.UserEmail))
+            {
+                var (status, mercadoPagoId) = await _paymentService.CreatePaymentAsync( dto.UserEmail, dto.CardToken, availability.Price, "Reserva de espaço esportivo");
+
+                var paymentRecord = new PaymentRecordEntity
+                {
+                    ReservationId = reservation.Id,
+                    Amount = availability.Price,
+                    Status = status,
+                    MercadoPagoPaymentId = mercadoPagoId,
+                    CreatedAt = DateTime.UtcNow,
+                    PaidAt = status == ReservationStatusEnum.CONFIRMED ? DateTime.UtcNow : null
+
+                    _reservationContext.PaymentRecords.Add(paymentRecord);
+                    await _reservationContext.SaveChangesAsync();
+                }
+                return new ReservationResponseDto
+                {
+                    Id = reservation.Id,
+                    UserId = reservation.UserId,
+                    VenueId = reservation.VenueId,
+                    PaymentMethodId = reservation.PaymentMethodId,
+                    Status = reservation.Status,
+                    CreatedAt = reservation.CreatedAt,
+                };
+
+            }
+
+
+        }
+        catch (Exception ex)
         {
             throw new HttpResponseException(HttpStatusCode.InternalServerError, "Unexpected error", ex.Message);
         }
@@ -87,10 +140,11 @@ public async Task<ReservationResponseDto> CreateReservationAsync(CreateReservati
                     CreatedAt = r.CreatedAt
                 }).ToList()
             };
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
             throw new HttpResponseException(HttpStatusCode.InternalServerError, "Unexpected error", ex.Message);
-}
+        }
 
 
     }

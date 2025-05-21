@@ -10,5 +10,6 @@ namespace venue_service.Src.Iterfaces.Venue
         Task<VenueAvailabilityTimeEntity> UpdateAvaliabilityTime(int id, UpdateVenueAvaliabilityDto newTimeDto);
         Task<bool> DeleteVenueAvailabilityTimeAsync(int id);
         Task<VenueAvailabilityTimeResponseDto> AssignAvaliableTime(int userId);
+        Task<bool> IsThisTimeAvailableToBook(int id);
     }
 }
