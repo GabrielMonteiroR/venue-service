@@ -15,6 +15,8 @@ using venue_service.Src.Services.User;
 using venue_service.Src.Iterfaces.ImageStorage;
 using venue_service.Src.Iterfaces.Reservation;
 using venue_service.Src.Iterfaces.Venue;
+using venue_service.Src.Interfaces.Payment;
+using venue_service.Src.Services.Payment;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -86,6 +88,7 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<IVenueAvaliabilityTime, VenueAvaliabilityTimeService>();
 builder.Services.AddScoped<IVenueType, VenueTypeService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<IPaymentService, MercadoPagoPaymentService>();
 
 // Storage de Imagens
 
