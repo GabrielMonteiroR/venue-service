@@ -1,4 +1,5 @@
-﻿using venue_service.Src.Dtos.Reservation;
+﻿using venue_service.Src.Dtos.Payment;
+using venue_service.Src.Dtos.Reservation;
 
 namespace venue_service.Src.Interfaces.Reservation
 {
@@ -6,6 +7,7 @@ namespace venue_service.Src.Interfaces.Reservation
     {
         Task<ReservationResponseDto> CreateReservationAsync(CreateReservationDto dto);
         Task<ReservationsResponseDto> GetReservationsByUserIdAsync(int userId);
+        Task<ReservationPaymentResponseDto> PayReservationAsync(int reservationId, PaymentRequestDto dto)
     }
 
 }

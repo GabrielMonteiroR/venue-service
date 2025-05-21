@@ -1,4 +1,4 @@
-﻿using venue_service.Src.Enums;
+﻿
 using venue_service.Src.Enums.Payment;
 
 public interface IPaymentService

@@ -1,11 +1,7 @@
 ﻿using MercadoPago.Client.Payment;
 using MercadoPago.Config;
-using MercadoPago.Resource.Payment;
-using Microsoft.Extensions.Configuration;
-using venue_service.Src.Enums;
 using venue_service.Src.Enums;
 using venue_service.Src.Enums.Payment;
-using venue_service.Src.Interfaces.Payment;
 
 namespace venue_service.Src.Services.Payment
 {
