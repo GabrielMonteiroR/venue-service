@@ -7,7 +7,7 @@ using venue_service.Src.Iterfaces.Reservation;
 namespace venue_service.Src.Controllers.Reservation
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/reservation")]
     public class ReservationController : ControllerBase
     {
         private readonly IReservationService _reservationService;

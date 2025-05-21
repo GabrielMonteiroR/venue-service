@@ -4,7 +4,8 @@ using venue_service.Src.Contexts;
 using venue_service.Src.Dtos.Reservation;
 using venue_service.Src.Enums;
 using venue_service.Src.Exceptions;
-using venue_service.Src.Iterfaces.Reservation; 
+using venue_service.Src.Iterfaces.Reservation;
+using venue_service.Src.Iterfaces.Venue;
 
 namespace venue_service.Src.Services.Reservation;
 
@@ -13,44 +14,52 @@ public class ReservationService : IReservationService
     private readonly ReservationContext _reservationContext;
     private readonly UserContext _userContext;
     private readonly VenueContext _venueContext;
+    private readonly IVenueAvaliabilityTime _venueAvailabilityTimeService;
+    private readonly IPaymentService _paymentService;
 
-    public ReservationService(ReservationContext context)
+    public ReservationService(
+        ReservationContext reservationContext,
+        UserContext userContext,
+        VenueContext venueContext,
+        IPaymentService paymentService,
+        IVenueAvaliabilityTime venueAvailabilityTimeService)
     {
-        _reservationContext = context;
+        _reservationContext = reservationContext;
+        _userContext = userContext;
+        _venueContext = venueContext;
+        _paymentService = paymentService;
+        _venueAvailabilityTimeService = venueAvailabilityTimeService;
     }
 
-    public async Task<ReservationResponseDto> CreateReservationAsync(CreateReservationDto dto, int userId)
+
+public async Task<ReservationResponseDto> CreateReservationAsync(CreateReservationDto dto)
     {
-        var userExists = await _userContext.User.AnyAsync(u => u.Id == userId);
-        var venueExists = await _venueContext.Venues.AnyAsync(v => v.Id == dto.VenueId);
-        var availabilityExists = await _venueContext.VenueAvailabilities.AnyAsync(lat => lat.Id == dto.VenueAvailabilityTimeId);
-        var paymentMethodExists = await _reservationContext.PaymentMethods.AnyAsync(pm => pm.Id == dto.PaymentMethodId);
-
-        if (!userExists) throw new HttpResponseException(HttpStatusCode.BadRequest, "Validation Error", "User does not exist");
-        if (!venueExists) throw new HttpResponseException(HttpStatusCode.BadRequest, "Validation Error", "Venue does not exist");
-        if (!availabilityExists) throw new HttpResponseException(HttpStatusCode.BadRequest, "Validation Error", "Availability not found");
-        if (!paymentMethodExists) throw new HttpResponseException(HttpStatusCode.BadRequest, "Validation Error", "Payment Method invalid");
-
-        var reservation = new ReservationEntity();
-        reservation.CreatedAt = DateTime.UtcNow;
-        reservation.UpdatedAt = DateTime.UtcNow;
-        reservation.UserId = userId;
-        reservation.VenueId = dto.VenueId;
-        reservation.VenueAvailabilityTimeId = dto.VenueAvailabilityTimeId;
-        reservation.PaymentMethodId = dto.PaymentMethodId;
-        reservation.Status = (int)ReservationStatusEnum.PENDING;
-
-        _reservationContext.Reservations.Add(reservation);
-        await _reservationContext.SaveChangesAsync();
-
-        return new ReservationResponseDto
+        try
         {
-            CreatedAt = reservation.CreatedAt,
-            Id = reservation.Id,
-            Status = reservation.Status,
-            UserId = reservation.UserId,
-            VenueId = reservation.VenueId,
-        };
+            var userExists = await _userContext.User.FindAsync(dto.UserId);
+            var venueExists = await _venueContext.Venues.FindAsync(dto.VenueId);
+            var availabilityExists = await _venueContext.VenueAvailabilities.FindAsync(dto.VenueAvailabilityTimeId);
+
+            if(userExists is null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "User not found");
+            }
+            if(venueExists is null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Venue not found");
+            }
+            if (availabilityExists is null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Availability not found");
+            }
+
+            var isAvailable = await _venueAvailabilityTimeService.IsThisTimeAvailableToBook(dto.VenueAvailabilityTimeId);
+
+
+        } catch(Exception ex)
+        {
+            throw new HttpResponseException(HttpStatusCode.InternalServerError, "Unexpected error", ex.Message);
+        }
     }
 
     public async Task<ReservationsResponseDto> GetReservationsByUserIdAsync(int userId)

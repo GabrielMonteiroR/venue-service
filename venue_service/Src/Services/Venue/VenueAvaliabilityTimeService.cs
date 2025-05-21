@@ -10,11 +10,11 @@ namespace venue_service.Src.Services.Venue
 {
     public class VenueAvaliabilityTimeService : IVenueAvaliabilityTime
     {
-        private readonly VenueContext _context;
+        private readonly VenueContext _venueContext;
 
         public VenueAvaliabilityTimeService(VenueContext context)
         {
-            _context = context;
+            _venueContext = context;
         }
 
         public Task<VenueAvailabilityTimeResponseDto> AssignAvaliableTime(int userId)
@@ -36,8 +36,8 @@ namespace venue_service.Src.Services.Venue
                     IsReserved = false
                 };
 
-                _context.VenueAvailabilities.Add(newAvailability);
-                await _context.SaveChangesAsync();
+                _venueContext.VenueAvailabilities.Add(newAvailability);
+                await _venueContext.SaveChangesAsync();
 
                 var responseDto = new VenueAvailabilityTimeResponseDto
                 {
@@ -59,14 +59,14 @@ namespace venue_service.Src.Services.Venue
 
         public async Task<bool> DeleteVenueAvailabilityTimeAsync(int id)
         {
-            var availability = await _context.VenueAvailabilities.FindAsync(id);
+            var availability = await _venueContext.VenueAvailabilities.FindAsync(id);
             if (availability == null)
             {
                 throw new HttpResponseException(HttpStatusCode.NotFound, "Not found", $"No availability found with ID {id}");
             }
 
-            _context.VenueAvailabilities.Remove(availability);
-            await _context.SaveChangesAsync();
+            _venueContext.VenueAvailabilities.Remove(availability);
+            await _venueContext.SaveChangesAsync();
             return true;
         }
 
@@ -74,7 +74,7 @@ namespace venue_service.Src.Services.Venue
         {
             try
             {
-                var avaliableTimes = await _context.VenueAvailabilities
+                var avaliableTimes = await _venueContext.VenueAvailabilities
                     .Where(v => v.VenueId == venueId)
                     .Select(v => new VenueAvailabilityTimeResponseDto
                     {
@@ -105,7 +105,7 @@ namespace venue_service.Src.Services.Venue
         {
             try
             {
-                var existing = await _context.VenueAvailabilities.FindAsync(id);
+                var existing = await _venueContext.VenueAvailabilities.FindAsync(id);
                 if (existing is null)
                     throw new HttpResponseException(HttpStatusCode.NotFound, "Not found", $"No availability found with ID {id}");
 
@@ -113,7 +113,7 @@ namespace venue_service.Src.Services.Venue
                 existing.EndDate = DateTime.SpecifyKind(newTimeDto.EndDate, DateTimeKind.Utc);
                 existing.Price = newTimeDto.Price;
 
-                await _context.SaveChangesAsync();
+                await _venueContext.SaveChangesAsync();
 
                 return new VenueAvailabilityTimeEntity
                 {
@@ -133,6 +133,27 @@ namespace venue_service.Src.Services.Venue
                     "Unexpected error",
                     ex.InnerException?.Message ?? ex.Message
                 );
+            }
+        }
+
+        public async Task<bool> IsThisTimeAvailableToBook(int availabilityTimeId)
+        {
+            try
+            {
+                var existing = await _venueContext.VenueAvailabilities.FindAsync(availabilityTimeId);
+                if (existing is null)
+                {
+                    throw new HttpResponseException(HttpStatusCode.NotFound, "Not found", $"No availability found with ID {availabilityTimeId}");
+                }
+
+                if (existing.IsReserved) return false;
+
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "Unexpected error", ex.Message);
             }
         }
 
