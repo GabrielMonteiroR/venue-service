@@ -3,6 +3,7 @@ using System.Net;
 using venue_service.Src.Contexts;
 using venue_service.Src.Dtos.Reservation;
 using venue_service.Src.Enums;
+using venue_service.Src.Enums.Payment;
 using venue_service.Src.Exceptions;
 using venue_service.Src.Interfaces.Payment;
 using venue_service.Src.Interfaces.Reservation;
