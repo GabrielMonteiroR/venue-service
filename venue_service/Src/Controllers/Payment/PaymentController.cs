@@ -17,30 +17,13 @@ namespace venue_service.Src.Controllers.Payment
             _reservationService = reservationService;
         }
 
-        [HttpPatch("{reservationId}/pay")]
-        public async Task<IActionResult> PayReservation(int reservationId, [FromBody] PaymentRequestDto dto)
+        [HttpPatch("/pay")]
+        public async Task<IActionResult> PayReservation([FromQuery] int reservationId, [FromBody] PaymentRequestDto dto)
         {
-            try
-            {
-                var result = await _reservationService.PayReservationAsync(reservationId, dto);
-                return Ok(result);
-            }
-            catch (HttpResponseException ex)
-            {
-                return StatusCode((int)ex.Status, new
-                {
-                    ex.Title,
-                    ex.Message
-                });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, new
-                {
-                    Title = "Unexpected error",
-                    Message = ex.Message
-                });
-            }
+            var result = await _reservationService.PayReservationAsync(reservationId, dto);
+            return Ok(result);
         }
     }
 }
+
+
