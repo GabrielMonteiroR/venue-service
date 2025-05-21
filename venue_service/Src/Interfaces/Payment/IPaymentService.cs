@@ -9,4 +9,7 @@ public interface IPaymentService
         decimal amount,
         string description,
         PaymentMethodEnum paymentMethod);
+
+    Task<ReservationPaymentStatusDto> GetPaymentStatusAsync(int reservationId);
+
 }
