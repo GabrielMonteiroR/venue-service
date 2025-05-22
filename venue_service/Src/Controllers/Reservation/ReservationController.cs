@@ -23,5 +23,13 @@ namespace venue_service.Src.Controllers.Reservation
             await _reservationService.CreateReservationAsync(dto);
             return Ok();
         }
+
+        [HttpGet("{reservationId}")]
+        public async Task<IActionResult> GetPaymentStatus(int reservationId)
+        {
+            var result = await _reservationService.GetPaymentStatusAsync(reservationId);
+            return Ok(result);
+        }
+
     }
 }

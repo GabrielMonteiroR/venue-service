@@ -7,7 +7,7 @@ namespace venue_service.Src.Interfaces.Reservation
     {
         Task<ReservationResponseDto> CreateReservationAsync(CreateReservationDto dto);
         Task<ReservationsResponseDto> GetReservationsByUserIdAsync(int userId);
-        Task<ReservationPaymentResponseDto> PayReservationAsync(int reservationId, PaymentRequestDto dto)
+        Task<ReservationPaymentResponseDto> PayReservationAsync(int reservationId, PaymentRequestDto dto);
+        Task<ReservationPaymentStatusDto> GetPaymentStatusAsync(int reservationId);
     }
-
 }
