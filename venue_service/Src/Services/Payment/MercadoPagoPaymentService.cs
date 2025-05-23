@@ -7,6 +7,7 @@ using venue_service.Src.Dtos.Payment;
 using venue_service.Src.Enums;
 using venue_service.Src.Enums.Payment;
 using venue_service.Src.Exceptions;
+using venue_service.Src.Interfaces.PaymentInterfaces;
 
 namespace venue_service.Src.Services.Payment
 {

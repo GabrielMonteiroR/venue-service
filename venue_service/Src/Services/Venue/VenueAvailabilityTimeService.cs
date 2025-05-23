@@ -3,8 +3,7 @@ using System.Net;
 using venue_service.Src.Contexts;
 using venue_service.Src.Dtos.Venue;
 using venue_service.Src.Exceptions;
-using venue_service.Src.Interfaces.Venue;
-using venue_service.Src.Iterfaces.Venue;
+using venue_service.Src.Interfaces.VenueInterfaces;
 using venue_service.Src.Models.Venue;
 
 namespace venue_service.Src.Services.Venue

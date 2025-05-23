@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using venue_service.Src.Iterfaces.Venue;
+using venue_service.Src.Interfaces.VenueInterfaces;
 
 namespace venue_service.Src.Controllers.Venue
 {

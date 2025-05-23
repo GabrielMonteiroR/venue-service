@@ -1,6 +1,6 @@
 ﻿using venue_service.Src.Dtos.User;
 
-namespace venue_service.Src.Interfaces.User
+namespace venue_service.Src.Interfaces.UserUserInterfaces
 {
     public interface IUserService
     {

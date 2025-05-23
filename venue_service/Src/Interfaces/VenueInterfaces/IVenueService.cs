@@ -1,7 +1,7 @@
 ﻿using venue_service.Src.Dtos.Venue;
 using venue_service.Src.Models;
 
-namespace venue_service.Src.Interfaces.Venue;
+namespace venue_service.Src.Interfaces.VenueInterfaces;
 
 public interface IVenueService
 {

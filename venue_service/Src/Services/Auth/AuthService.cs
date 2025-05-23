@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using venue_service.Src.Contexts;
 using venue_service.Src.Dtos.Auth;
 using venue_service.Src.Enums;
-using venue_service.Src.Interfaces.ImageStorage;
+using venue_service.Src.Interfaces.ImageStorageInterfaces;
 using venue_service.Src.Models.User;
 using venue_service.Src.Services.User;
 

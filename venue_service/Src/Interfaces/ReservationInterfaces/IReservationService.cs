@@ -1,7 +1,7 @@
 ﻿using venue_service.Src.Dtos.Payment;
 using venue_service.Src.Dtos.Reservation;
 
-namespace venue_service.Src.Interfaces.Reservation
+namespace venue_service.Src.Interfaces.ReservationInterfaces
 {
     public interface IReservationService
     {

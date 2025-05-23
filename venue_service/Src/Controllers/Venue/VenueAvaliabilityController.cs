@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using NpgsqlTypes;
+﻿using Microsoft.AspNetCore.Mvc;
 using venue_service.Src.Dtos.Venue;
-using venue_service.Src.Interfaces.Venue;
-using venue_service.Src.Iterfaces.Venue;
+using venue_service.Src.Interfaces.VenueInterfaces;
 
 namespace venue_service.Src.Controllers.Venue
 {

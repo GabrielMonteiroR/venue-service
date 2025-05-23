@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
 using venue_service.Src.Exceptions;
 using System.Net;
-using venue_service.Src.Interfaces.ImageStorage;
+using venue_service.Src.Interfaces.ImageStorageInterfaces;
 
 namespace venue_service.Src.Services.ImageStorageService
 {

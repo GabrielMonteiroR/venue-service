@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using venue_service.Src.Dtos.Reservation;
-using venue_service.Src.Interfaces.Reservation;
+using venue_service.Src.Interfaces.ReservationInterfaces;
 
 namespace venue_service.Src.Controllers.Reservation
 {

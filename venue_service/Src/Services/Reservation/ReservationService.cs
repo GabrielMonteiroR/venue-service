@@ -6,8 +6,9 @@ using venue_service.Src.Dtos.Reservation;
 using venue_service.Src.Enums;
 using venue_service.Src.Enums.Payment;
 using venue_service.Src.Exceptions;
-using venue_service.Src.Interfaces.Reservation;
-using venue_service.Src.Interfaces.Venue;
+using venue_service.Src.Interfaces.PaymentInterfaces;
+using venue_service.Src.Interfaces.ReservationInterfaces;
+using venue_service.Src.Interfaces.VenueInterfaces;
 using venue_service.Src.Models.Payment;
 
 namespace venue_service.Src.Services.Reservation;

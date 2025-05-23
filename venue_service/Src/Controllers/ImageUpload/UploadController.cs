@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using venue_service.Src.Interfaces.ImageStorage;
+using venue_service.Src.Interfaces.ImageStorageInterfaces;
 
 namespace venue_service.Src.Controllers.ImageUpload
 {

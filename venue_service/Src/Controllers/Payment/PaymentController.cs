@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Net;
 using venue_service.Src.Dtos.Payment;
-using venue_service.Src.Exceptions;
-using venue_service.Src.Interfaces.Reservation;
+using venue_service.Src.Interfaces.ReservationInterfaces;
 
 namespace venue_service.Src.Controllers.Payment
 {
