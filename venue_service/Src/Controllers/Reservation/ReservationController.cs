@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using venue_service.Src.Dtos.Reservation;
-using venue_service.Src.Iterfaces.Reservation;
+using venue_service.Src.Interfaces.Reservation;
 
 namespace venue_service.Src.Controllers.Reservation
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/reservation")]
     public class ReservationController : ControllerBase
     {
         private readonly IReservationService _reservationService;
@@ -21,10 +20,16 @@ namespace venue_service.Src.Controllers.Reservation
         [HttpPost("reservations")]
         public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto dto)
         {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-            await _reservationService.CreateReservationAsync(dto, userId);
+            await _reservationService.CreateReservationAsync(dto);
             return Ok();
         }
+
+        [HttpGet("{reservationId}")]
+        public async Task<IActionResult> GetPaymentStatus(int reservationId)
+        {
+            var result = await _reservationService.GetPaymentStatusAsync(reservationId);
+            return Ok(result);
+        }
+
     }
 }

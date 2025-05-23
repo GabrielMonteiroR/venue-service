@@ -2,18 +2,21 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using venue_service.Src.Contexts;
 
 #nullable disable
 
-namespace venue_service.Migrations.Reservation
+namespace venue_service.Migrations
 {
     [DbContext(typeof(ReservationContext))]
-    partial class ReservationContextModelSnapshot : ModelSnapshot
+    [Migration("20250520163418_InitialSync")]
+    partial class InitialSync
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,53 +25,7 @@ namespace venue_service.Migrations.Reservation
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("venue_service.Src.Models.EquipamentType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("TypeName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("type_name");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("equipament_types");
-                });
-
-            modelBuilder.Entity("venue_service.Src.Models.PaymentMethod", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("description");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("name");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("payment_methods", (string)null);
-                });
-
-            modelBuilder.Entity("venue_service.Src.Models.Reservation", b =>
+            modelBuilder.Entity("ReservationEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -89,10 +46,9 @@ namespace venue_service.Migrations.Reservation
                         .HasColumnType("integer")
                         .HasColumnName("payment_method_id");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
+                    b.Property<int>("Status")
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                        .HasColumnType("integer")
                         .HasColumnName("status");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -122,7 +78,76 @@ namespace venue_service.Migrations.Reservation
                     b.ToTable("reservations", (string)null);
                 });
 
-            modelBuilder.Entity("venue_service.Src.Models.Role", b =>
+            modelBuilder.Entity("venue_service.Src.Models.Payment.PaymentMethodEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("payment_methods", (string)null);
+                });
+
+            modelBuilder.Entity("venue_service.Src.Models.Payment.PaymentRecordEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric")
+                        .HasColumnName("amount");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("MercadoPagoPaymentId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("mercado_pago_payment_id");
+
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("paid_at");
+
+                    b.Property<int>("ReservationId")
+                        .HasColumnType("integer")
+                        .HasColumnName("reservation_id");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("status");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReservationId")
+                        .IsUnique();
+
+                    b.ToTable("payment_records", (string)null);
+                });
+
+            modelBuilder.Entity("venue_service.Src.Models.User.User.RoleEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -142,7 +167,7 @@ namespace venue_service.Migrations.Reservation
                     b.ToTable("roles");
                 });
 
-            modelBuilder.Entity("venue_service.Src.Models.User", b =>
+            modelBuilder.Entity("venue_service.Src.Models.User.UserEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -150,6 +175,17 @@ namespace venue_service.Migrations.Reservation
                         .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Cnpj")
+                        .HasMaxLength(14)
+                        .HasColumnType("character varying(14)")
+                        .HasColumnName("cnpj");
+
+                    b.Property<string>("Cpf")
+                        .IsRequired()
+                        .HasMaxLength(14)
+                        .HasColumnType("character varying(14)")
+                        .HasColumnName("cpf");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -170,10 +206,6 @@ namespace venue_service.Migrations.Reservation
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
                         .HasColumnName("first_name");
-
-                    b.Property<bool>("IsBanned")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_banned");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -210,7 +242,88 @@ namespace venue_service.Migrations.Reservation
                     b.ToTable("users");
                 });
 
-            modelBuilder.Entity("venue_service.Src.Models.Venue", b =>
+            modelBuilder.Entity("venue_service.Src.Models.Venue.VenueAvailabilityTimeEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("end_date");
+
+                    b.Property<bool>("IsReserved")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_reserved");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric")
+                        .HasColumnName("price");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("start_date");
+
+                    b.Property<string>("TimeStatus")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("time_status");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnName("reserved_by");
+
+                    b.Property<int?>("VenueEntityId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("VenueId")
+                        .HasColumnType("integer")
+                        .HasColumnName("venue_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VenueEntityId");
+
+                    b.ToTable("venue_availability_times");
+                });
+
+            modelBuilder.Entity("venue_service.Src.Models.Venue.VenueContactInfoEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("email");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("phone");
+
+                    b.Property<int>("VenueId")
+                        .HasColumnType("integer")
+                        .HasColumnName("venue_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VenueId");
+
+                    b.ToTable("venue_contact_infos");
+                });
+
+            modelBuilder.Entity("venue_service.Src.Models.Venue.VenueEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -288,7 +401,7 @@ namespace venue_service.Migrations.Reservation
                     b.ToTable("venues");
                 });
 
-            modelBuilder.Entity("venue_service.Src.Models.VenueAvailabilityTime", b =>
+            modelBuilder.Entity("venue_service.Src.Models.Venue.VenueEquipamentEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -296,88 +409,6 @@ namespace venue_service.Migrations.Reservation
                         .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("end_date");
-
-                    b.Property<bool>("IsReserved")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_reserved");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric")
-                        .HasColumnName("price");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("start_date");
-
-                    b.Property<string>("TimeStatus")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("time_status");
-
-                    b.Property<int?>("UserId")
-                        .HasColumnType("integer")
-                        .HasColumnName("reserved_by");
-
-                    b.Property<int>("VenueId")
-                        .HasColumnType("integer")
-                        .HasColumnName("venue_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("VenueId");
-
-                    b.ToTable("venue_availability_times");
-                });
-
-            modelBuilder.Entity("venue_service.Src.Models.VenueContactInfo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("character varying(150)")
-                        .HasColumnName("email");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasColumnName("phone");
-
-                    b.Property<int>("VenueId")
-                        .HasColumnType("integer")
-                        .HasColumnName("venue_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("VenueId");
-
-                    b.ToTable("venue_contact_infos");
-                });
-
-            modelBuilder.Entity("venue_service.Src.Models.VenueEquipament", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("EquipamentTypeId")
-                        .HasColumnType("integer")
-                        .HasColumnName("equipament_type_id");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("integer")
@@ -389,14 +420,12 @@ namespace venue_service.Migrations.Reservation
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EquipamentTypeId");
-
                     b.HasIndex("VenueId");
 
                     b.ToTable("venue_equipaments");
                 });
 
-            modelBuilder.Entity("venue_service.Src.Models.VenueImage", b =>
+            modelBuilder.Entity("venue_service.Src.Models.Venue.VenueImageEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -428,7 +457,7 @@ namespace venue_service.Migrations.Reservation
                     b.ToTable("venue_images");
                 });
 
-            modelBuilder.Entity("venue_service.Src.Models.VenueType", b =>
+            modelBuilder.Entity("venue_service.Src.Models.Venue.VenueTypeEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -454,21 +483,21 @@ namespace venue_service.Migrations.Reservation
                     b.ToTable("venue_types");
                 });
 
-            modelBuilder.Entity("venue_service.Src.Models.Reservation", b =>
+            modelBuilder.Entity("ReservationEntity", b =>
                 {
-                    b.HasOne("venue_service.Src.Models.PaymentMethod", "PaymentMethod")
+                    b.HasOne("venue_service.Src.Models.Payment.PaymentMethodEntity", "PaymentMethod")
                         .WithMany("Reservations")
                         .HasForeignKey("PaymentMethodId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("venue_service.Src.Models.User", "User")
+                    b.HasOne("venue_service.Src.Models.User.UserEntity", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("venue_service.Src.Models.Venue", "Venue")
+                    b.HasOne("venue_service.Src.Models.Venue.VenueEntity", "Venue")
                         .WithMany()
                         .HasForeignKey("VenueId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -481,9 +510,20 @@ namespace venue_service.Migrations.Reservation
                     b.Navigation("Venue");
                 });
 
-            modelBuilder.Entity("venue_service.Src.Models.User", b =>
+            modelBuilder.Entity("venue_service.Src.Models.Payment.PaymentRecordEntity", b =>
                 {
-                    b.HasOne("venue_service.Src.Models.Role", "Role")
+                    b.HasOne("ReservationEntity", "Reservation")
+                        .WithOne("PaymentRecord")
+                        .HasForeignKey("venue_service.Src.Models.Payment.PaymentRecordEntity", "ReservationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Reservation");
+                });
+
+            modelBuilder.Entity("venue_service.Src.Models.User.UserEntity", b =>
+                {
+                    b.HasOne("venue_service.Src.Models.User.User.RoleEntity", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -492,15 +532,33 @@ namespace venue_service.Migrations.Reservation
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("venue_service.Src.Models.Venue", b =>
+            modelBuilder.Entity("venue_service.Src.Models.Venue.VenueAvailabilityTimeEntity", b =>
                 {
-                    b.HasOne("venue_service.Src.Models.User", "Owner")
+                    b.HasOne("venue_service.Src.Models.Venue.VenueEntity", null)
+                        .WithMany("VenueAvailabilityTimes")
+                        .HasForeignKey("VenueEntityId");
+                });
+
+            modelBuilder.Entity("venue_service.Src.Models.Venue.VenueContactInfoEntity", b =>
+                {
+                    b.HasOne("venue_service.Src.Models.Venue.VenueEntity", "Venue")
+                        .WithMany("VenueContactInfos")
+                        .HasForeignKey("VenueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Venue");
+                });
+
+            modelBuilder.Entity("venue_service.Src.Models.Venue.VenueEntity", b =>
+                {
+                    b.HasOne("venue_service.Src.Models.User.UserEntity", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("venue_service.Src.Models.VenueType", "VenueType")
+                    b.HasOne("venue_service.Src.Models.Venue.VenueTypeEntity", "VenueType")
                         .WithMany()
                         .HasForeignKey("VenueTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -511,19 +569,10 @@ namespace venue_service.Migrations.Reservation
                     b.Navigation("VenueType");
                 });
 
-            modelBuilder.Entity("venue_service.Src.Models.VenueAvailabilityTime", b =>
+            modelBuilder.Entity("venue_service.Src.Models.Venue.VenueEquipamentEntity", b =>
                 {
-                    b.HasOne("venue_service.Src.Models.Venue", null)
-                        .WithMany("VenueAvailabilityTimes")
-                        .HasForeignKey("VenueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("venue_service.Src.Models.VenueContactInfo", b =>
-                {
-                    b.HasOne("venue_service.Src.Models.Venue", "Venue")
-                        .WithMany("VenueContactInfos")
+                    b.HasOne("venue_service.Src.Models.Venue.VenueEntity", "Venue")
+                        .WithMany("VenueEquipaments")
                         .HasForeignKey("VenueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -531,28 +580,9 @@ namespace venue_service.Migrations.Reservation
                     b.Navigation("Venue");
                 });
 
-            modelBuilder.Entity("venue_service.Src.Models.VenueEquipament", b =>
+            modelBuilder.Entity("venue_service.Src.Models.Venue.VenueImageEntity", b =>
                 {
-                    b.HasOne("venue_service.Src.Models.EquipamentType", "EquipamentType")
-                        .WithMany("VenueEquipaments")
-                        .HasForeignKey("EquipamentTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("venue_service.Src.Models.Venue", "Venue")
-                        .WithMany("VenueEquipaments")
-                        .HasForeignKey("VenueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("EquipamentType");
-
-                    b.Navigation("Venue");
-                });
-
-            modelBuilder.Entity("venue_service.Src.Models.VenueImage", b =>
-                {
-                    b.HasOne("venue_service.Src.Models.Venue", "Venue")
+                    b.HasOne("venue_service.Src.Models.Venue.VenueEntity", "Venue")
                         .WithMany("VenueImages")
                         .HasForeignKey("VenueId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -561,22 +591,22 @@ namespace venue_service.Migrations.Reservation
                     b.Navigation("Venue");
                 });
 
-            modelBuilder.Entity("venue_service.Src.Models.EquipamentType", b =>
+            modelBuilder.Entity("ReservationEntity", b =>
                 {
-                    b.Navigation("VenueEquipaments");
+                    b.Navigation("PaymentRecord");
                 });
 
-            modelBuilder.Entity("venue_service.Src.Models.PaymentMethod", b =>
+            modelBuilder.Entity("venue_service.Src.Models.Payment.PaymentMethodEntity", b =>
                 {
                     b.Navigation("Reservations");
                 });
 
-            modelBuilder.Entity("venue_service.Src.Models.Role", b =>
+            modelBuilder.Entity("venue_service.Src.Models.User.User.RoleEntity", b =>
                 {
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("venue_service.Src.Models.Venue", b =>
+            modelBuilder.Entity("venue_service.Src.Models.Venue.VenueEntity", b =>
                 {
                     b.Navigation("VenueAvailabilityTimes");
 

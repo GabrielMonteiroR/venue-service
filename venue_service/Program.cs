@@ -8,13 +8,15 @@ using venue_service.Src.Config;
 using venue_service.Src.Services.ImageStorageService;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Configuration;
-using venue_service.Src.Services.Atuh;
+using venue_service.Src.Services.Auth;
 using venue_service.Src.Services.Reservation;
 using venue_service.Src.Services.Venue;
-using venue_service.Src.Services.UserService;
-using venue_service.Src.Iterfaces.ImageStorage;
+using venue_service.Src.Services.User;
 using venue_service.Src.Iterfaces.Reservation;
 using venue_service.Src.Iterfaces.Venue;
+using venue_service.Src.Interfaces.Payment;
+using venue_service.Src.Services.Payment;
+using venue_service.Src.Interfaces.ImageStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -86,6 +88,7 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<IVenueAvaliabilityTime, VenueAvaliabilityTimeService>();
 builder.Services.AddScoped<IVenueType, VenueTypeService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<IPaymentService, MercadoPagoPaymentService>();
 
 // Storage de Imagens
 

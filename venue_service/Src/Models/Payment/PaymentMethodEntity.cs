@@ -19,6 +19,6 @@ namespace venue_service.Src.Models.Payment
         [Column("description")]
         public string Description { get; set; }
 
-        public ICollection<Reservation> Reservations { get; set; }
+        public ICollection<ReservationEntity> Reservations { get; set; }
     }
 }
