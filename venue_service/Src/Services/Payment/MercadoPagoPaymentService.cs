@@ -37,7 +37,12 @@ namespace venue_service.Src.Services.Payment
                 Description = description,
                 Installments = 1,
                 PaymentMethodId = methodId,
-                Payer = new PaymentPayerRequest { Email = email }
+                Payer = new PaymentPayerRequest { Email = email },
+                ApplicationFee = amount * 0.3m,
+                Metadata = new Dictionary<string, string>
+                {
+                    {"collector_id", receiverId  }
+                }
             };
 
             var client = new PaymentClient();
