@@ -31,6 +31,10 @@ public class UserEntity
     [Column("cnpj")]
     public string? Cnpj { get; set; }
 
+    [MaxLength(50)]
+    [Column("mercado_pago_user_id")]
+    public string? MercadoPagoUserId { get; set; }
+
     [Required]
     [MaxLength(150)]
     [Column("email")]
