@@ -1,63 +1,67 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using venue_service.Src.Models.User.User;
+using venue_service.Src.Models.Venue;
 
-namespace venue_service.Src.Models.User;
-
-[Table("users")]
-public class UserEntity
+namespace venue_service.Src.Models.User
 {
-    [Key]
-    [Column("id")]
-    public int Id { get; set; }
+    [Table("users")]
+    public class UserEntity
+    {
+        [Key]
+        [Column("id")]
+        public int Id { get; set; }
 
-    [Required]
-    [MaxLength(100)]
-    [Column("first_name")]
-    public string FirstName { get; set; }
+        [Required]
+        [MaxLength(255)]
+        [Column("first_name")]
+        public string FirstName { get; set; }
 
-    [Required]
-    [MaxLength(100)]
-    [Column("last_name")]
-    public string LastName { get; set; }
+        [Required]
+        [MaxLength(255)]
+        [Column("last_name")]
+        public string LastName { get; set; }
 
-    [Required]
-    [MaxLength(14)]
-    [Column("cpf")]
-    public string Cpf { get; set; }
+        [Required]
+        [MaxLength(255)]
+        [EmailAddress]
+        [Column("email")]
+        public string Email { get; set; }
 
-    [MaxLength(14)]
-    [Column("cnpj")]
-    public string? Cnpj { get; set; }
+        [Required]
+        [Column("password")]
+        public string Password { get; set; }
 
-    [Required]
-    [MaxLength(150)]
-    [Column("email")]
-    public string Email { get; set; }
+        [Required]
+        [Column("phone")]
+        public string Phone { get; set; }
 
-    [Required]
-    [Column("password")]
-    public string Password { get; set; }
+        [Column("cpf")]
+        public string? Cpf { get; set; }
 
-    public string? ProfileImageUrl { get; set; }
+        [Column("cnpj")]
+        public string? Cnpj { get; set; }
 
-    [MaxLength(20)]
-    [Column("phone")]
-    public string Phone { get; set; }
+        [Column("profile_image_url")]
+        public string? ProfileImageUrl { get; set; }
 
-    [ForeignKey("RoleId")]
-    public RoleEntity Role { get; set; }
-    [Column("role_id")]
-    public int RoleId { get; set; }
+        [Column("is_banned")]
+        public bool IsBanned { get; set; }
 
-    [Column("created_at")]
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        [Required]
+        [Column("role_id")]
+        public int RoleId { get; set; }
+        public RoleEntity Role { get; set; }
 
-    [Column("updated_at")]
-    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+        [Column("mercado_pago_user_id")]
+        public string? MercadoPagoUserId { get; set; }
 
-    [Column("deleted_at")]
-    public DateTime? DeletedAt { get; set; }
+        [Column("created_at")]
+        public DateTime CreatedAt { get; set; }
 
+        [Column("updated_at")]
+        public DateTime UpdatedAt { get; set; }
+
+        public ICollection<ReservationEntity> Reservations { get; set; } = new List<ReservationEntity>();
+        public ICollection<VenueEntity> Venues { get; set; } = new List<VenueEntity>();
+    }
 }

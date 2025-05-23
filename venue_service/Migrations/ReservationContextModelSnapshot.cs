@@ -44,13 +44,15 @@ namespace venue_service.Migrations
                         .HasColumnName("payment_method_id");
 
                     b.Property<int>("Status")
-                        .HasMaxLength(50)
                         .HasColumnType("integer")
                         .HasColumnName("status");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
+
+                    b.Property<int?>("UserEntityId")
+                        .HasColumnType("integer");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer")
@@ -67,6 +69,8 @@ namespace venue_service.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("PaymentMethodId");
+
+                    b.HasIndex("UserEntityId");
 
                     b.HasIndex("UserId");
 
@@ -144,7 +148,7 @@ namespace venue_service.Migrations
                     b.ToTable("payment_records", (string)null);
                 });
 
-            modelBuilder.Entity("venue_service.Src.Models.User.User.RoleEntity", b =>
+            modelBuilder.Entity("venue_service.Src.Models.User.RoleEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -174,41 +178,42 @@ namespace venue_service.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Cnpj")
-                        .HasMaxLength(14)
-                        .HasColumnType("character varying(14)")
+                        .HasColumnType("text")
                         .HasColumnName("cnpj");
 
                     b.Property<string>("Cpf")
-                        .IsRequired()
-                        .HasMaxLength(14)
-                        .HasColumnType("character varying(14)")
+                        .HasColumnType("text")
                         .HasColumnName("cpf");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("deleted_at");
-
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("character varying(150)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("email");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("first_name");
+
+                    b.Property<bool>("IsBanned")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_banned");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("last_name");
+
+                    b.Property<string>("MercadoPagoUserId")
+                        .HasColumnType("text")
+                        .HasColumnName("mercado_pago_user_id");
 
                     b.Property<string>("Password")
                         .IsRequired()
@@ -217,12 +222,12 @@ namespace venue_service.Migrations
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
+                        .HasColumnType("text")
                         .HasColumnName("phone");
 
                     b.Property<string>("ProfileImageUrl")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("profile_image_url");
 
                     b.Property<int>("RoleId")
                         .HasColumnType("integer")
@@ -488,6 +493,10 @@ namespace venue_service.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("venue_service.Src.Models.User.UserEntity", null)
+                        .WithMany("Reservations")
+                        .HasForeignKey("UserEntityId");
+
                     b.HasOne("venue_service.Src.Models.User.UserEntity", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -520,7 +529,7 @@ namespace venue_service.Migrations
 
             modelBuilder.Entity("venue_service.Src.Models.User.UserEntity", b =>
                 {
-                    b.HasOne("venue_service.Src.Models.User.User.RoleEntity", "Role")
+                    b.HasOne("venue_service.Src.Models.User.RoleEntity", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -550,7 +559,7 @@ namespace venue_service.Migrations
             modelBuilder.Entity("venue_service.Src.Models.Venue.VenueEntity", b =>
                 {
                     b.HasOne("venue_service.Src.Models.User.UserEntity", "Owner")
-                        .WithMany()
+                        .WithMany("Venues")
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -598,9 +607,16 @@ namespace venue_service.Migrations
                     b.Navigation("Reservations");
                 });
 
-            modelBuilder.Entity("venue_service.Src.Models.User.User.RoleEntity", b =>
+            modelBuilder.Entity("venue_service.Src.Models.User.RoleEntity", b =>
                 {
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("venue_service.Src.Models.User.UserEntity", b =>
+                {
+                    b.Navigation("Reservations");
+
+                    b.Navigation("Venues");
                 });
 
             modelBuilder.Entity("venue_service.Src.Models.Venue.VenueEntity", b =>
