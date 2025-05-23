@@ -1,7 +1,7 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using venue_service.Src.Models.User;
-using venue_service.Src.Models.User.User;
+using venue_service.Src.Models.Venue;
 
 namespace venue_service.Src.Contexts;
 
@@ -15,6 +15,8 @@ public class UserContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.Ignore<Venue_SportEntity>();
+
 
         modelBuilder.Entity<UserEntity>().ToTable("users");
         modelBuilder.Entity<RoleEntity>().ToTable("roles");

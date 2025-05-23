@@ -11,50 +11,42 @@ using venue_service.Src.Interfaces.ReservationInterfaces;
 using venue_service.Src.Interfaces.VenueInterfaces;
 using venue_service.Src.Models.Payment;
 
-namespace venue_service.Src.Services.Reservation;
-
-public class ReservationService : IReservationService
+namespace venue_service.Src.Services.Reservation
 {
-    private readonly ReservationContext _reservationContext;
-    private readonly UserContext _userContext;
-    private readonly VenueContext _venueContext;
-    private readonly IVenueAvailabilityTime _venueAvailabilityTimeService;
-    private readonly IPaymentService _paymentService;
-
-    public ReservationService(
-        ReservationContext reservationContext,
-        UserContext userContext,
-        VenueContext venueContext,
-        IPaymentService paymentService,
-        IVenueAvailabilityTime venueAvailabilityTimeService)
+    public class ReservationService : IReservationService
     {
-        _reservationContext = reservationContext;
-        _userContext = userContext;
-        _venueContext = venueContext;
-        _paymentService = paymentService;
-        _venueAvailabilityTimeService = venueAvailabilityTimeService;
-    }
+        private readonly ReservationContext _reservationContext;
+        private readonly UserContext _userContext;
+        private readonly VenueContext _venueContext;
+        private readonly IVenueAvailabilityTime _venueAvailabilityTimeService;
+        private readonly IPaymentService _paymentService;
 
-
-    public async Task<ReservationResponseDto> CreateReservationAsync(CreateReservationDto dto)
-    {
-        try
+        public ReservationService(
+            ReservationContext reservationContext,
+            UserContext userContext,
+            VenueContext venueContext,
+            IPaymentService paymentService,
+            IVenueAvailabilityTime venueAvailabilityTimeService)
         {
-            var userExists = await _userContext.User.FindAsync(dto.UserId);
-            var venueExists = await _venueContext.Venues.FindAsync(dto.VenueId);
-            var availability = await _venueContext.VenueAvailabilities.FindAsync(dto.VenueAvailabilityTimeId);
+            _reservationContext = reservationContext;
+            _userContext = userContext;
+            _venueContext = venueContext;
+            _paymentService = paymentService;
+            _venueAvailabilityTimeService = venueAvailabilityTimeService;
+        }
 
-            if (userExists is null)
-                throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "User not found");
+        public async Task<ReservationResponseDto> CreateReservationAsync(CreateReservationDto dto)
+        {
+            var user = await _userContext.User.FindAsync(dto.UserId)
+                ?? throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "User not found");
 
-            if (venueExists is null)
-                throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Venue not found");
+            var venue = await _venueContext.Venues.FindAsync(dto.VenueId)
+                ?? throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Venue not found");
 
-            if (availability is null)
-                throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Availability not found");
+            var availability = await _venueContext.VenueAvailabilities.FindAsync(dto.VenueAvailabilityTimeId)
+                ?? throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Availability not found");
 
             var isAvailable = await _venueAvailabilityTimeService.IsThisTimeAvailableToBook(dto.VenueAvailabilityTimeId);
-
             if (!isAvailable)
                 throw new HttpResponseException(HttpStatusCode.Conflict, "Conflict", "This time is not available");
 
@@ -77,12 +69,19 @@ public class ReservationService : IReservationService
 
             if (!string.IsNullOrWhiteSpace(dto.CardToken) && !string.IsNullOrWhiteSpace(dto.UserEmail))
             {
-                (string status, string mercadoPagoId) = await _paymentService.CreatePaymentAsync(
+                var owner = await _userContext.User.FindAsync(venue.OwnerId);
+                if (owner == null || string.IsNullOrWhiteSpace(owner.MercadoPagoUserId))
+                    throw new HttpResponseException(HttpStatusCode.BadRequest, "Payment Error", "Locador não possui conta MercadoPago cadastrada");
+
+                long receiverId = long.Parse(owner.MercadoPagoUserId);
+
+                (string status, string mercadoPagoId, string? error) = await _paymentService.CreatePaymentAsync(
                     dto.UserEmail,
                     dto.CardToken,
                     availability.Price,
                     $"Reserva #{reservation.Id}",
-                    (PaymentMethodEnum)dto.PaymentMethodId);
+                    (PaymentMethodEnum)dto.PaymentMethodId,
+                    receiverId);
 
                 var paymentRecord = new PaymentRecordEntity
                 {
@@ -108,28 +107,15 @@ public class ReservationService : IReservationService
                 CreatedAt = reservation.CreatedAt
             };
         }
-        catch (Exception ex)
-        {
-            throw new HttpResponseException(
-                HttpStatusCode.InternalServerError,
-                "Unexpected error",
-                ex.InnerException?.Message ?? ex.Message
-            );
-        }
-    }
 
-    public async Task<ReservationsResponseDto> GetReservationsByUserIdAsync(int userId)
-    {
-        try
+        public async Task<ReservationsResponseDto> GetReservationsByUserIdAsync(int userId)
         {
             var reservations = await _reservationContext.Reservations
-                                              .Where(r => r.UserId == userId)
-                                              .ToListAsync();
+                .Where(r => r.UserId == userId)
+                .ToListAsync();
 
-            if (reservations.Count == 0)
-            {
+            if (!reservations.Any())
                 throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "No reservations found for this user");
-            }
 
             return new ReservationsResponseDto
             {
@@ -144,83 +130,78 @@ public class ReservationService : IReservationService
                 }).ToList()
             };
         }
-        catch (Exception ex)
+
+        public async Task<ReservationPaymentResponseDto> PayReservationAsync(int reservationId, PaymentRequestDto dto)
         {
-            throw new HttpResponseException(HttpStatusCode.InternalServerError, "Unexpected error", ex.Message);
+            var reservation = await _reservationContext.Reservations
+                .Include(r => r.PaymentRecord)
+                .Include(r => r.Venue)
+                .FirstOrDefaultAsync(r => r.Id == reservationId);
+
+            if (reservation == null)
+                throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Reservation not found");
+
+            if (reservation.PaymentRecord != null)
+                throw new HttpResponseException(HttpStatusCode.BadRequest, "Already Paid", "This reservation already has a payment record");
+
+            var availability = await _venueContext.VenueAvailabilities
+                .FirstOrDefaultAsync(a => a.Id == reservation.VenueAvailabilityTimeId);
+
+            if (availability == null)
+                throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Availability not found");
+
+            var owner = await _userContext.User.FindAsync(reservation.Venue.OwnerId);
+            if (owner == null || string.IsNullOrWhiteSpace(owner.MercadoPagoUserId))
+                throw new HttpResponseException(HttpStatusCode.BadRequest, "Payment Error", "Locador não possui conta MercadoPago cadastrada");
+
+            long receiverId = long.Parse(owner.MercadoPagoUserId);
+            var paymentMethodEnum = (PaymentMethodEnum)reservation.PaymentMethodId;
+
+            (string status, string mercadoPagoId, string? _) = await _paymentService.CreatePaymentAsync(
+                dto.UserEmail,
+                dto.CardToken,
+                availability.Price,
+                $"Reserva #{reservationId}",
+                paymentMethodEnum,
+                receiverId);
+
+            var record = new PaymentRecordEntity
+            {
+                ReservationId = reservationId,
+                Amount = availability.Price,
+                Status = status,
+                MercadoPagoPaymentId = mercadoPagoId,
+                CreatedAt = DateTime.UtcNow,
+                PaidAt = status == "approved" ? DateTime.UtcNow : null
+            };
+
+            _reservationContext.PaymentRecords.Add(record);
+            await _reservationContext.SaveChangesAsync();
+
+            return new ReservationPaymentResponseDto
+            {
+                ReservationId = reservationId,
+                Paid = status == "approved",
+                PaymentStatus = status,
+                PaidAt = record.PaidAt
+            };
         }
 
-
-    }
-
-    public async Task<ReservationPaymentStatusDto> GetPaymentStatusAsync(int reservationId)
-    {
-        var reservation = await _reservationContext.Reservations
-            .Include(r => r.PaymentRecord)
-            .FirstOrDefaultAsync(r => r.Id == reservationId);
-
-        if (reservation == null)
-            throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Reservation not found");
-
-        var record = reservation.PaymentRecord;
-
-        return new ReservationPaymentStatusDto
+        public async Task<ReservationPaymentStatusDto> GetPaymentStatusAsync(int reservationId)
         {
-            ReservationId = reservationId,
-            HasPayment = record != null,
-            PaymentStatus = record?.Status,
-            PaidAt = record?.PaidAt
-        };
+            var payment = await _reservationContext.PaymentRecords
+                .FirstOrDefaultAsync(p => p.ReservationId == reservationId);
+
+            if (payment == null)
+                throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "No payment found for this reservation");
+
+            return new ReservationPaymentStatusDto
+            {
+                ReservationId = reservationId,
+                PaymentStatus = payment.Status,
+                PaidAt = payment.PaidAt,
+                HasPayment = true
+            };
+        }
     }
-
-
-    public async Task<ReservationPaymentResponseDto> PayReservationAsync(int reservationId, PaymentRequestDto dto)
-    {
-        var reservation = await _reservationContext.Reservations
-            .Include(r => r.PaymentRecord)
-            .FirstOrDefaultAsync(r => r.Id == reservationId);
-
-        if (reservation == null)
-            throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Reservation not found");
-
-        if (reservation.PaymentRecord != null)
-            throw new HttpResponseException(HttpStatusCode.BadRequest, "Already Paid", "This reservation already has a payment record");
-
-        var availability = await _venueContext.VenueAvailabilities
-            .FirstOrDefaultAsync(a => a.Id == reservation.VenueAvailabilityTimeId);
-
-        if (availability == null)
-            throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Availability not found");
-
-        var paymentMethodEnum = (PaymentMethodEnum)reservation.PaymentMethodId;
-
-        var (status, mercadoPagoId) = await _paymentService.CreatePaymentAsync(
-            dto.UserEmail,
-            dto.CardToken,
-            availability.Price,
-            $"Reserva #{reservationId}",
-            paymentMethodEnum);
-
-        var record = new PaymentRecordEntity
-        {
-            ReservationId = reservationId,
-            Amount = availability.Price,
-            Status = status,
-            MercadoPagoPaymentId = mercadoPagoId,
-            CreatedAt = DateTime.UtcNow,
-            PaidAt = status == "approved" ? DateTime.UtcNow : null
-        };
-
-        _reservationContext.PaymentRecords.Add(record);
-        await _reservationContext.SaveChangesAsync();
-
-        return new ReservationPaymentResponseDto
-        {
-            ReservationId = reservationId,
-            Paid = status == "approved",
-            PaymentStatus = status,
-            PaidAt = record.PaidAt
-        };
-    }
-
-
 }
