@@ -15,6 +15,7 @@ namespace venue_service.Src.Models.Payment
         public int ReservationId { get; set; }
 
         [ForeignKey("ReservationId")]
+        [InverseProperty(nameof(ReservationEntity.PaymentRecord))]
         public ReservationEntity Reservation { get; set; }
 
         [Required]

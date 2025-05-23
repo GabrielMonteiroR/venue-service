@@ -36,6 +36,7 @@ public class ReservationEntity
     [ForeignKey("PaymentMethodId")]
     public PaymentMethodEntity PaymentMethod { get; set; }
 
+    [InverseProperty(nameof(PaymentRecordEntity.Reservation))]
     public PaymentRecordEntity? PaymentRecord { get; set; }
 
     [Required]

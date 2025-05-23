@@ -14,14 +14,13 @@ public class CreateReservationDto
     public int UserId { get; set; }
 
     [Required]
+    [Range(1, 3, ErrorMessage = "Método de pagamento inválido")]
     public int PaymentMethodId { get; set; }
 
-    [Required]
     [StringLength(255, MinimumLength = 1)]
-    public string CardToken { get; set; }
+    public string? CardToken { get; set; }
 
-    [Required]
     [EmailAddress]
     [StringLength(255)]
-    public string UserEmail { get; set; }
+    public string? UserEmail { get; set; }
 }

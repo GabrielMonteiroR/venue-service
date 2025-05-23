@@ -17,7 +17,7 @@ public class ReservationService : IReservationService
     private readonly ReservationContext _reservationContext;
     private readonly UserContext _userContext;
     private readonly VenueContext _venueContext;
-    private readonly IVenueAvaliabilityTime _venueAvailabilityTimeService;
+    private readonly IVenueAvailabilityTime _venueAvailabilityTimeService;
     private readonly IPaymentService _paymentService;
 
     public ReservationService(
@@ -25,7 +25,7 @@ public class ReservationService : IReservationService
         UserContext userContext,
         VenueContext venueContext,
         IPaymentService paymentService,
-        IVenueAvaliabilityTime venueAvailabilityTimeService)
+        IVenueAvailabilityTime venueAvailabilityTimeService)
     {
         _reservationContext = reservationContext;
         _userContext = userContext;

@@ -1,12 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using System.Net;
 using venue_service.Src.Contexts;
 using venue_service.Src.Dtos.Venue;
 using venue_service.Src.Exceptions;
-using venue_service.Src.Interfaces.ImageStorage;
+using venue_service.Src.Iterfaces.ImageStorage;
 using venue_service.Src.Iterfaces.Venue;
-using venue_service.Src.Models;
 using venue_service.Src.Models.Venue;
 
 namespace venue_service.Src.Services.Venue

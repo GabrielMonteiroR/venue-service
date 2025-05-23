@@ -3,7 +3,7 @@ using venue_service.Src.Models.Venue;
 
 namespace venue_service.Src.Interfaces.Venue
 {
-    public interface IVenueAvaliabilityTime
+    public interface IVenueAvailabilityTime
     {
         Task<VenueAvailabilityTimeResponseDto> CreateVenueAvailabilityTimeAsync(CreateVenueAvaliabilityDto dto);
         Task<VenueAvaliabilityTimesResponseDto> ListAvaliableTimesByVenue(int venueId);

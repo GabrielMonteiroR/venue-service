@@ -3,16 +3,17 @@ using System.Net;
 using venue_service.Src.Contexts;
 using venue_service.Src.Dtos.Venue;
 using venue_service.Src.Exceptions;
+using venue_service.Src.Interfaces.Venue;
 using venue_service.Src.Iterfaces.Venue;
 using venue_service.Src.Models.Venue;
 
 namespace venue_service.Src.Services.Venue
 {
-    public class VenueAvaliabilityTimeService : IVenueAvaliabilityTime
+    public class VenueAvailabilityTimeService : IVenueAvailabilityTime
     {
         private readonly VenueContext _venueContext;
 
-        public VenueAvaliabilityTimeService(VenueContext context)
+        public VenueAvailabilityTimeService(VenueContext context)
         {
             _venueContext = context;
         }
