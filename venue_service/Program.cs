@@ -25,6 +25,8 @@ builder.Configuration
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
     .AddEnvironmentVariables();
 
+builder.Services.AddHttpContextAccessor();
+
 var accessToken = builder.Configuration["MercadoPago:AccessToken"];
 
 // Ambiente e Connection String
