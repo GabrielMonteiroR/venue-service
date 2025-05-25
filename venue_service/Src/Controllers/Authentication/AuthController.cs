@@ -37,11 +37,11 @@ public class AuthController : ControllerBase
 
 
     [HttpPost("login")]
-    public IActionResult Login([FromBody] LoginRequestDto dto)
+    public async Task<IActionResult> Login([FromBody] LoginRequestDto dto)
     {
         try
         {
-            var response = _authService.Login(dto);
+            var response = await _authService.Login(dto);
             return Ok(response);
         }
         catch (Exception ex)
