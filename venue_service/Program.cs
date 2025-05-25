@@ -47,7 +47,7 @@ builder.Services.AddDbContext<UserContext>(options =>
 builder.Services.AddDbContext<ReservationContext>(options =>
     options.UseNpgsql(connectionString));
 
-builder.Services.AddDbContext<EquipamentContext>(options =>
+builder.Services.AddDbContext<EquipmentContext>(options =>
     options.UseNpgsql(connectionString));
 
 builder.Services.AddDbContext<SportContext>(options =>
@@ -113,7 +113,7 @@ using (var scope = app.Services.CreateScope())
     scope.ServiceProvider.GetRequiredService<VenueContext>().Database.Migrate();
     scope.ServiceProvider.GetRequiredService<UserContext>().Database.Migrate();
     scope.ServiceProvider.GetRequiredService<ReservationContext>().Database.Migrate();
-    scope.ServiceProvider.GetRequiredService<EquipamentContext>().Database.Migrate();
+    scope.ServiceProvider.GetRequiredService<EquipmentContext>().Database.Migrate();
     scope.ServiceProvider.GetRequiredService<SportContext>().Database.Migrate();
 }
 

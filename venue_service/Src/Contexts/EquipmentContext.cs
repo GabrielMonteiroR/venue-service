@@ -4,9 +4,9 @@ using venue_service.Src.Models.Venue;
 
 namespace venue_service.Src.Contexts;
 
-public class EquipamentContext : DbContext
+public class EquipmentContext : DbContext
 {
-    public EquipamentContext(DbContextOptions<EquipamentContext> options) : base(options) { }
+    public EquipmentContext(DbContextOptions<EquipmentContext> options) : base(options) { }
 
     public DbSet<VenueEquipamentEntity> VenueEquipaments => Set<VenueEquipamentEntity>();
 
