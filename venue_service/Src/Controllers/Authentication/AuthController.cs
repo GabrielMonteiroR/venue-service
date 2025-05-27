@@ -18,9 +18,6 @@ public class AuthController : ControllerBase
     [HttpPost("register-athlete")]
     public async Task<IActionResult> RegisterAthlete([FromBody] RegisterUserRequestDto dto)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         var response = await _authService.RegisterAthleteAsync(dto);
         return Ok(response);
     }
@@ -28,9 +25,6 @@ public class AuthController : ControllerBase
     [HttpPost("register-owner")]
     public async Task<IActionResult> RegisterOwner([FromBody] RegisterOwnerRequestDto dto)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         var response = await _authService.RegisterOwnerAsync(dto);
         return Ok(response);
     }
@@ -39,14 +33,7 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequestDto dto)
     {
-        try
-        {
             var response = await _authService.Login(dto);
             return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
     }
 }

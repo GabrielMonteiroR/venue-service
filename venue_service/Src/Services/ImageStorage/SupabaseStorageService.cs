@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using venue_service.Src.Exceptions;
 using System.Net;
 using venue_service.Src.Interfaces.ImageStorageInterfaces;
+using venue_service.Src.Dtos.ImageUpload;
 
 namespace venue_service.Src.Services.ImageStorageService
 {
@@ -24,7 +25,7 @@ namespace venue_service.Src.Services.ImageStorageService
                 throw new InvalidOperationException("Supabase URL ou API Key não configurada corretamente.");
         }
 
-        public async Task<string?> UploadImageAsync(IFormFile file, string bucket, string path)
+        public async Task<ImageUploadResponseDto> UploadImageAsync(IFormFile file, string bucket, string path)
         {
             try
             {
@@ -32,9 +33,7 @@ namespace venue_service.Src.Services.ImageStorageService
 
                 using var streamContent = new StreamContent(file.OpenReadStream());
                 streamContent.Headers.ContentType =
-    !string.IsNullOrWhiteSpace(file.ContentType)
-    ? new MediaTypeHeaderValue(file.ContentType)
-    : new MediaTypeHeaderValue("image/jpeg");
+                !string.IsNullOrWhiteSpace(file.ContentType) ? new MediaTypeHeaderValue(file.ContentType) : new MediaTypeHeaderValue("image/jpeg");
 
 
                 var request = new HttpRequestMessage(HttpMethod.Post, relativePath)
@@ -52,7 +51,11 @@ namespace venue_service.Src.Services.ImageStorageService
                     return null;
                 ;
 
-                return $"{_options.Url}/storage/v1/object/public/{bucket}/{path}";
+                return new ImageUploadResponseDto
+                {
+                    ImageUrl = $"{_options.Url}/storage/v1/object/public/{bucket}/{path}"
+                };
+
             }
             catch (Exception ex)
             {
@@ -84,15 +87,20 @@ namespace venue_service.Src.Services.ImageStorageService
             return (bucket, path);
         }
 
-        public async Task<string?> UploadProfileImageAsync(IFormFile file)
+        public async Task<ImageUploadResponseDto> UploadProfileImageAsync(IFormFile file)
         {
             var fileName = $"{Guid.NewGuid()}_{file.FileName}";
-            return await UploadImageAsync(file, "profile-images", fileName);
+            var image = await UploadImageAsync(file, "profile-images", fileName);
+
+            return new ImageUploadResponseDto
+            {
+                ImageUrl = image.ImageUrl
+            };
         }
 
-        public async Task<List<string>> UploadVenueImagesAsync(List<IFormFile> files)
+        public async Task<List<ImageUploadResponseDto>> UploadVenueImagesAsync(List<IFormFile> files)
         {
-            var urls = new List<string>();
+            var urls = new List<ImageUploadResponseDto>();
 
             foreach (var file in files)
             {

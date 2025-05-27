@@ -1,10 +1,12 @@
-﻿namespace venue_service.Src.Interfaces.ImageStorageInterfaces;
+﻿using venue_service.Src.Dtos.ImageUpload;
+
+namespace venue_service.Src.Interfaces.ImageStorageInterfaces;
 
 public interface IStorageService
 {
-    Task<string?> UploadProfileImageAsync(IFormFile file);
-    Task<List<string>> UploadVenueImagesAsync(List<IFormFile> files);
+    Task<ImageUploadResponseDto> UploadProfileImageAsync(IFormFile file);
+    Task<List<ImageUploadResponseDto>> UploadVenueImagesAsync(List<IFormFile> files);
     Task<bool> DeleteFileAsync(string bucket, string path);
     (string Bucket, string Path)? ParseSupabaseUrl(string url);
-    Task<string?> UploadImageAsync(IFormFile file, string bucket, string path);
+    Task<ImageUploadResponseDto?> UploadImageAsync(IFormFile file, string bucket, string path);
 }

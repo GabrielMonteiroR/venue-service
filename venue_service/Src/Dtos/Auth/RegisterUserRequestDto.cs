@@ -17,7 +17,7 @@ public class RegisterUserRequestDto
     [EmailAddress(ErrorMessage = "Invalid email.")]
     public string Email { get; set; }
 
-    public IFormFile? Image { get; set; }
+    public string Image { get; set; }
 
     [Required(ErrorMessage = "Password is required.")]
     [MinLength(6, ErrorMessage = "Password must be at least 6 characters.")]
