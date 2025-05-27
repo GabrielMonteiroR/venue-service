@@ -53,7 +53,7 @@ namespace venue_service.Src.Services.ImageStorageService
 
                 return new ImageUploadResponseDto
                 {
-                    ImageUrl = $"{_options.Url}/storage/v1/object/public/{bucket}/{path}"
+                    Image = $"{_options.Url}/storage/v1/object/public/{bucket}/{path}"
                 };
 
             }
@@ -94,7 +94,7 @@ namespace venue_service.Src.Services.ImageStorageService
 
             return new ImageUploadResponseDto
             {
-                ImageUrl = image.ImageUrl
+                Image = image.Image
             };
         }
 

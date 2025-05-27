@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using venue_service.Src.Attributes;
 
 namespace venue_service.Src.Dtos.Auth;
@@ -17,6 +18,7 @@ public class RegisterOwnerRequestDto
     [EmailAddress(ErrorMessage = "Invalid email.")]
     public string Email { get; set; }
 
+    [JsonPropertyName("imageUrl")]
     public string? Image { get; set; }
 
     [Required(ErrorMessage = "Password is required.")]
