@@ -196,27 +196,33 @@ namespace venue_service.Src.Services.Reservation
             };
         }
 
-        public async Task<LastUserReservationDto> GetLastUserReservationAsync(int userId)
+        public async Task<ReservationResponseDto> GetNextUserReservationAsync(int userId)
         {
             try
             {
                 var user = await _userContext.Users.FindAsync(userId);
-
                 if (user is null)
-                    throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "User not found");
-
-                var lastReservation = user.Reservations
-                    .OrderByDescending(r => r.CreatedAt)
-                    .FirstOrDefault();
-
-                if (lastReservation == null)
-                    throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "No reservations found for this user");
-
-                return new LastUserReservationDto
                 {
-                    reservationId = lastReservation.Id,
-                    reservationStatus = ((ReservationStatusEnum)lastReservation.Status).ToString(),
-                    ScheduleId = lastReservation.ScheduleId,
+                    throw new HttpResponseException(HttpStatusCode.NotFound, "User not found", $"User with ID {userId} does not exist.");
+                };
+                
+                var nextReservation = await _reservationContext.Reservations.Where(r => r.UserId == userId).FirstOrDefaultAsync(r => r.CreatedAt > DateTime.UtcNow);
+
+                if (nextReservation is null)
+                {
+                    throw new HttpResponseException(HttpStatusCode.NotFound, "No upcoming reservations", $"User with ID {userId} has no upcoming reservations.");
+                }
+
+                return new ReservationResponseDto
+                {
+                    Id = nextReservation.Id,
+                    UserId = nextReservation.UserId,
+                    VenueId = nextReservation.VenueId,
+                    ScheduleId = nextReservation.ScheduleId,
+                    TotalAmount = nextReservation.TotalAmount,
+                    PaymentMethodId = nextReservation.PaymentMethodId,
+                    Status = nextReservation.Status,
+                    CreatedAt = nextReservation.CreatedAt
                 };
             }
             catch (Exception ex)

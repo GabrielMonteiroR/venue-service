@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using venue_service.Src.Dtos.User;
 using venue_service.Src.Interfaces.ImageStorageInterfaces;
+using venue_service.Src.Interfaces.ReservationInterfaces;
 using venue_service.Src.Interfaces.UserInterfaces;
 using venue_service.Src.Services.User;
 
@@ -12,7 +13,7 @@ namespace venue_service.Src.Controllers.User
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly IStorageService _storageService;
+        private readonly IReservationService _reservationService;
 
         public UserController(UserService userService)
         {
@@ -45,6 +46,13 @@ namespace venue_service.Src.Controllers.User
         public async Task<IActionResult> GetCurrentUserInfo()
         {
             var response = await _userService.GetCurrentUser();
+            return Ok(response);
+        }
+
+        [HttpGet("next-reservation/{userId}")]
+        public async Task<IActionResult> GetNextReservation(int userId)
+        {
+            var response = await _reservationService.GetNextUserReservationAsync(userId);
             return Ok(response);
         }
     }

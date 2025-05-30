@@ -9,4 +9,5 @@ public interface IReservationService
     Task<ReservationsResponseDto> GetReservationsByUserIdAsync(int userId);
     Task<ReservationPaymentResponseDto> PayReservationAsync(int reservationId, PaymentRequestDto dto);
     Task<ReservationPaymentStatusDto> GetPaymentStatusAsync(int reservationId);
+    Task<ReservationResponseDto> GetNextUserReservationAsync(int userId);
 }
