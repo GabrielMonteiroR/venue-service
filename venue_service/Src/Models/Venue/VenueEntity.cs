@@ -52,6 +52,7 @@ namespace venue_service.Src.Models.Venue
         public int OwnerId { get; set; }
         public UserEntity Owner { get; set; }
 
+
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
@@ -63,6 +64,7 @@ namespace venue_service.Src.Models.Venue
 
         public ICollection<VenueImageEntity> VenueImages { get; set; }
         public ICollection<VenueEquipamentEntity> VenueEquipaments { get; set; }
+        public ICollection<SchedulesEntity> Schedules { get; set; }
         public ICollection<Venue_SportEntity> VenueSports { get; set; }
         public ICollection<VenueContactInfoEntity> VenueContactInfos { get; set; }
         public ICollection<VenueAvailabilityTimeEntity>? VenueAvailabilityTimes { get; set; }

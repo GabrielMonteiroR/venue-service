@@ -49,8 +49,6 @@ builder.Services.AddDbContext<UserContext>(options =>
 builder.Services.AddDbContext<ReservationContext>(options =>
     options.UseNpgsql(connectionString));
 
-builder.Services.AddDbContext<EquipmentContext>(options =>
-    options.UseNpgsql(connectionString));
 
 builder.Services.AddDbContext<SportContext>(options =>
     options.UseNpgsql(connectionString));
@@ -86,7 +84,6 @@ builder.Services.Configure<SupabaseStorageOptions>(
 builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IVenueService, VenueService>();
 builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<IVenueAvailabilityTime, VenueAvailabilityTimeService>();
 builder.Services.AddScoped<IVenueType, VenueTypeService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<IPaymentService, MercadoPagoPaymentService>();
@@ -115,7 +112,6 @@ using (var scope = app.Services.CreateScope())
     scope.ServiceProvider.GetRequiredService<VenueContext>().Database.Migrate();
     scope.ServiceProvider.GetRequiredService<UserContext>().Database.Migrate();
     scope.ServiceProvider.GetRequiredService<ReservationContext>().Database.Migrate();
-    scope.ServiceProvider.GetRequiredService<EquipmentContext>().Database.Migrate();
     scope.ServiceProvider.GetRequiredService<SportContext>().Database.Migrate();
 }
 

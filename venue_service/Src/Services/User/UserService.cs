@@ -22,7 +22,7 @@ public class UserService : IUserService
     {
         try
         {
-            var user = await _userContext.User.FindAsync(id);
+            var user = await _userContext.Users.FindAsync(id);
             if (user is null) throw new HttpResponseException(HttpStatusCode.NotFound, "User not found", $"User with id {id} not found.");
 
             return new UserResponseDto
@@ -47,7 +47,7 @@ public class UserService : IUserService
     {
         try
         {
-            var user = await _userContext.User.FindAsync(id);
+            var user = await _userContext.Users.FindAsync(id);
             if (user is null) throw new HttpResponseException(HttpStatusCode.NotFound, "User not found", $"User with id {id} not found.");
             user.FirstName = userDto.FirstName;
             user.LastName = userDto.LastName;
@@ -55,7 +55,7 @@ public class UserService : IUserService
             user.Phone = userDto.Phone;
             user.UpdatedAt = DateTime.UtcNow;
 
-            _userContext.User.Update(user);
+            _userContext.Users.Update(user);
             await _userContext.SaveChangesAsync();
 
             return new UserResponseDto
@@ -78,7 +78,7 @@ public class UserService : IUserService
     {
         try
         {
-            var user = await _userContext.User.FindAsync(userId);
+            var user = await _userContext.Users.FindAsync(userId);
             if (user is null) throw new HttpResponseException(HttpStatusCode.NotFound, "User not found", $"User with id {userId} not found.");
 
             user.ProfileImageUrl = dto.ImageUrl;
@@ -117,7 +117,7 @@ public class UserService : IUserService
                 throw new HttpResponseException(HttpStatusCode.BadRequest, "Invalid User ID", "User ID is not valid.");
             }
 
-            var user = await _userContext.User.FindAsync(userId);
+            var user = await _userContext.Users.FindAsync(userId);
             if (user is null)
             {
                 throw new HttpResponseException(HttpStatusCode.NotFound, "User not found", $"User with id {userId} not found.");

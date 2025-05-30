@@ -26,7 +26,7 @@ public class AuthService
 
     public async Task<AuthResponseDto> RegisterOwnerAsync(RegisterOwnerRequestDto dto)
     {
-        if (_userContext.User.Any(u => u.Email == dto.Email))
+        if (_userContext.Users.Any(u => u.Email == dto.Email))
             throw new Exception("Email already in use!");
 
         var user = new UserEntity
@@ -44,7 +44,7 @@ public class AuthService
 
         user.Password = _passwordHasher.HashPassword(user, dto.Password);
 
-        _userContext.User.Add(user);
+        _userContext.Users.Add(user);
         await _userContext.SaveChangesAsync();
 
         return new AuthResponseDto
@@ -65,7 +65,7 @@ public class AuthService
 
     public async Task<AuthResponseDto> RegisterAthleteAsync(RegisterUserRequestDto dto)
     {
-        if (_userContext.User.Any(u => u.Email == dto.Email))
+        if (_userContext.Users.Any(u => u.Email == dto.Email))
             throw new Exception("Email already in use!");
 
         var user = new UserEntity
@@ -82,7 +82,7 @@ public class AuthService
 
         user.Password = _passwordHasher.HashPassword(user, dto.Password);
 
-        _userContext.User.Add(user);
+        _userContext.Users.Add(user);
         await _userContext.SaveChangesAsync();
 
         return new AuthResponseDto
@@ -102,7 +102,7 @@ public class AuthService
 
     public async Task<AuthResponseDto> Login(LoginRequestDto dto)
     {
-        var user = _userContext.User
+        var user = _userContext.Users
             .Include(u => u.Role) 
             .FirstOrDefault(u => u.Email == dto.Email)
             ?? throw new Exception("Invalid user or password.");

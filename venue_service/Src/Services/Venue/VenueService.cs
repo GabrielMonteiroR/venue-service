@@ -217,7 +217,7 @@ namespace venue_service.Src.Services.Venue
         {
             try
             {
-                var owner = await _userContext.User.FirstOrDefaultAsync(o => o.Id == id);
+                var owner = await _userContext.Users.FirstOrDefaultAsync(o => o.Id == id);
                 if (owner is null)
                     throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Owner not found");
 
@@ -225,7 +225,7 @@ namespace venue_service.Src.Services.Venue
                     .Include(v => v.VenueImages)
                     .Where(v => v.OwnerId == id).ToListAsync();
 
-                if (venues.Count == 0) // Fixed: use property, not method group
+                if (venues.Count == 0) 
                     throw new HttpResponseException(HttpStatusCode.NoContent, "No Content", "No venues found");
 
                 var venueDtos = venues.Select(v => new VenueResponseDto
