@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using venue_service.Src.Models.Payment;
+using venue_service.Src.Models.Venue;
 
 namespace venue_service.Src.Contexts
 {
@@ -15,6 +16,7 @@ namespace venue_service.Src.Contexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Ignore<Venue_SportEntity>();
 
             modelBuilder.Entity<ReservationEntity>().ToTable("reservations");
             modelBuilder.Entity<PaymentMethodEntity>().ToTable("payment_methods");
