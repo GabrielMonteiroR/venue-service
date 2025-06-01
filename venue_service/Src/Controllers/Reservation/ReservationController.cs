@@ -31,7 +31,7 @@ namespace venue_service.Src.Controllers.Reservation
             return Ok(result);
         }
 
-        [HttpGet("reservations/{userId}")]
+        [HttpGet("reservations/{userId}/all")]
         public async Task<IActionResult> GetUserReservations(int userId)
         {
             var response = await _reservationService.GetReservationsByUserIdAsync(userId);
