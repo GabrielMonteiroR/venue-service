@@ -24,14 +24,14 @@ namespace venue_service.Src.Controllers.Reservation
             return Ok();
         }
 
-        [HttpGet("{reservationId}")]
+        [HttpGet("payment-status/{reservationId}")]
         public async Task<IActionResult> GetPaymentStatus(int reservationId)
         {
             var result = await _reservationService.GetPaymentStatusAsync(reservationId);
             return Ok(result);
         }
 
-        [HttpGet("reservations/{userId}/all")]
+        [HttpGet("{userId}")]
         public async Task<IActionResult> GetUserReservations(int userId)
         {
             var response = await _reservationService.GetReservationsByUserIdAsync(userId);
