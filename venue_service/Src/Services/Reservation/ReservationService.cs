@@ -109,7 +109,7 @@ namespace venue_service.Src.Services.Reservation
             }
         }
 
-        public async Task<ReservationsResponseDto> GetReservationsByUserIdAsync(int userId)
+        public async Task<ReservationsResponseDto> GetReservationsByUserIdAsync(int userId, ReservationStatusEnum? status)
         {
             try
             {
@@ -117,11 +117,19 @@ namespace venue_service.Src.Services.Reservation
                 if (user is null)
                     throw new HttpResponseException(HttpStatusCode.NotFound, "User not found", $"User with ID {userId} does not exist.");
 
-                var reservations = await _reservationContext.Reservations
-                .Where(r => r.UserId == userId && r.Status == (int)ReservationStatusEnum.CONFIRMED)
-                .ToListAsync();
+                var query = _reservationContext.Reservations
+                    .Include(r => r.Schedule)
+                    .Include(r => r.PaymentRecord)
+                    .Where(r => r.UserId == userId);
 
-                if (reservations is null || reservations.Count == 0)
+                if (status.HasValue)
+                {
+                    query = query.Where(r => r.Status == (int)status.Value);
+                }
+
+                var reservations = await query.ToListAsync();
+
+                if (reservations.Count == 0)
                 {
                     return new ReservationsResponseDto
                     {
@@ -133,12 +141,19 @@ namespace venue_service.Src.Services.Reservation
                 var content = reservations.Select(r => new ReservationResponseDto
                 {
                     Id = r.Id,
-                    UserId = user.Id,
+                    UserId = r.UserId,
                     VenueId = r.VenueId,
                     ScheduleId = r.ScheduleId,
+                    StartDate = r.Schedule.StartDate,
+                    EndDate = r.Schedule.EndDate,
+                    TotalAmount = r.TotalAmount,
                     PaymentMethodId = r.PaymentMethodId,
-                    PaymentStatus = r.Status,
-                    CreatedAt = r.CreatedAt
+                    Status = r.Status,
+                    CreatedAt = r.CreatedAt,
+                    UpdatedAt = r.UpdatedAt,
+                    PaidAt = r.PaymentRecord?.PaidAt,
+                    IsPaid = r.PaymentRecord?.Status == "approved",
+                    PaymentStatus = r.PaymentRecord?.Status == "approved" ? 1 : 0
                 }).ToList();
 
                 return new ReservationsResponseDto

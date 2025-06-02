@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using venue_service.Src.Dtos.Reservation;
+using venue_service.Src.Enums;
 using venue_service.Src.Interfaces.ReservationInterfaces;
 
 namespace venue_service.Src.Controllers.Reservation
@@ -32,11 +33,12 @@ namespace venue_service.Src.Controllers.Reservation
         }
 
         [HttpGet("{userId}")]
-        public async Task<IActionResult> GetUserReservations(int userId)
+        public async Task<IActionResult> GetUserReservations(int userId, [FromQuery] ReservationStatusEnum? status)
         {
-            var response = await _reservationService.GetReservationsByUserIdAsync(userId);
+            var response = await _reservationService.GetReservationsByUserIdAsync(userId, status);
             return Ok(response);
         }
+
 
     }
 }
