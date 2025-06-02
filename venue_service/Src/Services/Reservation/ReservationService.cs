@@ -117,7 +117,9 @@ namespace venue_service.Src.Services.Reservation
                 if (user is null)
                     throw new HttpResponseException(HttpStatusCode.NotFound, "User not found", $"User with ID {userId} does not exist.");
 
-                var reservations = await _reservationContext.Reservations.Where(r => r.UserId == userId).ToListAsync();
+                var reservations = await _reservationContext.Reservations
+                .Where(r => r.UserId == userId && r.Status == (int)ReservationStatusEnum.CONFIRMED)
+                .ToListAsync();
 
                 if (reservations is null || reservations.Count == 0)
                 {
