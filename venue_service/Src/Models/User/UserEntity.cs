@@ -61,7 +61,6 @@ namespace venue_service.Src.Models.User
         [Column("updated_at")]
         public DateTime UpdatedAt { get; set; }
 
-        public ICollection<ReservationEntity> Reservations { get; set; } = new List<ReservationEntity>();
         public ICollection<VenueEntity> Venues { get; set; } = new List<VenueEntity>();
     }
 }

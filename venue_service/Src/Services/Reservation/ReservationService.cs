@@ -37,9 +37,7 @@ namespace venue_service.Src.Services.Reservation
         {
             try
             {
-                var user = await _userContext.Users
-                    .Include(u => u.Reservations)
-                    .FirstOrDefaultAsync(u => u.Id == dto.UserId);
+                var user = await _userContext.Users.FindAsync(dto.UserId);
                 if (user is null)
                     throw new HttpResponseException(HttpStatusCode.NotFound, "User not found", $"User with ID {dto.UserId} does not exist.");
 
