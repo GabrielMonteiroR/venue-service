@@ -72,15 +72,32 @@ namespace venue_service.Src.Services.Venue
         }
 
 
-        public async Task<VenuesResponseDto> ListVenuesAsync()
+        public async Task<VenuesResponseDto> GetVenuesAsync(int? venueTypeId = null, int? minCapacity = null, int? maxCapacity = null, string? name = null, string? address = null)
         {
             try
             {
-                var venues = await _venueContext.Venues.Include(v => v.VenueImages).ToListAsync();
+                var query = _venueContext.Venues.Include(v => v.VenueImages).AsQueryable();
 
-                if (venues.Count == 0) 
+                if (venueTypeId.HasValue)
+                    query = query.Where(v => v.VenueTypeId == venueTypeId.Value);
+
+                if (minCapacity.HasValue)
+                    query = query.Where(v => v.Capacity >= minCapacity.Value);
+
+                if (maxCapacity.HasValue)
+                    query = query.Where(v => v.Capacity <= maxCapacity.Value);
+
+                if (!string.IsNullOrEmpty(name))
+                    query = query.Where(v => EF.Functions.Like(v.Name, $"%{name}%"));
+
+                if (!string.IsNullOrEmpty(address))
+                    query = query.Where(v => EF.Functions.Like(v.Address, $"%{address}%"));
+
+                var venues = await query.ToListAsync();
+
+                if (venues.Count == 0)
                 {
-                    throw new HttpResponseException(HttpStatusCode.NoContent, "No Content", "No venues found");
+                    throw new HttpResponseException(HttpStatusCode.NoContent, "No Content", "No venues found matching the filters.");
                 }
 
                 var venueDtos = venues.Select(v => new VenueResponseDto
@@ -101,7 +118,7 @@ namespace venue_service.Src.Services.Venue
 
                 return new VenuesResponseDto
                 {
-                    Message = "Venues retrieved successfully",
+                    Message = "Venues retrieved successfully with applied filters",
                     Data = venueDtos
                 };
             }
@@ -119,7 +136,7 @@ namespace venue_service.Src.Services.Venue
                     .Include(v => v.VenueImages)
                     .Where(v => ids.Contains(v.Id)).ToListAsync();
 
-                if (venues.Count == 0) // Fixed: use property, not method group
+                if (venues.Count == 0) 
                 {
                     throw new HttpResponseException(HttpStatusCode.NoContent, "No Content", "No venues found");
                 }

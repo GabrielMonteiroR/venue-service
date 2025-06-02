@@ -5,7 +5,7 @@ using venue_service.Src.Interfaces.VenueInterfaces;
 namespace venue_service.Src.Controllers.Venue
 {
     [ApiController]
-    [Route("api/venue")]
+    [Route("api/venues")]
     public class VenueController : ControllerBase
     {
         private readonly IVenueService _venueService;
@@ -25,7 +25,7 @@ namespace venue_service.Src.Controllers.Venue
         [HttpGet]
         public async Task<IActionResult> ListVenues()
         {
-            var result = await _venueService.ListVenuesAsync();
+            var result = await _venueService.GetVenuesAsync();
             return Ok(result);
         }
 
