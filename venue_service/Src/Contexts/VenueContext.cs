@@ -45,11 +45,12 @@ public class VenueContext : DbContext
             .WithMany()
             .HasForeignKey(vs => vs.SportId);
 
-        modelBuilder.Entity<VenueEntity>()
-            .HasOne(v => v.Owner)
-            .WithMany()
-            .HasForeignKey(v => v.OwnerId)
-            .OnDelete(DeleteBehavior.Cascade);
+      modelBuilder.Entity<VenueEntity>()
+     .HasOne(v => v.Owner)
+     .WithMany(u => u.Venues)
+     .HasForeignKey(v => v.OwnerId)
+     .OnDelete(DeleteBehavior.Cascade);
+
 
         modelBuilder.Entity<VenueEntity>()
             .HasOne(v => v.VenueType)
