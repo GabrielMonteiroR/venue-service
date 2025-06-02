@@ -35,7 +35,7 @@ namespace venue_service.Src.Dtos.Reservation
         public bool? IsPaid { get; set; }
 
         [JsonPropertyName("paymentStatus")]
-        public string? PaymentStatus { get; set; }
+        public int PaymentStatus { get; set; }
 
         [JsonPropertyName("paidAt")]
         public DateTime? PaidAt { get; set; }

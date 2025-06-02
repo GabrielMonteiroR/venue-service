@@ -25,7 +25,7 @@ namespace venue_service.Src.Services.Reservation
             UserContext userContext,
             VenueContext venueContext,
             IPaymentService paymentService
-            )
+        )
         {
             _reservationContext = reservationContext;
             _userContext = userContext;
@@ -78,7 +78,8 @@ namespace venue_service.Src.Services.Reservation
                         dto.TotalAmount,
                         $"Reserva #{newReservation.Id}",
                         (PaymentMethodEnum)dto.PaymentMethodId,
-                        receiverId);
+                        receiverId
+                    );
 
                     var paymentRecord = new PaymentRecordEntity
                     {
@@ -112,25 +113,44 @@ namespace venue_service.Src.Services.Reservation
 
         public async Task<ReservationsResponseDto> GetReservationsByUserIdAsync(int userId)
         {
-            var reservations = await _reservationContext.Reservations
-                .Where(r => r.UserId == userId)
-                .ToListAsync();
-
-            if (!reservations.Any())
-                throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "No reservations found for this user");
-
-            return new ReservationsResponseDto
+            try
             {
-                Reservations = reservations.Select(r => new ReservationResponseDto
+                var user = await _userContext.Users.FindAsync(userId);
+                if (user is null)
+                    throw new HttpResponseException(HttpStatusCode.NotFound, "User not found", $"User with ID {userId} does not exist.");
+
+                var reservations = await _reservationContext.Reservations.Where(r => r.UserId == userId).ToListAsync();
+
+                if (reservations is null || reservations.Count == 0)
+                {
+                    return new ReservationsResponseDto
+                    {
+                        Message = $"No reservations found for user with id {userId}.",
+                        Reservations = new List<ReservationResponseDto>()
+                    };
+                }
+
+                var content = reservations.Select(r => new ReservationResponseDto
                 {
                     Id = r.Id,
-                    UserId = r.UserId,
+                    UserId = user.Id,
                     VenueId = r.VenueId,
+                    ScheduleId = r.ScheduleId,
                     PaymentMethodId = r.PaymentMethodId,
-                    Status = r.Status,
+                    PaymentStatus = r.Status,
                     CreatedAt = r.CreatedAt
-                }).ToList()
-            };
+                }).ToList();
+
+                return new ReservationsResponseDto
+                {
+                    Message = $"Reservations found for user with id {userId}.",
+                    Reservations = content
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while retrieving reservations.", ex.Message);
+            }
         }
 
         public async Task<ReservationPaymentResponseDto> PayReservationAsync(int reservationId, PaymentRequestDto dto)
@@ -156,7 +176,8 @@ namespace venue_service.Src.Services.Reservation
                 reservation.TotalAmount,
                 $"Reserva #{reservationId}",
                 paymentMethodEnum,
-                receiverId);
+                receiverId
+            );
 
             var record = new PaymentRecordEntity
             {
@@ -204,9 +225,11 @@ namespace venue_service.Src.Services.Reservation
                 if (user is null)
                 {
                     throw new HttpResponseException(HttpStatusCode.NotFound, "User not found", $"User with ID {userId} does not exist.");
-                };
-                
-                var nextReservation = await _reservationContext.Reservations.Where(r => r.UserId == userId).FirstOrDefaultAsync(r => r.CreatedAt > DateTime.UtcNow);
+                }
+
+                var nextReservation = await _reservationContext.Reservations
+                    .Where(r => r.UserId == userId)
+                    .FirstOrDefaultAsync(r => r.CreatedAt > DateTime.UtcNow);
 
                 if (nextReservation is null)
                 {
