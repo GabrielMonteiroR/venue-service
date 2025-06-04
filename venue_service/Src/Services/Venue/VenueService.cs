@@ -72,11 +72,11 @@ namespace venue_service.Src.Services.Venue
         }
 
 
-        public async Task<VenuesResponseDto> GetVenuesAsync(int? venueTypeId = null, int? minCapacity = null, int? maxCapacity = null, string? name = null, string? address = null)
+        public async Task<VenuesResponseDto> GetVenuesAsync(int? venueTypeId = null, int? minCapacity = null, int? maxCapacity = null, string? name = null)
         {
             try
             {
-                var query = _venueContext.Venues.Include(v => v.VenueImages).AsQueryable();
+                var query = _venueContext.Venues.Include(v => v.VenueImages).Include(o => o.Owner).Include(vt => vt.VenueType).Include(s => s.VenueSports).AsQueryable();
 
                 if (venueTypeId.HasValue)
                     query = query.Where(v => v.VenueTypeId == venueTypeId.Value);
@@ -89,9 +89,6 @@ namespace venue_service.Src.Services.Venue
 
                 if (!string.IsNullOrEmpty(name))
                     query = query.Where(v => EF.Functions.Like(v.Name, $"%{name}%"));
-
-                if (!string.IsNullOrEmpty(address))
-                    query = query.Where(v => EF.Functions.Like(v.Address, $"%{address}%"));
 
                 var venues = await query.ToListAsync();
 
@@ -109,10 +106,13 @@ namespace venue_service.Src.Services.Venue
                     Latitude = v.Latitude,
                     Longitude = v.Longitude,
                     Description = v.Description,
+                    Sports = v.VenueSports.Select(s => s.Sport.Name).ToList(),
                     AllowLocalPayment = v.AllowLocalPayment,
                     VenueTypeId = v.VenueTypeId,
+                    venueTypeName = v.VenueType.Name,
                     Rules = v.Rules,
                     OwnerId = v.OwnerId,
+                    OwnerName = v.Owner.FirstName,
                     ImageUrls = v.VenueImages?.Select(i => i.ImageUrl).ToList() ?? new List<string>()
                 }).ToList();
 
