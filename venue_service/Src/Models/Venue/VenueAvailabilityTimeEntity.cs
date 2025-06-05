@@ -34,7 +34,6 @@ namespace venue_service.Src.Models.Venue
         [MaxLength(50)]
         public string TimeStatus { get; set; }
 
-        [Required]
         [Column("is_reserved")]
         public bool IsReserved { get; set; }
 
