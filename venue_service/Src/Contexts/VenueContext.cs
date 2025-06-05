@@ -20,6 +20,13 @@ public class VenueContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<VenueAvailabilityTimeEntity>()
+    .HasOne(vat => vat.Venue)
+    .WithMany(v => v.VenueAvailabilityTimes)
+    .HasForeignKey(vat => vat.VenueId)
+    .OnDelete(DeleteBehavior.Cascade);
+
+
         modelBuilder.Entity<VenueEntity>().ToTable("venues");
         modelBuilder.Entity<VenueImageEntity>().ToTable("venue_images");
         modelBuilder.Entity<VenueContactInfoEntity>().ToTable("venue_contact_infos");
@@ -44,11 +51,11 @@ public class VenueContext : DbContext
             .WithMany()
             .HasForeignKey(vs => vs.SportId);
 
-      modelBuilder.Entity<VenueEntity>()
-     .HasOne(v => v.Owner)
-     .WithMany(u => u.Venues)
-     .HasForeignKey(v => v.OwnerId)
-     .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<VenueEntity>()
+       .HasOne(v => v.Owner)
+       .WithMany(u => u.Venues)
+       .HasForeignKey(v => v.OwnerId)
+       .OnDelete(DeleteBehavior.Cascade);
 
 
         modelBuilder.Entity<VenueEntity>()

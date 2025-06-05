@@ -18,15 +18,16 @@ namespace venue_service.Src.Models.Venue
         [Column("end_date")]
         public DateTime EndDate { get; set; }
 
-        [Required]
-        [ForeignKey("VenueId")]
-        [Column("venue_id")]
-        public int VenueId { get; set; }
+    [Required]
+    [Column("venue_id")]
+    public int VenueId { get; set; }
+
+    [ForeignKey("VenueId")]
+        public VenueEntity Venue { get; set; }
 
         [Required]
         [Column("price", TypeName = "numeric")]
         public decimal Price { get; set; }
-
 
         [Required]
         [Column("time_status")]
@@ -39,5 +40,6 @@ namespace venue_service.Src.Models.Venue
 
         [Column("reserved_by")]
         public int? UserId { get; set; }
+
     }
 }
