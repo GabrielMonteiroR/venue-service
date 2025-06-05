@@ -128,6 +128,7 @@ namespace venue_service.Src.Services.Venue
                         StartDate = t.StartDate,
                         EndDate = t.EndDate,
                         Price = t.Price,
+                        VenueId = t.VenueId,
                         IsReserved = t.IsReserved,
                         UserId = t.UserId 
                     }).ToList(),
