@@ -52,7 +52,7 @@ namespace venue_service.Src.Dtos.Venue
         public int OwnerId { get; set; }
 
         [JsonPropertyName("venue_avaliability_times")]
-        public List<VenueAvailabilityTimeEntity> venueAvaliabilityTimes { get; set; }
+        public List<VenueAvailabilityTimeResponseDto> venueAvaliabilityTimes { get; set; }
 
         [JsonPropertyName("venue_times")]
         public List<string> VenueTimes { get; set; } = new();

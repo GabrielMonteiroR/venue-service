@@ -72,11 +72,17 @@ namespace venue_service.Src.Services.Venue
         }
 
 
-        public async Task<VenuesResponseDto> GetVenuesAsync(int? venueTypeId = null,DateTime? from = null, DateTime? to = null, int? minCapacity = null, int? maxCapacity = null, string? name = null)
+        public async Task<VenuesResponseDto> GetVenuesAsync(int? venueTypeId = null, DateTime? from = null, DateTime? to = null, int? minCapacity = null, int? maxCapacity = null, string? name = null)
         {
             try
             {
-                var query = _venueContext.Venues.Include(v => v.VenueImages).Include(o => o.Owner).Include(vt => vt.VenueType).Include(s => s.VenueSports).ThenInclude(vs => vs.Sport).Include(va => va.VenueAvailabilityTimes).AsQueryable();
+                var query = _venueContext.Venues
+                    .Include(v => v.VenueImages)
+                    .Include(o => o.Owner)
+                    .Include(vt => vt.VenueType)
+                    .Include(s => s.VenueSports).ThenInclude(vs => vs.Sport)
+                    .Include(va => va.VenueAvailabilityTimes)
+                    .AsQueryable();
 
                 if (venueTypeId.HasValue)
                     query = query.Where(v => v.VenueTypeId == venueTypeId.Value);
@@ -114,9 +120,18 @@ namespace venue_service.Src.Services.Venue
                     Address = v.Address,
                     Capacity = v.Capacity,
                     Latitude = v.Latitude,
-                    venueAvaliabilityTimes = v.VenueAvailabilityTimes.ToList(),
                     Longitude = v.Longitude,
                     Description = v.Description,
+                    venueAvaliabilityTimes = v.VenueAvailabilityTimes.Select(t => new VenueAvailabilityTimeResponseDto
+                    {
+                        Id = t.Id,
+                        StartDate = t.StartDate,
+                        EndDate = t.EndDate,
+                        Price = t.Price,
+                        TimeStatus = t.TimeStatus,
+                        IsReserved = t.IsReserved,
+                        UserId = t.UserId 
+                    }).ToList(),
                     Sports = v.VenueSports.Select(s => s.Sport.Name).ToList(),
                     AllowLocalPayment = v.AllowLocalPayment,
                     VenueTypeId = v.VenueTypeId,
