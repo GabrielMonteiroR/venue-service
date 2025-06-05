@@ -54,7 +54,5 @@ namespace venue_service.Src.Dtos.Venue
         [JsonPropertyName("venue_avaliability_times")]
         public List<VenueAvailabilityTimeResponseDto> venueAvaliabilityTimes { get; set; }
 
-        [JsonPropertyName("venue_times")]
-        public List<string> VenueTimes { get; set; } = new();
     }
 }
