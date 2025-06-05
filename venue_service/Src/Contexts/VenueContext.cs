@@ -20,7 +20,6 @@ public class VenueContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Ignore<Venue_SportEntity>();
         modelBuilder.Entity<VenueEntity>().ToTable("venues");
         modelBuilder.Entity<VenueImageEntity>().ToTable("venue_images");
         modelBuilder.Entity<VenueContactInfoEntity>().ToTable("venue_contact_infos");
