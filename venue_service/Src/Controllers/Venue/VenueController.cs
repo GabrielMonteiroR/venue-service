@@ -23,14 +23,21 @@ namespace venue_service.Src.Controllers.Venue
         }
 
         [HttpGet]
-        public async Task<IActionResult> ListVenues()
+        public async Task<ActionResult<VenuesResponseDto>> GetVenues(
+            [FromQuery] int? venueTypeId,
+            [FromQuery] DateTime? from,
+            [FromQuery] DateTime? to,
+            [FromQuery] int? minCapacity,
+            [FromQuery] int? maxCapacity,
+            [FromQuery] string? name,
+            [FromQuery] List<int>? sportId)
         {
-            var result = await _venueService.GetVenuesAsync();
+            var result = await _venueService.GetVenuesAsync(venueTypeId, from, to, minCapacity, maxCapacity, name, sportId);
             return Ok(result);
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateVenue([FromQuery]int id, [FromBody] UpdateVenueRequestDto dto)
+        public async Task<IActionResult> UpdateVenue([FromQuery] int id, [FromBody] UpdateVenueRequestDto dto)
         {
             var result = await _venueService.UpdateVenueAsync(id, dto);
             return Ok(result);
@@ -63,7 +70,5 @@ namespace venue_service.Src.Controllers.Venue
             await _venueService.DeleteVenueImageAsync(venueId, url);
             return NoContent();
         }
-
-
     }
 }
