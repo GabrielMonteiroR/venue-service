@@ -30,10 +30,6 @@ namespace venue_service.Src.Models.Venue
         public decimal Price { get; set; }
 
         [Required]
-        [Column("time_status")]
-        [MaxLength(50)]
-        public string TimeStatus { get; set; }
-
         [Column("is_reserved")]
         public bool IsReserved { get; set; }
 
