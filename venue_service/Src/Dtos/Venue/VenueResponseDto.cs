@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using venue_service.Src.Models.Venue;
 
 namespace venue_service.Src.Dtos.Venue
 {
@@ -50,7 +51,10 @@ namespace venue_service.Src.Dtos.Venue
         [JsonPropertyName("owner_id")]
         public int OwnerId { get; set; }
 
-        [JsonPropertyName("venue_availability_id")]
-        public int VenueAvaliabilityId { get; set; }
+        [JsonPropertyName("venue_avaliability_times")]
+        public List<VenueAvailabilityTimeEntity> venueAvaliabilityTimes { get; set; }
+
+        [JsonPropertyName("venue_times")]
+        public List<string> VenueTimes { get; set; } = new();
     }
 }
