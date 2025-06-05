@@ -76,7 +76,7 @@ namespace venue_service.Src.Services.Venue
         {
             try
             {
-                var query = _venueContext.Venues.Include(v => v.VenueImages).Include(o => o.Owner).Include(vt => vt.VenueType).Include(s => s.VenueSports).AsQueryable();
+                var query = _venueContext.Venues.Include(v => v.VenueImages).Include(o => o.Owner).Include(vt => vt.VenueType).Include(s => s.VenueSports).ThenInclude(vs => vs.Sport).AsQueryable();
 
                 if (venueTypeId.HasValue)
                     query = query.Where(v => v.VenueTypeId == venueTypeId.Value);
