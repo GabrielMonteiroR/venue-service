@@ -9,18 +9,18 @@ namespace venue_service.Src.Services.Sport
 {
     public class SportService : ISportInterface
     {
-        private readonly VenueContext _venueContext;
+        private readonly SportContext _sportContext;
 
-        public SportService(VenueContext venueContext)
+        public SportService(SportContext sportContext)
         {
-            _venueContext = venueContext;
+            _sportContext = sportContext;
         }
 
         public async Task<SportsResponseDto> GetAllSportsAsync()
         {
             try
             {
-                var sports = await _venueContext.VenueSports.ToListAsync();
+                var sports = await _sportContext.Sports.ToListAsync();
 
                 if (sports is null || sports.Count == 0)
                 {
@@ -32,8 +32,8 @@ namespace venue_service.Src.Services.Sport
                     Message = "Sports retrieved successfully",
                     Data = sports.Select(s => new SportResponseDto
                     {
-                        Id = s.SportId,
-                        Name = s.Sport.Name
+                        Id = s.Id,
+                        Name = s.Name
                     }).ToList()
                 };
 
