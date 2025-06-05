@@ -23,7 +23,7 @@ public class VenueContext : DbContext
         modelBuilder.Entity<VenueEntity>().ToTable("venues");
         modelBuilder.Entity<VenueImageEntity>().ToTable("venue_images");
         modelBuilder.Entity<VenueContactInfoEntity>().ToTable("venue_contact_infos");
-        modelBuilder.Entity<VenueAvailabilityTimeEntity>().ToTable("venue_availability");
+        modelBuilder.Entity<VenueAvailabilityTimeEntity>().ToTable("venue_availability_times");
         modelBuilder.Entity<VenueStatusEntity>().ToTable("venue_status");
         modelBuilder.Entity<VenueTypeEntity>().ToTable("venue_types");
         modelBuilder.Entity<Venue_SportEntity>().ToTable("venue_sports");
