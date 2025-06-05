@@ -16,6 +16,8 @@ using venue_service.Src.Services.Payment;
 using venue_service.Src.Interfaces.VenueInterfaces;
 using venue_service.Src.Interfaces.PaymentInterfaces;
 using venue_service.Src.Interfaces.ImageStorageInterfaces;
+using venue_service.Src.Interfaces.SportInterfaces;
+using venue_service.Src.Services.Sport;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -87,6 +89,7 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<IVenueType, VenueTypeService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<IPaymentService, MercadoPagoPaymentService>();
+builder.Services.AddScoped<ISportInterface, SportService>();
 
 // Storage de Imagens
 
