@@ -21,7 +21,7 @@ namespace venue_service.Src.Services.Sport
             try
             {
                 var sports = await _venueContext.VenueSports.ToListAsync();
-                
+
                 if (sports is null || sports.Count == 0)
                 {
                     { throw new HttpResponseException(HttpStatusCode.NoContent, "No sports found", "There are no sports available at the moment."); }
@@ -37,9 +37,11 @@ namespace venue_service.Src.Services.Sport
                     }).ToList()
                 };
 
-            } catch (Exception ex)
-            {
-               throw new HttpResponseException(HttpStatusCode.InternalServerError, "An internal server error ocurred", ex.Message);
             }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "An internal server error ocurred", ex.Message);
+            }
+        }
     }
 }
