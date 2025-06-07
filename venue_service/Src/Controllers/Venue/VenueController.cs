@@ -30,9 +30,10 @@ namespace venue_service.Src.Controllers.Venue
             [FromQuery] int? minCapacity,
             [FromQuery] int? maxCapacity,
             [FromQuery] string? name,
-            [FromQuery] List<int>? sportId)
+            [FromQuery] List<int>? sportId,
+            [FromQuery] bool? isReserved)
         {
-            var result = await _venueService.GetVenuesAsync(venueTypeId, from, to, minCapacity, maxCapacity, name, sportId);
+            var result = await _venueService.GetVenuesAsync(venueTypeId, from, to, minCapacity, maxCapacity, name, sportId, isReserved);
             return Ok(result);
         }
 
