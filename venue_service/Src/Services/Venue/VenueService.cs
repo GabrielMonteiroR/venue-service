@@ -72,7 +72,7 @@ namespace venue_service.Src.Services.Venue
         }
 
 
-        public async Task<VenuesResponseDto> GetVenuesAsync(int? venueTypeId = null, DateTime? from = null, DateTime? to = null, int? minCapacity = null, int? maxCapacity = null, string? name = null, List<int>? sportId = null, bool? isReserverd = null)
+        public async Task<VenuesResponseDto> GetVenuesAsync(int? venueTypeId = null, DateTime? from = null, DateTime? to = null, int? minCapacity = null, int? maxCapacity = null, string? name = null, List<int>? sportId = null, bool? isReserved = null)
         {
             try
             {
@@ -87,9 +87,9 @@ namespace venue_service.Src.Services.Venue
                 if (venueTypeId.HasValue)
                     query = query.Where(v => v.VenueTypeId == venueTypeId.Value);
 
-                if(isReserverd.HasValue)
+                if(isReserved.HasValue)
                 {
-                    query = query.Where(v => v.VenueAvailabilityTimes.Any(va => va.IsReserved == isReserverd.Value));
+                    query = query.Where(v => v.VenueAvailabilityTimes.Any(va => va.IsReserved == isReserved.Value));
                 }
 
                 if (sportId != null && sportId.Count > 0)
