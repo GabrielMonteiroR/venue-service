@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Net;
 using venue_service.Src.Contexts;
 using venue_service.Src.Dtos.Venue;
@@ -118,9 +119,13 @@ namespace venue_service.Src.Services.Venue
 
                 var venues = await query.ToListAsync();
 
-                if (venues.Count == 0)
+                if (venues.Count == 0 || venues is null)
                 {
-                    throw new HttpResponseException(HttpStatusCode.NoContent, "No Content", "No venues found matching the filters.");
+                    return new VenuesResponseDto
+                    {
+                        Message = "No venues found with the specified filters",
+                        Data = new List<VenueResponseDto>()
+                    };
                 }
 
                 var venueDtos = venues.Select(v => new VenueResponseDto
