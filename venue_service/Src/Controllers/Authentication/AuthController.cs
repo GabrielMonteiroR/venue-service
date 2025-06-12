@@ -17,6 +17,7 @@ public class AuthController : ControllerBase
         _authService = authService;
     }
 
+    [AllowAnonymous]
     [HttpPost("register-athlete")]
     public async Task<IActionResult> RegisterAthlete([FromBody] RegisterUserRequestDto dto)
     {
@@ -24,6 +25,7 @@ public class AuthController : ControllerBase
         return Ok(response);
     }
 
+    [AllowAnonymous]
     [HttpPost("register-owner")]
     public async Task<IActionResult> RegisterOwner([FromBody] RegisterOwnerRequestDto dto)
     {
