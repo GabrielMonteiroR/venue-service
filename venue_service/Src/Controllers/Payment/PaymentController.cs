@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using venue_service.Src.Dtos.Payment;
 using venue_service.Src.Interfaces.ReservationInterfaces;
 
 namespace venue_service.Src.Controllers.Payment
 {
+    [Authorize]
     [ApiController]
     [Route("api/payment")]
     public class PaymentController : ControllerBase

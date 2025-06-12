@@ -6,55 +6,55 @@ using venue_service.Src.Interfaces.ReservationInterfaces;
 using venue_service.Src.Interfaces.UserInterfaces;
 using venue_service.Src.Services.User;
 
-namespace venue_service.Src.Controllers.User
+namespace venue_service.Src.Controllers.User;
+
+[Authorize]
+[ApiController]
+[Route("api/user")]
+public class UserController : ControllerBase
 {
-    [ApiController]
-    [Route("api/user")]
-    public class UserController : ControllerBase
+    private readonly IUserService _userService;
+    private readonly IReservationService _reservationService;
+
+    public UserController(UserService userService)
     {
-        private readonly IUserService _userService;
-        private readonly IReservationService _reservationService;
+        _userService = userService;
+    }
 
-        public UserController(UserService userService)
-        {
-            _userService = userService;
-        }
+    [HttpGet]
+    public async Task<IActionResult> GetUserInfo([FromQuery] int id)
+    {
+        var userInfo = await _userService.GetUserInfoByIdAsync(id);
+        return Ok(userInfo);
+    }
 
-        [HttpGet]
-        public async Task<IActionResult> GetUserInfo([FromQuery] int id)
-        {
-            var userInfo = await _userService.GetUserInfoByIdAsync(id);
-            return Ok(userInfo);
-        }
+    [HttpPut]
+    public async Task<IActionResult> UpdateUserInfo([FromQuery] int id, [FromBody] UpdateUserDto userDto)
+    {
+        var updatedUser = await _userService.UpdateUserInfoAsync(id, userDto);
+        return Ok(updatedUser);
+    }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateUserInfo([FromQuery] int id, [FromBody] UpdateUserDto userDto)
-        {
-            var updatedUser = await _userService.UpdateUserInfoAsync(id, userDto);
-            return Ok(updatedUser);
-        }
+    [HttpPatch("profile-image")]
+    public async Task<IActionResult> UpdateProfileImage([FromQuery] int id, [FromBody] UpdateUserImageDto dto)
+    {
+        var updatedUser = await _userService.UpdateProfileImage(id, dto);
+        return Ok(updatedUser);
+    }
 
-        [HttpPatch("profile-image")]
-        public async Task<IActionResult> UpdateProfileImage([FromQuery] int id, [FromBody] UpdateUserImageDto dto)
-        {
-            var updatedUser = await _userService.UpdateProfileImage(id, dto);
-            return Ok(updatedUser);
-        }
+    [Authorize]
+    [HttpGet("me")]
+    public async Task<IActionResult> GetCurrentUserInfo()
+    {
+        var response = await _userService.GetCurrentUser();
+        return Ok(response);
+    }
 
-        [Authorize]
-        [HttpGet("me")]
-        public async Task<IActionResult> GetCurrentUserInfo()
-        {
-            var response = await _userService.GetCurrentUser();
-            return Ok(response);
-        }
-
-        [HttpGet("next-reservation/{userId}")]
-        public async Task<IActionResult> GetNextReservation(int userId)
-        {
-            var response = await _reservationService.GetNextUserReservationAsync(userId);
-            return Ok(response);
-        }
+    [HttpGet("next-reservation/{userId}")]
+    public async Task<IActionResult> GetNextReservation(int userId)
+    {
+        var response = await _reservationService.GetNextUserReservationAsync(userId);
+        return Ok(response);
     }
 }
 

@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using venue_service.Src.Interfaces.VenueInterfaces;
 
 namespace venue_service.Src.Controllers.Venue
 {
+    [Authorize]
     [ApiController]
     [Route("api/venue-types")]
     public class VenueTypeController : ControllerBase
