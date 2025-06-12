@@ -6,6 +6,7 @@ using venue_service.Src.Interfaces.ReservationInterfaces;
 
 namespace venue_service.Src.Controllers.Reservation
 {
+    [Authorize]
     [ApiController]
     [Route("api/reservation")]
     public class ReservationController : ControllerBase

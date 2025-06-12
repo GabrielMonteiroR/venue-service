@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using venue_service.Src.Interfaces.ImageStorageInterfaces;
 
 namespace venue_service.Src.Controllers.ImageUpload
 {
-
+    [Authorize]
     [ApiController]
     [Route("upload-images")]
     public class UploadController : ControllerBase

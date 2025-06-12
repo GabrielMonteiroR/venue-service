@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using venue_service.Src.Dtos.Auth;
 using venue_service.Src.Services.Auth;
 
 namespace venue_service.Src.Controllers.Authentication;
 
+[Authorize]
 [ApiController]
 [Route("auth")]
 public class AuthController : ControllerBase
@@ -29,7 +31,7 @@ public class AuthController : ControllerBase
         return Ok(response);
     }
 
-
+    [AllowAnonymous]
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequestDto dto)
     {
