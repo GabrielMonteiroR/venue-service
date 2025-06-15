@@ -66,7 +66,7 @@ public class TestController : ControllerBase
                 description = "Teste direto",
                 installments = 1,
                 payment_method_id = "visa",
-                payer = new { email = "*****@*****.com" }, 
+                payer = new { email = "test_user_170454958@testuser.com" }, 
                 sponsor_id = long.Parse(receiverId),
                 additional_info = new
                 {
