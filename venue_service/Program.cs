@@ -8,11 +8,8 @@ using venue_service.Src.Config;
 using venue_service.Src.Services.ImageStorageService;
 using Microsoft.Extensions.Options;
 using venue_service.Src.Services.Auth;
-using venue_service.Src.Services.Reservation;
 using venue_service.Src.Services.Venue;
 using venue_service.Src.Services.User;
-using venue_service.Src.Interfaces.ReservationInterfaces;
-using venue_service.Src.Services.Payment;
 using venue_service.Src.Interfaces.VenueInterfaces;
 using venue_service.Src.Interfaces.PaymentInterfaces;
 using venue_service.Src.Interfaces.ImageStorageInterfaces;
@@ -92,7 +89,6 @@ builder.Services.AddScoped<IVenueService, VenueService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<IVenueType, VenueTypeService>();
 builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<IPaymentService, MercadoPagoPaymentService>();
 builder.Services.AddScoped<ISportInterface, SportService>();
 
 // Storage de Imagens

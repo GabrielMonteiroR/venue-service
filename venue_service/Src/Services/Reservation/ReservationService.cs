@@ -1,19 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Net;
 using venue_service.Src.Contexts;
-using venue_service.Src.Dtos.Payment;
 using venue_service.Src.Dtos.Reservation;
-using venue_service.Src.Dtos.User;
 using venue_service.Src.Enums;
 using venue_service.Src.Enums.Payment;
 using venue_service.Src.Exceptions;
 using venue_service.Src.Interfaces.PaymentInterfaces;
-using venue_service.Src.Interfaces.ReservationInterfaces;
-using venue_service.Src.Models.Payment;
 
 namespace venue_service.Src.Services.Reservation
 {
-    public class ReservationService 
+    public class ReservationService
     {
         private readonly ReservationContext _reservationContext;
         private readonly UserContext _userContext;
@@ -33,81 +30,50 @@ namespace venue_service.Src.Services.Reservation
             _paymentService = paymentService;
         }
 
-        // public async Task<ReservationResponseDto> CreateReservationAsync(CreateReservationDto dto)
-        // {
-        //     try
-        //     {
-        //         var user = await _userContext.Users.FindAsync(dto.UserId);
-        //         if (user is null)
-        //             throw new HttpResponseException(HttpStatusCode.NotFound, "User not found", $"User with ID {dto.UserId} does not exist.");
+        public async Task<ReservationResponseDto> CreateReservationAsync(CreateReservationDto dto)
+        {
+            try
+            {
+                var user = await _userContext.Users.FindAsync(dto.UserId);
+                if (user is null)
+                    throw new HttpResponseException(HttpStatusCode.NotFound, "User not found", $"User with ID {dto.UserId} does not exist.");
 
-        //         var venue = await _venueContext.Venues
-        //             .Include(v => v.Owner)
-        //             .FirstOrDefaultAsync(v => v.Id == dto.VenueId);
-        //         if (venue is null)
-        //             throw new HttpResponseException(HttpStatusCode.NotFound, "Venue not found", $"Venue with ID {dto.VenueId} does not exist.");
+                var venue = await _venueContext.Venues
+                    .Include(v => v.Owner)
+                    .FirstOrDefaultAsync(v => v.Id == dto.VenueId);
+                if (venue is null)
+                    throw new HttpResponseException(HttpStatusCode.NotFound, "Venue not found", $"Venue with ID {dto.VenueId} does not exist.");
 
-        //         var newReservation = new ReservationEntity
-        //         {
-        //             UserId = dto.UserId,
-        //             VenueId = dto.VenueId,
-        //             ScheduleId = dto.ScheduleId,
-        //             TotalAmount = dto.TotalAmount,
-        //             PaymentMethodId = dto.PaymentMethodId,
-        //             Status = (int)ReservationStatusEnum.PENDING,
-        //             CreatedAt = DateTime.UtcNow,
-        //             UpdatedAt = DateTime.UtcNow
-        //         };
+                var newReservation = new ReservationEntity
+                {
+                    UserId = dto.UserId,
+                    VenueId = dto.VenueId,
+                    ScheduleId = dto.ScheduleId,
+                    TotalAmount = dto.TotalAmount,
+                    PaymentMethodId = dto.PaymentMethodId,
+                    Status = (int)ReservationStatusEnum.PENDING,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                };
 
-        //         _reservationContext.Reservations.Add(newReservation);
-        //         await _reservationContext.SaveChangesAsync();
+                _reservationContext.Reservations.Add(newReservation);
+                await _reservationContext.SaveChangesAsync();
 
-        //         if (!string.IsNullOrWhiteSpace(dto.CardToken) && !string.IsNullOrWhiteSpace(dto.UserEmail))
-        //         {
-        //             var owner = venue.Owner;
-        //             if (owner == null || string.IsNullOrWhiteSpace(owner.MercadoPagoUserId))
-        //                 throw new HttpResponseException(HttpStatusCode.BadRequest, "Payment Error", "Locador não possui conta MercadoPago cadastrada");
-
-        //             long receiverId = long.Parse(owner.MercadoPagoUserId);
-
-        //             (string status, string mercadoPagoId, string? error) = await _paymentService.CreatePaymentAsync(
-        //                 dto.UserEmail,
-        //                 dto.CardToken,
-        //                 dto.TotalAmount,
-        //                 $"Reserva #{newReservation.Id}",
-        //                 (PaymentMethodEnum)dto.PaymentMethodId,
-        //                 receiverId
-        //             );
-
-        //             var paymentRecord = new PaymentRecordEntity
-        //             {
-        //                 ReservationId = newReservation.Id,
-        //                 Amount = dto.TotalAmount,
-        //                 Status = status,
-        //                 MercadoPagoPaymentId = mercadoPagoId,
-        //                 CreatedAt = DateTime.UtcNow,
-        //                 PaidAt = status == "approved" ? DateTime.UtcNow : null
-        //             };
-
-        //             _reservationContext.PaymentRecords.Add(paymentRecord);
-        //             await _reservationContext.SaveChangesAsync();
-        //         }
-
-        //         return new ReservationResponseDto
-        //         {
-        //             Id = newReservation.Id,
-        //             UserId = newReservation.UserId,
-        //             VenueId = newReservation.VenueId,
-        //             PaymentMethodId = newReservation.PaymentMethodId,
-        //             Status = newReservation.Status,
-        //             CreatedAt = newReservation.CreatedAt
-        //         };
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while creating the reservation.", ex.Message);
-        //     }
-        // }
+                return new ReservationResponseDto
+                {
+                    Id = newReservation.Id,
+                    UserId = newReservation.UserId,
+                    VenueId = newReservation.VenueId,
+                    PaymentMethodId = newReservation.PaymentMethodId,
+                    Status = newReservation.Status,
+                    CreatedAt = newReservation.CreatedAt
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while creating the reservation.", ex.Message);
+            }
+        }
 
         public async Task<ReservationsResponseDto> GetReservationsByUserIdAsync(int userId, ReservationStatusEnum? status)
         {
@@ -152,8 +118,8 @@ namespace venue_service.Src.Services.Reservation
                     CreatedAt = r.CreatedAt,
                     UpdatedAt = r.UpdatedAt,
                     PaidAt = r.PaymentRecord?.PaidAt,
-                    IsPaid = r.PaymentRecord?.Status == "approved",
-                    PaymentStatus = r.PaymentRecord?.Status == "approved" ? 1 : 0
+                    IsPaid = r.PaymentRecord != null && r.PaymentRecord.Status == PaymentStatusEnum.APPROVED.ToString(),
+                    PaymentStatus = r.PaymentRecord != null ? int.Parse(r.PaymentRecord.Status) : 0
                 }).ToList();
 
                 return new ReservationsResponseDto
@@ -202,6 +168,76 @@ namespace venue_service.Src.Services.Reservation
             catch (Exception ex)
             {
                 throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while retrieving the last reservation.", ex.Message);
+            }
+        }
+
+        public async Task<ReservationsResponseDto> GetReservationByVenueIdAsync(int venueId)
+        {
+            try
+            {
+                var reservation = await _reservationContext.Reservations
+                    .Include(r => r.Schedule)
+                    .Include(r => r.PaymentRecord)
+                    .Where(v => v.VenueId == venueId)
+                    .ToListAsync();
+
+                if (reservation.IsNullOrEmpty())
+                {
+                    return new ReservationsResponseDto
+                    {
+                        Message = $"No reservations found for venue with id {venueId}.",
+                        Reservations = new List<ReservationResponseDto>()
+                    };
+                }
+
+                return new ReservationsResponseDto
+                {
+                    Message = $"Reservations found for venue with id {venueId}.",
+                    Reservations = reservation.Select(r => new ReservationResponseDto
+                    {
+                        Id = r.Id,
+                        UserId = r.UserId,
+                        VenueId = r.VenueId,
+                        ScheduleId = r.ScheduleId,
+                        StartDate = r.Schedule.StartDate,
+                        EndDate = r.Schedule.EndDate,
+                        TotalAmount = r.TotalAmount,
+                        PaymentMethodId = r.PaymentMethodId,
+                        Status = r.Status,
+                        CreatedAt = r.CreatedAt,
+                        UpdatedAt = r.UpdatedAt,
+                        PaidAt = r.PaymentRecord?.PaidAt,
+                        IsPaid = r.PaymentRecord != null && r.PaymentRecord.Status == PaymentStatusEnum.APPROVED.ToString(),
+                        PaymentStatus = r.PaymentRecord != null ? int.Parse(r.PaymentRecord.Status) : 0
+                    }).ToList()
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while retrieving the reservation.", ex.Message);
+            }
+
+        }
+
+        public async Task<bool> PayReservationAsync(int reservationId)
+        {
+            try
+            {
+                var reservation = await _reservationContext.Reservations.FindAsync(reservationId);
+                if (reservation is null)
+                {
+                    throw new HttpResponseException(HttpStatusCode.NotFound, "Reservation not found", $"Reservation with ID {reservationId} does not exist.");
+                }
+
+                reservation.Status = (int)ReservationStatusEnum.CONFIRMED;
+
+                await _reservationContext.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while updating the reservation status.", ex.Message);
             }
         }
     }

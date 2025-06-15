@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using venue_service.Src.Dtos.Reservation;
 using venue_service.Src.Enums;
 using venue_service.Src.Interfaces.ReservationInterfaces;
+using venue_service.Src.Services.Reservation;
 
 namespace venue_service.Src.Controllers.Reservation
 {
@@ -11,26 +12,19 @@ namespace venue_service.Src.Controllers.Reservation
     [Route("api/reservation")]
     public class ReservationController : ControllerBase
     {
-        private readonly IReservationService _reservationService;
+        private readonly ReservationService _reservationService;
 
-        public ReservationController(IReservationService reservationService)
+        public ReservationController(ReservationService reservationService)
         {
             _reservationService = reservationService;
         }
 
-        //[Authorize]
-        //[HttpPost("reservations")]
-        //public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto dto)
-        //{
-        //    await _reservationService.CreateReservationAsync(dto);
-        //    return Ok();
-        //}
-
-        [HttpGet("payment-status/{reservationId}")]
-        public async Task<IActionResult> GetPaymentStatus(int reservationId)
+        [Authorize]
+        [HttpPost("reservations")]
+        public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto dto)
         {
-            var result = await _reservationService.GetPaymentStatusAsync(reservationId);
-            return Ok(result);
+            await _reservationService.CreateReservationAsync(dto);
+            return Ok();
         }
 
         [HttpGet("{userId}")]
@@ -40,6 +34,18 @@ namespace venue_service.Src.Controllers.Reservation
             return Ok(response);
         }
 
+        [HttpGet("venue/{venueId}")]
+        public async Task<IActionResult> GetVenueReservations(int venueId)
+        {
+            var response = await _reservationService.GetReservationByVenueIdAsync(venueId);
+            return Ok(response);
+        }
 
+        [HttpPut("pay/{reservationId}")]
+        public async Task<IActionResult> PayReservation(int reservationId)
+        {
+            var response = await _reservationService.PayReservationAsync(reservationId);
+            return Ok(response);
+        }
     }
 }
