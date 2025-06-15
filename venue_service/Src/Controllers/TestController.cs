@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -13,10 +14,10 @@ public class TestController : ControllerBase
     private readonly HttpClient _http;
     private readonly MercadoPagoApiConfig _mercadoPagoApiConfig;
 
-    public TestController(MercadoPagoApiConfig mercadoPagoApiConfig)
+    public TestController(IOptions<MercadoPagoApiConfig> options)
     {
         _http = new HttpClient();
-        _mercadoPagoApiConfig = mercadoPagoApiConfig;
+        _mercadoPagoApiConfig = options.Value;
     }
 
     [HttpPost("pay-fixed")]
