@@ -77,6 +77,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
+builder.Services.Configure<MercadoPagoApiConfig>(
+    builder.Configuration.GetSection("MercadoPago")
+);
+
 // Configurações customizadas via IOptions<T>
 builder.Services.Configure<SupabaseStorageOptions>(
     builder.Configuration.GetSection("Supabase")

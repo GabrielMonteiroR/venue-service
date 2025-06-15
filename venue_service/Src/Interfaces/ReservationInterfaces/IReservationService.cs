@@ -6,7 +6,7 @@ namespace venue_service.Src.Interfaces.ReservationInterfaces;
 
 public interface IReservationService
 {
-    Task<ReservationResponseDto> CreateReservationAsync(CreateReservationDto dto);
+    //Task<ReservationResponseDto> CreateReservationAsync(CreateReservationDto dto);
     Task<ReservationPaymentResponseDto> PayReservationAsync(int reservationId, PaymentRequestDto dto);
     Task<ReservationPaymentStatusDto> GetPaymentStatusAsync(int reservationId);
     Task<ReservationResponseDto> GetNextUserReservationAsync(int userId);

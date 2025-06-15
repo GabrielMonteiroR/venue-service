@@ -1,71 +1,44 @@
-﻿using MercadoPago.Client.Payment;
-using MercadoPago.Config;
+﻿using MercadoPago.Config;
+using Microsoft.Extensions.Options;
+using System.Net;
+using System.Text;
+using System.Text.Json;
+using venue_service.Src.Config;
 using venue_service.Src.Dtos.Payment;
-using venue_service.Src.Enums;
-using venue_service.Src.Enums.Payment;
+using venue_service.Src.Exceptions;
 using venue_service.Src.Interfaces.PaymentInterfaces;
+using venue_service.Src.Middlewares;
 
-namespace venue_service.Src.Services.Payment
+namespace venue_service.Src.Services.Payment;
+
+public class MercadoPagoPaymentService : IPaymentService
 {
-    public class MercadoPagoPaymentService : IPaymentService
+    private readonly MercadoPagoApiConfig _mpConfig;
+
+    public MercadoPagoPaymentService(IOptions<MercadoPagoApiConfig> config)
     {
-        public MercadoPagoPaymentService(IConfiguration config)
+        _mpConfig = config.Value;
+        MercadoPagoConfig.AccessToken = _mpConfig.AccessToken;
+    }
+
+    public async Task<CardTokenResponseDto?> GetCardTokenAsync(CardTokenRequestDto dto)
+    {
+        try
         {
-            MercadoPagoConfig.AccessToken = config["MercadoPago:AccessToken"];
+            using var httpClient = new HttpClient();
+
+            var url = _mpConfig.CardTokenRequestEndpoint;
+
+            var content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PostAsync(url, content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            return JsonSerializer.Deserialize<CardTokenResponseDto>(responseContent);
         }
-
-        public async Task<(string status, string mercadoPagoId, string? errorMessage)> CreatePaymentAsync(
-            string email,
-            string cardToken,
-            decimal amount,
-            string description,
-            PaymentMethodEnum paymentMethod,
-            long sellerUserId)
+        catch (Exception ex)
         {
-            try
-            {
-                var methodId = paymentMethod.ToMercadoPagoId();
-
-                var paymentRequest = new PaymentCreateRequest
-                {
-                    TransactionAmount = amount,
-                    Token = cardToken,
-                    Description = description,
-                    Installments = 1,
-                    PaymentMethodId = methodId,
-                    Payer = new PaymentPayerRequest
-                    {
-                        Email = email
-                    },
-                    AdditionalInfo = new PaymentAdditionalInfoRequest
-                    {
-                        Items = new List<PaymentItemRequest>
-                        {
-                            new PaymentItemRequest
-                            {
-                                Title = description,
-                                Quantity = 1,
-                                UnitPrice = amount
-                            }
-                        }
-                    },
-                    SponsorId = sellerUserId
-                };
-
-                var client = new PaymentClient();
-                var result = await client.CreateAsync(paymentRequest);
-
-                return (result.Status.ToString(), result.Id.ToString(), null);
-            }
-            catch (Exception ex)
-            {
-                return ("error", string.Empty, ex.Message);
-            }
-        }
-
-        public async Task<ReservationPaymentStatusDto> GetPaymentStatusAsync(int reservationId)
-        {
-            throw new NotImplementedException();
+            throw new HttpResponseException(HttpStatusCode.InternalServerError, "Error", $"Erro ao obter token do cartão: {ex.Message}");
         }
     }
 }
