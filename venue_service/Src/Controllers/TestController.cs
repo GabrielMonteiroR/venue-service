@@ -65,7 +65,7 @@ public class TestController : ControllerBase
                 token = tokenId,
                 description = "Teste direto",
                 installments = 1,
-                payment_method_id = "visa",
+                payment_method_id = "master",
                 payer = new { email = "test_user_170454958@testuser.com" }, 
                 sponsor_id = long.Parse(receiverId),
                 additional_info = new
@@ -79,14 +79,15 @@ public class TestController : ControllerBase
 
             var paymentJson = JsonSerializer.Serialize(paymentRequest);
 
+            _http.DefaultRequestHeaders.Clear();
             _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             _http.DefaultRequestHeaders.Add("X-Idempotency-Key", Guid.NewGuid().ToString());
-
 
             var paymentResponse = await _http.PostAsync(
                 "https://api.mercadopago.com/v1/payments",
                 new StringContent(paymentJson, Encoding.UTF8, "application/json")
             );
+
 
             var paymentBody = await paymentResponse.Content.ReadAsStringAsync();
             if (!paymentResponse.IsSuccessStatusCode)
