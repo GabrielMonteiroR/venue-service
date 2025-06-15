@@ -87,7 +87,7 @@ builder.Services.Configure<SupabaseStorageOptions>(
 );
 
 // Injeção de Services (respeitando dependências)
-builder.Services.AddScoped<IReservationService, ReservationService>();
+//builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IVenueService, VenueService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<IVenueType, VenueTypeService>();

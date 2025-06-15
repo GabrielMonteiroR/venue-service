@@ -18,13 +18,13 @@ namespace venue_service.Src.Controllers.Reservation
             _reservationService = reservationService;
         }
 
-        [Authorize]
-        [HttpPost("reservations")]
-        public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto dto)
-        {
-            await _reservationService.CreateReservationAsync(dto);
-            return Ok();
-        }
+        //[Authorize]
+        //[HttpPost("reservations")]
+        //public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto dto)
+        //{
+        //    await _reservationService.CreateReservationAsync(dto);
+        //    return Ok();
+        //}
 
         [HttpGet("payment-status/{reservationId}")]
         public async Task<IActionResult> GetPaymentStatus(int reservationId)
