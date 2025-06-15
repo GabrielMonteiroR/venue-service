@@ -78,7 +78,10 @@ public class TestController : ControllerBase
             };
 
             var paymentJson = JsonSerializer.Serialize(paymentRequest);
+
             _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            _http.DefaultRequestHeaders.Add("X-Idempotency-Key", Guid.NewGuid().ToString());
+
 
             var paymentResponse = await _http.PostAsync(
                 "https://api.mercadopago.com/v1/payments",
