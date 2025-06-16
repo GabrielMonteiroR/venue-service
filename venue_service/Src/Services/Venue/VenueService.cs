@@ -282,10 +282,17 @@ namespace venue_service.Src.Services.Venue
 
                 var venues = await _venueContext.Venues
                     .Include(v => v.VenueImages)
+                    .Include(o => o.Owner)
+                    .Include(vt => vt.VenueType)
+                    .Include(s => s.VenueSports).ThenInclude(vs => vs.Sport)
+                    .Include(va => va.VenueAvailabilityTimes)
                     .Where(v => v.OwnerId == id).ToListAsync();
 
                 if (venues.Count == 0) 
-                    throw new HttpResponseException(HttpStatusCode.NoContent, "No Content", "No venues found");
+                    return new VenuesResponseDto                     {
+                        Message = "No venues found for this owner",
+                        Data = new List<VenueResponseDto>()
+                    };
 
                 var venueDtos = venues.Select(v => new VenueResponseDto
                 {
