@@ -16,10 +16,11 @@ namespace venue_service.Src.Services.Venue
         private readonly UserContext _userContext;
         private readonly IStorageService _storageService;
 
-        public VenueService(VenueContext context, IStorageService storageService) 
+        public VenueService(VenueContext context, IStorageService storageService, UserContext userContext) 
         {
             _venueContext = context;
             _storageService = storageService;
+            _userContext = userContext;
         }
 
         public async Task<VenueResponseDto> CreateVenueAsync(CreateVenueRequestDto dto)
