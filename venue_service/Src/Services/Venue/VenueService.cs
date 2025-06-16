@@ -305,8 +305,21 @@ namespace venue_service.Src.Services.Venue
                     Description = v.Description,
                     AllowLocalPayment = v.AllowLocalPayment,
                     VenueTypeId = v.VenueTypeId,
+                    venueTypeName = v.VenueType?.Name,
                     Rules = v.Rules,
                     OwnerId = v.OwnerId,
+                    OwnerName = v.Owner?.FirstName,
+                    Sports = v.VenueSports.Select(s => s.Sport.Name).ToList(),
+                    venueAvaliabilityTimes = v.VenueAvailabilityTimes.Select(t => new VenueAvailabilityTimeResponseDto
+                    {
+                        Id = t.Id,
+                        StartDate = t.StartDate,
+                        EndDate = t.EndDate,
+                        Price = t.Price,
+                        VenueId = t.VenueId,
+                        IsReserved = t.IsReserved,
+                        UserId = t.UserId
+                    }).ToList(),
                     ImageUrls = v.VenueImages?.Select(i => i.ImageUrl).ToList() ?? new List<string>()
                 }).ToList();
 
