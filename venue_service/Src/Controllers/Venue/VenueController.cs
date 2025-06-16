@@ -53,8 +53,8 @@ namespace venue_service.Src.Controllers.Venue
             return Ok(result);
         }
 
-        [HttpGet("by-owner")]
-        public async Task<IActionResult> GetVenueByOwnerId([FromQuery] int id)
+        [HttpGet("by-owner/{id}")]
+        public async Task<IActionResult> GetVenueByOwnerId([FromRoute] int id)
         {
             var result = await _venueService.ListVenuesByOwner(id);
             return Ok(result);
