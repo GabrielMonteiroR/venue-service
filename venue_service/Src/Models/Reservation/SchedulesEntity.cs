@@ -25,8 +25,8 @@ public class SchedulesEntity
     public DateTime EndDate { get; set; }
 
     [Required]
-    [Column("status")]
-    public int ScheduleStatus { get; set; }
+    [Column("is_reserved")]
+    public bool IsReserved { get; set; }
 
     public ReservationEntity? Reservation { get; set; }
 }

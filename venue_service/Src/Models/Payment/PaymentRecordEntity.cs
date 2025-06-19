@@ -26,9 +26,6 @@ namespace venue_service.Src.Models.Payment
         [Column("status")]
         public string Status { get; set; } 
 
-        [Column("mercado_pago_payment_id")]
-        public string MercadoPagoPaymentId { get; set; }
-
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

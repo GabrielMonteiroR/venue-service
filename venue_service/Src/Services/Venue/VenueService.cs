@@ -1,12 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.IO;
 using System.Net;
+using System.Xml.Linq;
 using venue_service.Src.Contexts;
 using venue_service.Src.Dtos.Venue;
 using venue_service.Src.Exceptions;
 using venue_service.Src.Interfaces.ImageStorageInterfaces;
 using venue_service.Src.Interfaces.VenueInterfaces;
 using venue_service.Src.Models.Venue;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace venue_service.Src.Services.Venue
 {
@@ -16,7 +19,7 @@ namespace venue_service.Src.Services.Venue
         private readonly UserContext _userContext;
         private readonly IStorageService _storageService;
 
-        public VenueService(VenueContext context, IStorageService storageService, UserContext userContext) 
+        public VenueService(VenueContext context, IStorageService storageService, UserContext userContext)
         {
             _venueContext = context;
             _storageService = storageService;
@@ -30,14 +33,19 @@ namespace venue_service.Src.Services.Venue
                 var venue = new VenueEntity
                 {
                     Name = dto.Name,
-                    Address = dto.Address,
-                    Capacity = dto.Capacity,
+                    Street = dto.Street,
+                    Number = dto.Number,
+                    Complement = dto.Complement,
+                    Neighborhood = dto.Neighborhood,
+                    City = dto.City,
+                    State = dto.State,
+                    PostalCode = dto.PostalCode,
                     Latitude = dto.Latitude,
                     Longitude = dto.Longitude,
                     Description = dto.Description,
-                    AllowLocalPayment = dto.AllowLocalPayment,
-                    VenueTypeId = dto.VenueTypeId,
+                    Capacity = dto.Capacity,
                     Rules = dto.Rules,
+                    VenueTypeId = dto.VenueTypeId,
                     OwnerId = dto.OwnerId
                 };
 
@@ -55,24 +63,32 @@ namespace venue_service.Src.Services.Venue
                 {
                     Id = venue.Id,
                     Name = venue.Name,
-                    Address = venue.Address,
-                    Capacity = venue.Capacity,
+                    Street = venue.Street,
+                    Number = venue.Number,
+                    Complement = venue.Complement,
+                    Neighborhood = venue.Neighborhood,
+                    City = venue.City,
+                    State = venue.State,
+                    PostalCode = venue.PostalCode,
                     Latitude = venue.Latitude,
                     Longitude = venue.Longitude,
                     Description = venue.Description,
-                    AllowLocalPayment = venue.AllowLocalPayment,
-                    VenueTypeId = venue.VenueTypeId,
+                    Capacity = venue.Capacity,
                     Rules = venue.Rules,
+                    VenueTypeId = venue.VenueTypeId,
                     OwnerId = venue.OwnerId,
                     ImageUrls = venue.VenueImages.Select(i => i.ImageUrl).ToList()
                 };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw new HttpResponseException(HttpStatusCode.InternalServerError, "Error while registering the venue.", "An unexpected error occurred while creating the venue.", DateTime.UtcNow.ToString());
+                throw new HttpResponseException(
+                    HttpStatusCode.InternalServerError,
+                    "Error while registering the venue.",
+                    $"{ex.Message}",
+                    DateTime.UtcNow.ToString());
             }
         }
-
 
         public async Task<VenuesResponseDto> GetVenuesAsync(int? venueTypeId = null, DateTime? from = null, DateTime? to = null, int? minCapacity = null, int? maxCapacity = null, string? name = null, List<int>? sportId = null, bool? isReserved = null)
         {
@@ -89,7 +105,7 @@ namespace venue_service.Src.Services.Venue
                 if (venueTypeId.HasValue)
                     query = query.Where(v => v.VenueTypeId == venueTypeId.Value);
 
-                if(isReserved.HasValue)
+                if (isReserved.HasValue)
                 {
                     query = query.Where(v => v.VenueAvailabilityTimes.Any(va => va.IsReserved == isReserved.Value));
                 }
@@ -97,9 +113,9 @@ namespace venue_service.Src.Services.Venue
                 if (sportId != null && sportId.Count > 0)
                 {
                     query = query.Where(v => v.VenueSports.Any(vs => sportId.Contains(vs.SportId)));
-                };
+                }
 
-                    if (from.HasValue || to.HasValue)
+                if (from.HasValue || to.HasValue)
                 {
                     query = query.Where(v =>
                         v.VenueAvailabilityTimes.Any(va =>
@@ -133,7 +149,13 @@ namespace venue_service.Src.Services.Venue
                 {
                     Id = v.Id,
                     Name = v.Name,
-                    Address = v.Address,
+                    Street = v.Street,
+                    Number = v.Number,
+                    Complement = v.Complement,
+                    Neighborhood = v.Neighborhood,
+                    City = v.City,
+                    State = v.State,
+                    PostalCode = v.PostalCode,
                     Capacity = v.Capacity,
                     Latitude = v.Latitude,
                     Longitude = v.Longitude,
@@ -146,10 +168,9 @@ namespace venue_service.Src.Services.Venue
                         Price = t.Price,
                         VenueId = t.VenueId,
                         IsReserved = t.IsReserved,
-                        UserId = t.UserId 
+                        UserId = t.UserId
                     }).ToList(),
                     Sports = v.VenueSports.Select(s => s.Sport.Name).ToList(),
-                    AllowLocalPayment = v.AllowLocalPayment,
                     VenueTypeId = v.VenueTypeId,
                     venueTypeName = v.VenueType.Name,
                     Rules = v.Rules,
@@ -178,7 +199,7 @@ namespace venue_service.Src.Services.Venue
                     .Include(v => v.VenueImages)
                     .Where(v => ids.Contains(v.Id)).ToListAsync();
 
-                if (venues.Count == 0) 
+                if (venues.Count == 0)
                 {
                     throw new HttpResponseException(HttpStatusCode.NoContent, "No Content", "No venues found");
                 }
@@ -203,18 +224,8 @@ namespace venue_service.Src.Services.Venue
                     Data = venues.Select(v => new VenueResponseDto
                     {
                         Id = v.Id,
-                        Name = v.Name,
-                        Address = v.Address,
-                        Capacity = v.Capacity,
-                        Latitude = v.Latitude,
-                        Longitude = v.Longitude,
-                        Description = v.Description,
-                        AllowLocalPayment = v.AllowLocalPayment,
-                        VenueTypeId = v.VenueTypeId,
-                        Rules = v.Rules,
-                        OwnerId = v.OwnerId,
-                        ImageUrls = v.VenueImages?.Select(i => i.ImageUrl).ToList() ?? new List<string>()
-                    }).ToList()
+                        Name = v.Name
+                    })
                 };
             }
             catch (Exception ex)
@@ -223,24 +234,29 @@ namespace venue_service.Src.Services.Venue
             }
         }
 
-        public async Task<VenueResponseDto> UpdateVenueAsync(int id, UpdateVenueRequestDto dto)
+        public async Task<VenueResponseDto> UpdateVenueAsync(int venueId, UpdateVenueRequestDto dto)
         {
             try
             {
-                var venue = await _venueContext.Venues.FindAsync(id);
+                var venue = await _venueContext.Venues.FindAsync(venueId);
 
                 if (venue is null)
                     throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Venue not found", "The specified venue could not be located.");
 
                 venue.Name = dto.Name;
-                venue.Address = dto.Address;
-                venue.Capacity = dto.Capacity;
+                venue.Street = dto.Street;
+                venue.Number = dto.Number;
+                venue.Complement = dto.Complement;
+                venue.Neighborhood = dto.Neighborhood;
+                venue.City = dto.City;
+                venue.State = dto.State;
+                venue.PostalCode = dto.PostalCode;
                 venue.Latitude = dto.Latitude;
                 venue.Longitude = dto.Longitude;
                 venue.Description = dto.Description;
-                venue.AllowLocalPayment = dto.AllowLocalPayment;
-                venue.VenueTypeId = dto.VenueTypeId;
+                venue.Capacity = dto.Capacity;
                 venue.Rules = dto.Rules;
+                venue.VenueTypeId = dto.VenueTypeId;
 
                 await _venueContext.SaveChangesAsync();
 
@@ -253,12 +269,18 @@ namespace venue_service.Src.Services.Venue
                 {
                     Id = venue.Id,
                     Name = venue.Name,
-                    Address = venue.Address,
+                    Street = venue.Street,
+                    Number = venue.Number,
+                    Complement = venue.Complement,
+                    Neighborhood = venue.Neighborhood,
+                    City = venue.City,
+                    State = venue.State,
+                    PostalCode = venue.PostalCode,
+
                     Capacity = venue.Capacity,
                     Latitude = venue.Latitude,
                     Longitude = venue.Longitude,
                     Description = venue.Description,
-                    AllowLocalPayment = venue.AllowLocalPayment,
                     VenueTypeId = venue.VenueTypeId,
                     Rules = venue.Rules,
                     OwnerId = venue.OwnerId,
@@ -267,10 +289,12 @@ namespace venue_service.Src.Services.Venue
             }
             catch (Exception ex)
             {
-                throw new HttpResponseException(HttpStatusCode.InternalServerError, "Internal Server Error", ex.Message);
+                throw new HttpResponseException(
+                    HttpStatusCode.InternalServerError,
+                    "Internal Server Error",
+                    ex.Message);
             }
         }
-
 
         public async Task<VenuesResponseDto> ListVenuesByOwner(int id)
         {
@@ -286,24 +310,34 @@ namespace venue_service.Src.Services.Venue
                     .Include(vt => vt.VenueType)
                     .Include(s => s.VenueSports).ThenInclude(vs => vs.Sport)
                     .Include(va => va.VenueAvailabilityTimes)
-                    .Where(v => v.OwnerId == id).ToListAsync();
+                    .Where(v => v.OwnerId == id)
+                    .ToListAsync();
 
-                if (venues.Count == 0) 
-                    return new VenuesResponseDto                     {
+                if (venues.Count == 0)
+                {
+                    return new VenuesResponseDto
+                    {
                         Message = "No venues found for this owner",
                         Data = new List<VenueResponseDto>()
                     };
+                }
 
                 var venueDtos = venues.Select(v => new VenueResponseDto
                 {
                     Id = v.Id,
                     Name = v.Name,
-                    Address = v.Address,
+                    Street = v.Street,
+                    Number = v.Number,
+                    Complement = v.Complement,
+                    Neighborhood = v.Neighborhood,
+                    City = v.City,
+                    State = v.State,
+                    PostalCode = v.PostalCode,
+
                     Capacity = v.Capacity,
                     Latitude = v.Latitude,
                     Longitude = v.Longitude,
                     Description = v.Description,
-                    AllowLocalPayment = v.AllowLocalPayment,
                     VenueTypeId = v.VenueTypeId,
                     venueTypeName = v.VenueType?.Name,
                     Rules = v.Rules,
@@ -334,7 +368,6 @@ namespace venue_service.Src.Services.Venue
                 throw new HttpResponseException(HttpStatusCode.InternalServerError, "Internal Server Error", ex.Message);
             }
         }
-
 
         public async Task<UpdateVenueImageResponseDto> AddVenueImagesAsync(UpdateVenueImageDto dto)
         {

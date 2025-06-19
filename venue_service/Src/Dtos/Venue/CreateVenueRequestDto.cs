@@ -1,40 +1,57 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace venue_service.Src.Dtos.Venue
+namespace venue_service.Src.Dtos.Venue;
+
+public class CreateVenueRequestDto
 {
-    public class CreateVenueRequestDto
-    {
-        [JsonPropertyName("name")]
-        public string Name { get; set; }
+    [JsonPropertyName("name")]
+    public string Name { get; set; }
 
-        [JsonPropertyName("address")]
-        public string Address { get; set; }
+    [JsonPropertyName("street")]
+    public string Street { get; set; }
 
-        [JsonPropertyName("capacity")]
-        public int Capacity { get; set; }
+    [JsonPropertyName("number")]
+    public string? Number { get; set; }
 
-        [JsonPropertyName("latitude")]
-        public double Latitude { get; set; }
+    [JsonPropertyName("complement")]
+    public string? Complement { get; set; }
 
-        [JsonPropertyName("image_urls")]
-        public List<string> ImageUrls { get; set; } = new();
+    [JsonPropertyName("neighborhood")]
+    public string Neighborhood { get; set; }
 
-        [JsonPropertyName("longitude")]
-        public double Longitude { get; set; }
+    [JsonPropertyName("city")]
+    public string City { get; set; }
 
-        [JsonPropertyName("description")]
-        public string Description { get; set; }
+    [JsonPropertyName("state")]
+    public string State { get; set; }
 
-        [JsonPropertyName("allow_local_payment")]
-        public bool AllowLocalPayment { get; set; }
+    [JsonPropertyName("postal_code")]
+    public string PostalCode { get; set; }
 
-        [JsonPropertyName("venue_type_id")]
-        public int VenueTypeId { get; set; }
+    [JsonPropertyName("capacity")]
+    public int Capacity { get; set; }
 
-        [JsonPropertyName("rules")]
-        public string Rules { get; set; }
+    [JsonPropertyName("latitude")]
+    public double Latitude { get; set; }
 
-        [JsonPropertyName("owner_id")]
-        public int OwnerId { get; set; }
-    }
+    [JsonPropertyName("longitude")]
+    public double Longitude { get; set; }
+
+    [JsonPropertyName("description")]
+    public string Description { get; set; }
+
+    [JsonPropertyName("allow_local_payment")]
+    public bool AllowLocalPayment { get; set; }
+
+    [JsonPropertyName("venue_type_id")]
+    public int VenueTypeId { get; set; }
+
+    [JsonPropertyName("rules")]
+    public string Rules { get; set; }
+
+    [JsonPropertyName("owner_id")]
+    public int OwnerId { get; set; }
+
+    [JsonPropertyName("image_urls")]
+    public List<string> ImageUrls { get; set; } = new();
 }
