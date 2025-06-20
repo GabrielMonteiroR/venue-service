@@ -23,37 +23,37 @@ namespace venue_service.Src.Services.ImageStorageService
                 throw new InvalidOperationException("Supabase URL ou API Key não configurada corretamente.");
         }
 
-        public async Task<ImageUploadResponseDto> UploadImageAsync(IFormFile file, string bucket, string path)
+        public async Task<ImageUploadResponseDto?> UploadImageAsync(IFormFile file, string bucket, string path)
         {
             try
             {
-                var relativePath = $"/storage/v1/object/{bucket}/{path}";
+                var fullUrl = $"{_options.Url}/storage/v1/object/{bucket}/{path}";
 
-                using var streamContent = new StreamContent(file.OpenReadStream());
-                streamContent.Headers.ContentType =
-                !string.IsNullOrWhiteSpace(file.ContentType) ? new MediaTypeHeaderValue(file.ContentType) : new MediaTypeHeaderValue("image/jpeg");
+                var content = new MultipartFormDataContent();
+                var fileContent = new StreamContent(file.OpenReadStream());
+                fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType ?? "image/jpeg");
 
+                content.Add(fileContent, "file", path); // campo "file" é OBRIGATÓRIO
 
-                var request = new HttpRequestMessage(HttpMethod.Post, relativePath)
+                var request = new HttpRequestMessage(HttpMethod.Post, fullUrl)
                 {
-                    Content = streamContent
+                    Content = content
                 };
 
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _options.ApiKey);
 
                 var response = await _httpClient.SendAsync(request);
-
                 var body = await response.Content.ReadAsStringAsync();
+
+                Console.WriteLine($"🔁 Supabase Upload [{bucket}] => {response.StatusCode} | {body}");
 
                 if (!response.IsSuccessStatusCode)
                     return null;
-                ;
 
                 return new ImageUploadResponseDto
                 {
                     Image = $"{_options.Url}/storage/v1/object/public/{bucket}/{path}"
                 };
-
             }
             catch (Exception ex)
             {

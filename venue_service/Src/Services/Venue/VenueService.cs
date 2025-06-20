@@ -1,15 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.IO;
 using System.Net;
-using System.Xml.Linq;
 using venue_service.Src.Contexts;
 using venue_service.Src.Dtos.Venue;
 using venue_service.Src.Exceptions;
 using venue_service.Src.Interfaces.ImageStorageInterfaces;
 using venue_service.Src.Interfaces.VenueInterfaces;
 using venue_service.Src.Models.Venue;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace venue_service.Src.Services.Venue
 {
