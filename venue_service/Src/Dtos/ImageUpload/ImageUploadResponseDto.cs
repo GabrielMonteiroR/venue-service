@@ -4,7 +4,7 @@ namespace venue_service.Src.Dtos.ImageUpload
 {
     public class ImageUploadResponseDto
     {
-        [JsonPropertyName("Image")]
+        [JsonPropertyName("image")]
         public string Image { get; set; }
     }
 }

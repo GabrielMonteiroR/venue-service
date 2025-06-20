@@ -33,7 +33,7 @@ namespace venue_service.Src.Services.ImageStorageService
                 var fileContent = new StreamContent(file.OpenReadStream());
                 fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType ?? "image/jpeg");
 
-                content.Add(fileContent, "file", path); // campo "file" é OBRIGATÓRIO
+                content.Add(fileContent, "file", path); 
 
                 var request = new HttpRequestMessage(HttpMethod.Post, fullUrl)
                 {
