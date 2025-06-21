@@ -10,7 +10,7 @@ namespace venue_service.Src.Controllers.User;
 
 [Authorize]
 [ApiController]
-[Route("api/user")]
+[Route("api/users")]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -21,22 +21,22 @@ public class UserController : ControllerBase
         _userService = userService;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetUserInfo([FromQuery] int id)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetUserInfo(int id)
     {
         var userInfo = await _userService.GetUserInfoByIdAsync(id);
         return Ok(userInfo);
     }
 
-    [HttpPut]
-    public async Task<IActionResult> UpdateUserInfo([FromQuery] int id, [FromBody] UpdateUserDto userDto)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateUserInfo(int id, [FromBody] UpdateUserDto userDto)
     {
         var updatedUser = await _userService.UpdateUserInfoAsync(id, userDto);
         return Ok(updatedUser);
     }
 
-    [HttpPatch("profile-image")]
-    public async Task<IActionResult> UpdateProfileImage([FromQuery] int id, [FromBody] UpdateUserImageDto dto)
+    [HttpPatch("{id}/profile-image")]
+    public async Task<IActionResult> UpdateProfileImage(int id, [FromBody] UpdateUserImageDto dto)
     {
         var updatedUser = await _userService.UpdateProfileImage(id, dto);
         return Ok(updatedUser);
@@ -50,7 +50,7 @@ public class UserController : ControllerBase
         return Ok(response);
     }
 
-    [HttpGet("next-reservation/{userId}")]
+    [HttpGet("{userId}/next-reservation")]
     public async Task<IActionResult> GetNextReservation(int userId)
     {
         var response = await _reservationService.GetNextUserReservationAsync(userId);
