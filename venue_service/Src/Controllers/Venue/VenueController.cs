@@ -39,8 +39,8 @@ namespace venue_service.Src.Controllers.Venue
             return Ok(result);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateVenue([FromQuery] int id, [FromBody] UpdateVenueRequestDto dto)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateVenue([FromRoute] int id, [FromBody] UpdateVenueRequestDto dto)
         {
             var result = await _venueService.UpdateVenueAsync(id, dto);
             return Ok(result);
