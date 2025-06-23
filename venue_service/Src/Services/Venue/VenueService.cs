@@ -239,20 +239,20 @@ namespace venue_service.Src.Services.Venue
                 if (venue is null)
                     throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Venue not found", "The specified venue could not be located.");
 
-                venue.Name = dto.Name;
-                venue.Street = dto.Street;
-                venue.Number = dto.Number;
-                venue.Complement = dto.Complement;
-                venue.Neighborhood = dto.Neighborhood;
-                venue.City = dto.City;
-                venue.State = dto.State;
-                venue.PostalCode = dto.PostalCode;
-                venue.Latitude = dto.Latitude;
-                venue.Longitude = dto.Longitude;
-                venue.Description = dto.Description;
-                venue.Capacity = dto.Capacity;
-                venue.Rules = dto.Rules;
-                venue.VenueTypeId = dto.VenueTypeId;
+                venue.Name = dto.Name ?? venue.Name;
+                venue.Street = dto.Street ?? venue.Street;
+                venue.Number = dto.Number ?? venue.Number;
+                venue.Complement = dto.Complement ?? venue.Complement;
+                venue.Neighborhood = dto.Neighborhood ?? venue.Neighborhood;
+                venue.City = dto.City ?? venue.City;
+                venue.State = dto.State ?? venue.State;
+                venue.PostalCode = dto.PostalCode ?? venue.PostalCode;
+                venue.Latitude = dto.Latitude ?? venue.Latitude;
+                venue.Longitude = dto.Longitude ?? venue.Longitude;
+                venue.Description = dto.Description ?? venue.Description;
+                venue.Capacity = dto.Capacity ?? venue.Capacity;
+                venue.Rules = dto.Rules ?? venue.Rules;
+                venue.VenueTypeId = dto.VenueTypeId ?? venue.VenueTypeId;
 
                 await _venueContext.SaveChangesAsync();
 
