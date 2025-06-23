@@ -12,5 +12,6 @@ public interface IVenueService
     Task<VenuesResponseDto> ListVenuesByOwner(int id);
     Task<UpdateVenueImageResponseDto> AddVenueImagesAsync(UpdateVenueImageDto dto);
     Task DeleteVenueImageAsync(int venueId, string imageUrl);
+    Task<VenueResponseDto> GetVenueByIdAsync(int id);
 
 }

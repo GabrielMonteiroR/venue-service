@@ -60,6 +60,13 @@ namespace venue_service.Src.Controllers.Venue
             return Ok(result);
         }
 
+        [HttpGet("by-id/{id}")]
+        public async Task<IActionResult> GetResultAsync([FromRoute] int id)
+        {
+            var result = await _venueService.GetVenueByIdAsync(id);
+            return Ok(result);
+        }
+
         [HttpPatch("image/add")]
         public async Task<IActionResult> AddVenueImages([FromBody] UpdateVenueImageDto dto)
         {

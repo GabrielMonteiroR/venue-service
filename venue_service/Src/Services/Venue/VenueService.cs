@@ -424,5 +424,47 @@ namespace venue_service.Src.Services.Venue
             await _venueContext.SaveChangesAsync();
         }
 
+        public async Task<VenueResponseDto> GetVenueByIdAsync(int id)
+        {
+            try
+            {
+                var venue = await _venueContext.Venues
+                    .Include(v => v.VenueImages)
+                    .Include(o => o.Owner)
+                    .Include(vt => vt.VenueType)
+                    .Include(s => s.VenueSports).ThenInclude(vs => vs.Sport)
+                    .Include(va => va.VenueAvailabilityTimes)
+                    .FirstOrDefaultAsync(v => v.Id == id);
+                if (venue == null)
+                    throw new HttpResponseException(HttpStatusCode.NotFound, "Not Found", "Venue not found");
+                return new VenueResponseDto
+                {
+                    Id = venue.Id,
+                    Name = venue.Name,
+                    Street = venue.Street,
+                    Number = venue.Number,
+                    Complement = venue.Complement,
+                    Neighborhood = venue.Neighborhood,
+                    City = venue.City,
+                    State = venue.State,
+                    PostalCode = venue.PostalCode,
+                    Capacity = venue.Capacity,
+                    Latitude = venue.Latitude,
+                    Longitude = venue.Longitude,
+                    Description = venue.Description,
+                    VenueTypeId = venue.VenueTypeId,
+                    Rules = venue.Rules,
+                    OwnerId = venue.OwnerId,
+                    OwnerName = venue.Owner.FirstName,
+                    Sports = venue.VenueSports.Select(s => s.Sport.Name).ToList(),
+                    ImageUrls = venue.VenueImages.Select(i => i.ImageUrl).ToList(),
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "Internal Server Error", ex.Message);
+            }
+        }
+
     }
 }
