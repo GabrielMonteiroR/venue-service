@@ -88,7 +88,6 @@ public class VenueEntity
 
     public ICollection<VenueImageEntity> VenueImages { get; set; }
     public ICollection<VenueEquipamentEntity> VenueEquipaments { get; set; }
-    public ICollection<SchedulesEntity> Schedules { get; set; }
     public ICollection<Venue_SportEntity> VenueSports { get; set; }
     public ICollection<VenueContactInfoEntity> VenueContactInfos { get; set; }
     public ICollection<VenueAvailabilityTimeEntity>? VenueAvailabilityTimes { get; set; }

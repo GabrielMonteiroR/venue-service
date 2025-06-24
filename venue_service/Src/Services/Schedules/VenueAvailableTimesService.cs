@@ -3,11 +3,12 @@ using System.Net;
 using venue_service.Src.Contexts;
 using venue_service.Src.Dtos.AvailabilityTimes;
 using venue_service.Src.Exceptions;
+using venue_service.Src.Interfaces.AvailableTimesInterfaces;
 using venue_service.Src.Models.Venue;
 
 namespace venue_service.Src.Services.Schedules;
 
-public class VenueAvailableTimesService
+public class VenueAvailableTimesService : IAvailableTimesService
 {
     private readonly VenueContext _venueContext;
 
@@ -67,7 +68,7 @@ public class VenueAvailableTimesService
         }
     }
 
-    public async Task<VenueAvailabilityTimeResponseDto> GetVenueAvailabilityTimeResponses()
+    public async Task<VenueAvailabilityTimeResponseDto> GetVenueAvailabilityTimes()
     {
         try
         {

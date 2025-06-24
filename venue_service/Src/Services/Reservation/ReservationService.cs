@@ -48,7 +48,6 @@ namespace venue_service.Src.Services.Reservation
                 {
                     UserId = dto.UserId,
                     VenueId = dto.VenueId,
-                    ScheduleId = dto.ScheduleId,
                     TotalAmount = dto.TotalAmount,
                     PaymentMethodId = dto.PaymentMethodId,
                     Status = (int)ReservationStatusEnum.PENDING,
@@ -84,7 +83,6 @@ namespace venue_service.Src.Services.Reservation
                     throw new HttpResponseException(HttpStatusCode.NotFound, "User not found", $"User with ID {userId} does not exist.");
 
                 var query = _reservationContext.Reservations
-                    .Include(r => r.Schedule)
                     .Include(r => r.PaymentRecord)
                     .Where(r => r.UserId == userId);
 
@@ -109,9 +107,6 @@ namespace venue_service.Src.Services.Reservation
                     Id = r.Id,
                     UserId = r.UserId,
                     VenueId = r.VenueId,
-                    ScheduleId = r.ScheduleId,
-                    StartDate = r.Schedule.StartDate,
-                    EndDate = r.Schedule.EndDate,
                     TotalAmount = r.TotalAmount,
                     PaymentMethodId = r.PaymentMethodId,
                     Status = r.Status,
@@ -158,7 +153,6 @@ namespace venue_service.Src.Services.Reservation
                     Id = nextReservation.Id,
                     UserId = nextReservation.UserId,
                     VenueId = nextReservation.VenueId,
-                    ScheduleId = nextReservation.ScheduleId,
                     TotalAmount = nextReservation.TotalAmount,
                     PaymentMethodId = nextReservation.PaymentMethodId,
                     Status = nextReservation.Status,
@@ -176,7 +170,6 @@ namespace venue_service.Src.Services.Reservation
             try
             {
                 var reservation = await _reservationContext.Reservations
-                    .Include(r => r.Schedule)
                     .Include(r => r.PaymentRecord)
                     .Where(v => v.VenueId == venueId)
                     .ToListAsync();
@@ -198,9 +191,6 @@ namespace venue_service.Src.Services.Reservation
                         Id = r.Id,
                         UserId = r.UserId,
                         VenueId = r.VenueId,
-                        ScheduleId = r.ScheduleId,
-                        StartDate = r.Schedule.StartDate,
-                        EndDate = r.Schedule.EndDate,
                         TotalAmount = r.TotalAmount,
                         PaymentMethodId = r.PaymentMethodId,
                         Status = r.Status,
