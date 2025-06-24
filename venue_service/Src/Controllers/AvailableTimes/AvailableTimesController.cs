@@ -32,7 +32,7 @@ public class AvailableTimesController : ControllerBase
     }
 
     [HttpGet("by-id/{id}")]
-    public async Task<IActionResult> GetVenueAvailabilityTimeById(int id)
+    public async Task<IActionResult> GetVenueAvailabilityTimeById([FromRoute] int id)
     {
         var result = await _availableTimesService.GetVenueAvailabilityTimeById(id);
         return Ok(result);
