@@ -151,29 +151,40 @@ public class VenueAvailableTimesService : IAvailableTimesService
                 throw new HttpResponseException(HttpStatusCode.NotFound, "Venue availability time not found.", $"No venue availability time found with ID {availabilityTimeId}.");
             }
 
-            if (requestDto.StartDate >= requestDto.EndDate)
+            var start = requestDto.StartDate.HasValue
+                ? DateTime.SpecifyKind(requestDto.StartDate.Value, DateTimeKind.Utc)
+                : (DateTime?)null;
+
+            var end = requestDto.EndDate.HasValue
+                ? DateTime.SpecifyKind(requestDto.EndDate.Value, DateTimeKind.Utc)
+                : (DateTime?)null;
+
+            if (start.HasValue && end.HasValue && start >= end)
             {
-                throw new HttpResponseException(HttpStatusCode.BadRequest, "Start date must be earlier than end date.", $"{requestDto.StartDate} is bigger than {requestDto.EndDate}");
+                throw new HttpResponseException(HttpStatusCode.BadRequest, "Start date must be earlier than end date.", $"{start} is after {end}");
             }
 
-            var hasOverlap = await _venueContext.VenueAvailabilities
-                .AnyAsync(x =>
-                    x.VenueId == availabilityTimeToBeUpdated.VenueId &&
-                    x.Id != availabilityTimeId &&
-                    (
-                        (requestDto.StartDate < x.EndDate && requestDto.EndDate > x.StartDate)
-                    ));
-
-            if (hasOverlap)
+            if (start.HasValue && end.HasValue)
             {
-                throw new HttpResponseException(HttpStatusCode.Conflict, "Venue availability time already exists.", $"The venue availability time for venue ID {availabilityTimeToBeUpdated.VenueId} from {requestDto.StartDate} to {requestDto.EndDate} already exists.");
+                var hasOverlap = await _venueContext.VenueAvailabilities
+                    .AnyAsync(x =>
+                        x.VenueId == availabilityTimeToBeUpdated.VenueId &&
+                        x.Id != availabilityTimeId &&
+                        (
+                            start < x.EndDate && end > x.StartDate
+                        ));
+
+                if (hasOverlap)
+                {
+                    throw new HttpResponseException(HttpStatusCode.Conflict, "Venue availability time already exists.", $"The venue availability time for venue ID {availabilityTimeToBeUpdated.VenueId} from {start} to {end} already exists.");
+                }
             }
 
-            if (requestDto.StartDate.HasValue)
-                availabilityTimeToBeUpdated.StartDate = DateTime.SpecifyKind(requestDto.StartDate.Value, DateTimeKind.Utc);
+            if (start.HasValue)
+                availabilityTimeToBeUpdated.StartDate = start.Value;
 
-            if (requestDto.EndDate.HasValue)
-                availabilityTimeToBeUpdated.EndDate = DateTime.SpecifyKind(requestDto.EndDate.Value, DateTimeKind.Utc);
+            if (end.HasValue)
+                availabilityTimeToBeUpdated.EndDate = end.Value;
 
             if (requestDto.Price.HasValue)
                 availabilityTimeToBeUpdated.Price = requestDto.Price.Value;
@@ -197,6 +208,7 @@ public class VenueAvailableTimesService : IAvailableTimesService
             throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while updating the venue availability time.", ex.Message);
         }
     }
+
 
     public async Task<DeleteVenueAvailabilityTimeDto> DeleteVenueAvailabilityTime(int id)
     {
