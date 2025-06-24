@@ -38,6 +38,14 @@ public class AvailableTimesController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("by-venue/{venueId}")]
+    public async Task<IActionResult> GetByVenueId([FromRoute] int venueId, [FromQuery] bool? isReserved = null)
+    {
+        var result = await _availableTimesService.GetAvailabilityTimesByVenueId(venueId, isReserved);
+        return Ok(result);
+    }
+
+
     [HttpPut("{availabilityTimeId}")]
     public async Task<IActionResult> UpdateVenueAvailabilityTime([FromRoute] int availabilityTimeId, [FromBody] UpdateVenueAvailabilityTimeDto requestDto)
     {

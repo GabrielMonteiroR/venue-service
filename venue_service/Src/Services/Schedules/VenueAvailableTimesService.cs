@@ -240,4 +240,50 @@ public class VenueAvailableTimesService : IAvailableTimesService
         }
     }
 
+    public async Task<VenueAvailabilityTimeResponseDto> GetAvailabilityTimesByVenueId(int venueId, bool? isReserved = null)
+    {
+        try
+        {
+            var query = _venueContext.VenueAvailabilities
+                .Where(v => v.VenueId == venueId)
+                .Include(v => v.Venue)
+                .OrderBy(v => v.StartDate)
+                .AsQueryable();
+
+            if (isReserved.HasValue)
+            {
+                query = query.Where(v => v.IsReserved == isReserved.Value);
+            }
+
+            var result = await query.ToListAsync();
+
+            if (result == null || !result.Any())
+            {
+                return new VenueAvailabilityTimeResponseDto
+                {
+                    Message = "No venue availability times found for the specified venue ID.",
+                    Data = new List<VenueAvailabilityTimeDto>()
+                };
+            }
+
+            return new VenueAvailabilityTimeResponseDto
+            {
+                Message = "Available times retrieved successfully.",
+                Data = result.Select(v => new VenueAvailabilityTimeDto
+                {
+                    Id = v.Id,
+                    StartDate = v.StartDate,
+                    EndDate = v.EndDate,
+                    VenueId = v.VenueId,
+                    Price = v.Price,
+                    IsReserved = v.IsReserved,
+                    UserId = v.UserId
+                }).ToList()
+            };
+        }
+        catch (Exception ex)
+        {
+            throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while retrieving venue availability times by venue ID.", ex.Message);
+        }
+    }
 }
