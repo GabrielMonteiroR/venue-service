@@ -11,7 +11,6 @@ namespace venue_service.Src.Contexts
         public DbSet<ReservationEntity> Reservations => Set<ReservationEntity>();
         public DbSet<PaymentMethodEntity> PaymentMethods => Set<PaymentMethodEntity>();
         public DbSet<PaymentRecordEntity> PaymentRecords => Set<PaymentRecordEntity>();
-        public DbSet<SchedulesEntity> Schedules => Set<SchedulesEntity>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -21,7 +20,6 @@ namespace venue_service.Src.Contexts
             modelBuilder.Entity<ReservationEntity>().ToTable("reservations");
             modelBuilder.Entity<PaymentMethodEntity>().ToTable("payment_methods");
             modelBuilder.Entity<PaymentRecordEntity>().ToTable("payment_records");
-            modelBuilder.Entity<SchedulesEntity>().ToTable("schedules");
 
             // Reservation -> User
             modelBuilder.Entity<ReservationEntity>()
@@ -42,13 +40,6 @@ namespace venue_service.Src.Contexts
                 .HasForeignKey(r => r.PaymentMethodId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Reservation -> Schedule (1:1)
-            modelBuilder.Entity<ReservationEntity>()
-                .HasOne(r => r.Schedule)
-                .WithOne(s => s.Reservation)
-                .HasForeignKey<ReservationEntity>(r => r.ScheduleId)
-                .OnDelete(DeleteBehavior.Restrict);
-
             // PaymentRecord -> Reservation (1:1)
             modelBuilder.Entity<PaymentRecordEntity>()
                 .HasOne(pr => pr.Reservation)
@@ -56,12 +47,6 @@ namespace venue_service.Src.Contexts
                 .HasForeignKey<PaymentRecordEntity>(pr => pr.ReservationId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Schedule -> Venue (muitos horários por venue)
-            modelBuilder.Entity<SchedulesEntity>()
-                .HasOne(s => s.Venue)
-                .WithMany(v => v.Schedules)
-                .HasForeignKey(s => s.VenueId)
-                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

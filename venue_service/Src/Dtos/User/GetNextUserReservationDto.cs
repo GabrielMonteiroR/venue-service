@@ -19,9 +19,6 @@ namespace venue_service.Src.Dtos.User
         [JsonPropertyName("scheduleId")]
         public int ScheduleId { get; set; }
 
-        [JsonPropertyName("scheduleDate")]
-        public SchedulesEntity Schedule { get; set; }
-
         [JsonPropertyName("venueImage")]
         public string venueImage { get; set; }
 

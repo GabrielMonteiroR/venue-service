@@ -26,11 +26,11 @@ public class ReservationEntity
     public VenueEntity Venue { get; set; }
 
     [Required]
-    [Column("schedule_id")]
-    public int ScheduleId { get; set; }
+    [Column("venue_availability_time_id")]
+    public int VenueAvailabilityTimeId { get; set; }
 
-    [ForeignKey("ScheduleId")]
-    public SchedulesEntity Schedule { get; set; }
+    [ForeignKey("VenueAvailabilityTimeId")]
+    public VenueAvailabilityTimeEntity VenueAvailabilityTime { get; set; }
 
     [Required]
     [Column("total_amount")]
