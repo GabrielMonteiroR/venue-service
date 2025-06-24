@@ -23,13 +23,14 @@ public class VenueAvailableTimesService : IAvailableTimesService
         {
             var request = new VenueAvailabilityTimeEntity
             {
-                StartDate = requestDto.StartDate,
-                EndDate = requestDto.EndDate,
+                StartDate = DateTime.SpecifyKind(requestDto.StartDate, DateTimeKind.Utc),
+                EndDate = DateTime.SpecifyKind(requestDto.EndDate, DateTimeKind.Utc),
                 VenueId = requestDto.VenueId,
                 Price = requestDto.Price,
                 IsReserved = requestDto.IsReserved,
                 UserId = requestDto.UserId
             };
+
 
             var hasOverlap = await _venueContext.VenueAvailabilities
  .AnyAsync(x =>
@@ -168,9 +169,14 @@ public class VenueAvailableTimesService : IAvailableTimesService
                 throw new HttpResponseException(HttpStatusCode.Conflict, "Venue availability time already exists.", $"The venue availability time for venue ID {availabilityTimeToBeUpdated.VenueId} from {requestDto.StartDate} to {requestDto.EndDate} already exists.");
             }
 
-            availabilityTimeToBeUpdated.StartDate = (DateTime)requestDto.StartDate;
-            availabilityTimeToBeUpdated.EndDate = (DateTime)requestDto.EndDate;
-            availabilityTimeToBeUpdated.Price = (decimal)requestDto.Price;
+            if (requestDto.StartDate.HasValue)
+                availabilityTimeToBeUpdated.StartDate = DateTime.SpecifyKind(requestDto.StartDate.Value, DateTimeKind.Utc);
+
+            if (requestDto.EndDate.HasValue)
+                availabilityTimeToBeUpdated.EndDate = DateTime.SpecifyKind(requestDto.EndDate.Value, DateTimeKind.Utc);
+
+            if (requestDto.Price.HasValue)
+                availabilityTimeToBeUpdated.Price = requestDto.Price.Value;
 
             _venueContext.VenueAvailabilities.Update(availabilityTimeToBeUpdated);
             await _venueContext.SaveChangesAsync();
