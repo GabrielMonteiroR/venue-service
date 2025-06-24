@@ -15,6 +15,8 @@ using venue_service.Src.Interfaces.PaymentInterfaces;
 using venue_service.Src.Interfaces.ImageStorageInterfaces;
 using venue_service.Src.Interfaces.SportInterfaces;
 using venue_service.Src.Services.Sport;
+using venue_service.Src.Interfaces.AvailableTimesInterfaces;
+using venue_service.Src.Services.Schedules;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -86,6 +88,7 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<IVenueType, VenueTypeService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ISportInterface, SportService>();
+builder.Services.AddScoped<IAvailableTimesService, VenueAvailableTimesService>();
 
 // Storage de Imagens
 
