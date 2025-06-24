@@ -141,4 +141,57 @@ public class VenueAvailableTimesService
             throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while retrieving the venue availability time.", ex.Message);
         }
     }
+
+    public async Task<VenueAvailabilityTimeDto> UpdateVenueAvailabilityTime(int availabilityTimeId, UpdateVenueAvailabilityTimeDto requestDto)
+    {
+        try
+        {
+            var availabilityTimeToBeUpdated = await _venueContext.VenueAvailabilities.FindAsync(availabilityTimeId);
+
+            if (availabilityTimeToBeUpdated == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound, "Venue availability time not found.", $"No venue availability time found with ID {availabilityTimeId}.");
+            }
+
+            if (requestDto.StartDate >= requestDto.EndDate)
+            {
+                throw new HttpResponseException(HttpStatusCode.BadRequest, "Start date must be earlier than end date.", $"{requestDto.StartDate} is bigger than {requestDto.EndDate}");
+            }
+
+            var hasOverlap = await _venueContext.VenueAvailabilities
+                .AnyAsync(x =>
+                    x.VenueId == availabilityTimeToBeUpdated.VenueId &&
+                    x.Id != availabilityTimeId &&
+                    (
+                        (requestDto.StartDate < x.EndDate && requestDto.EndDate > x.StartDate)
+                    ));
+
+            if (hasOverlap)
+            {
+                throw new HttpResponseException(HttpStatusCode.Conflict, "Venue availability time already exists.", $"The venue availability time for venue ID {availabilityTimeToBeUpdated.VenueId} from {requestDto.StartDate} to {requestDto.EndDate} already exists.");
+            }
+
+            availabilityTimeToBeUpdated.StartDate = (DateTime)requestDto.StartDate;
+            availabilityTimeToBeUpdated.EndDate = (DateTime)requestDto.EndDate;
+            availabilityTimeToBeUpdated.Price = (decimal)requestDto.Price;
+
+            _venueContext.VenueAvailabilities.Update(availabilityTimeToBeUpdated);
+            await _venueContext.SaveChangesAsync();
+
+            return new VenueAvailabilityTimeDto
+            {
+                Id = availabilityTimeToBeUpdated.Id,
+                StartDate = availabilityTimeToBeUpdated.StartDate,
+                EndDate = availabilityTimeToBeUpdated.EndDate,
+                VenueId = availabilityTimeToBeUpdated.VenueId,
+                Price = availabilityTimeToBeUpdated.Price,
+                IsReserved = availabilityTimeToBeUpdated.IsReserved,
+                UserId = availabilityTimeToBeUpdated.UserId
+            };
+        }
+        catch (Exception ex)
+        {
+            throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while updating the venue availability time.", ex.Message);
+        }
+    }
 }

@@ -12,11 +12,5 @@ public class UpdateVenueAvailabilityTimeDto
 
     [JsonPropertyName("price")]
     public decimal? Price { get; set; }
-
-    [JsonPropertyName("is_reserved")]
-    public bool? IsReserved { get; set; }
-
-    [JsonPropertyName("user_id")]
-    public int? UserId { get; set; }
 }
 
