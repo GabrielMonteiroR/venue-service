@@ -16,7 +16,7 @@ namespace venue_service.Src.Services.Schedules
             _venueContext = venueContext;
         }
 
-        public async Task<VenueAvailabilityTimeResponseDto> CreateVenueAvailabilityTime(CreateVenueAvailabilityTimeDto requestDto)
+        public async Task<VenueAvailabilityTimeDto> CreateVenueAvailabilityTime(CreateVenueAvailabilityTimeDto requestDto)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace venue_service.Src.Services.Schedules
 
                 await _venueContext.VenueAvailabilities.AddAsync(request);
 
-                return new VenueAvailabilityTimeResponseDto
+                return new VenueAvailabilityTimeDto
                 {
                     Id = request.Id,
                     StartDate = request.StartDate,
@@ -72,4 +72,21 @@ namespace venue_service.Src.Services.Schedules
             }
         }
     }
+
+    public async Task<List<VenueAvailabilityTimeDto>> GetVenueAvailabilityTimeResponses()
+        {
+            try
+            {
+                var availabilityTimes = await _venueContext.VenueAvailabilities
+                    .Include(v => v.Venue)
+                    .ToListAsync();
+
+                if (availabilityTimes == null || !availabilityTimes.Any())
+                {
+
+                }
+            } catch (Exception ex)
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while retrieving venue availability times.", ex.Message);
+            }
 }
