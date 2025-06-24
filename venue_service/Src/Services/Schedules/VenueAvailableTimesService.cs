@@ -47,13 +47,8 @@ public class VenueAvailableTimesService
                 throw new HttpResponseException(HttpStatusCode.BadRequest, " Start date must be earlier than end date.", $"{request.StartDate} is bigger than {request.EndDate}");
             }
 
-
-            if (request is null)
-            {
-                throw new HttpResponseException(HttpStatusCode.BadRequest, "Invalid request data.", "Request data cannot be null or empty.");
-            }
-
             await _venueContext.VenueAvailabilities.AddAsync(request);
+            await _venueContext.SaveChangesAsync();
 
             return new VenueAvailabilityTimeDto
             {
@@ -194,4 +189,47 @@ public class VenueAvailableTimesService
             throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while updating the venue availability time.", ex.Message);
         }
     }
+
+    public async Task<DeleteVenueAvailabilityTimeDto> DeleteVenueAvailabilityTime(int id)
+    {
+        try
+        {
+            var availabilityTimeToBeDeleted = await _venueContext.VenueAvailabilities.FindAsync(id);
+            if (availabilityTimeToBeDeleted == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound, "Venue availability time not found.", $"No venue availability time found with ID {id}.");
+            }
+
+            if (availabilityTimeToBeDeleted.IsReserved)
+            {
+                throw new HttpResponseException(HttpStatusCode.BadRequest, "Cannot delete reserved venue availability time.", $"The venue availability time with ID {id} is reserved and cannot be deleted.");
+            }
+
+            var availableTimeDeleted = availabilityTimeToBeDeleted;
+
+            _venueContext.VenueAvailabilities.Remove(availabilityTimeToBeDeleted);
+            await _venueContext.SaveChangesAsync();
+
+            return new DeleteVenueAvailabilityTimeDto
+            {
+                Message = "Venue availability time deleted successfully.",
+                Data = new VenueAvailabilityTimeDto
+                {
+                    Id = availableTimeDeleted.Id,
+                    StartDate = availableTimeDeleted.StartDate,
+                    EndDate = availableTimeDeleted.EndDate,
+                    VenueId = availableTimeDeleted.VenueId,
+                    Price = availableTimeDeleted.Price,
+                    IsReserved = availableTimeDeleted.IsReserved,
+                    UserId = availableTimeDeleted.UserId
+                }
+            };
+
+        }
+        catch (Exception ex)
+        {
+            throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while deleting the venue availability time.", ex.Message);
+        }
+    }
+
 }
