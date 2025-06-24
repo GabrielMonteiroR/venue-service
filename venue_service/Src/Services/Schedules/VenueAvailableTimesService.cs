@@ -71,9 +71,8 @@ public class VenueAvailableTimesService
             throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while creating the venue availability time.", ex.Message);
         }
     }
-}
 
-public async Task<VenueAvailabilityTimeResponseDto> GetVenueAvailabilityTimeResponses()
+    public async Task<VenueAvailabilityTimeResponseDto> GetVenueAvailabilityTimeResponses()
     {
         try
         {
@@ -107,11 +106,39 @@ public async Task<VenueAvailabilityTimeResponseDto> GetVenueAvailabilityTimeResp
 
             return response;
 
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
             throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while retrieving venue availability times.", ex.Message);
         }
     }
 
+    public async Task<VenueAvailabilityTimeDto> GetVenueAvailabilityTimeById(int id)
+    {
+        try
+        {
+            var availabilityTime = await _venueContext.VenueAvailabilities.FindAsync(id);
 
+            if (availabilityTime == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound, "Venue availability time not found.", $"No venue availability time found with ID {id}.");
+            }
+
+            return new VenueAvailabilityTimeDto
+            {
+                Id = availabilityTime.Id,
+                StartDate = availabilityTime.StartDate,
+                EndDate = availabilityTime.EndDate,
+                VenueId = availabilityTime.VenueId,
+                Price = availabilityTime.Price,
+                IsReserved = availabilityTime.IsReserved,
+                UserId = availabilityTime.UserId
+            };
+
+        }
+        catch (Exception ex)
+        {
+            throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while retrieving the venue availability time.", ex.Message);
+        }
+    }
 }
