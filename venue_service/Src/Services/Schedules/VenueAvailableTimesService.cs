@@ -245,10 +245,12 @@ public class VenueAvailableTimesService : IAvailableTimesService
         try
         {
             var query = _venueContext.VenueAvailabilities
-                .Where(v => v.VenueId == venueId)
-                .Include(v => v.Venue)
-                .OrderBy(v => v.StartDate)
-                .AsQueryable();
+            .Include(v => v.Venue)
+            .Where(v => v.VenueId == venueId)
+            .Where(v => v.EndDate >= DateTime.UtcNow)
+            .OrderBy(v => v.StartDate)
+            .AsQueryable();
+
 
             if (isReserved.HasValue)
             {
