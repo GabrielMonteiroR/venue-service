@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace venue_service.Src.Models.AvailabilityTimes;
+namespace venue_service.Src.Dtos.AvailabilityTimes;
 
 public class UpdateVenueAvailabilityTimeDto
 {

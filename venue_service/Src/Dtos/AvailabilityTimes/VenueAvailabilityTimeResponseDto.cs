@@ -1,9 +1,12 @@
-﻿namespace venue_service.Src.Models.AvailabilityTimes;
+﻿using System.Text.Json.Serialization;
 
-using System.Text.Json.Serialization;
+namespace venue_service.Src.Dtos.AvailabilityTimes;
 
-public class CreateVenueAvailabilityTimeDto
+public class VenueAvailabilityTimeResponseDto
 {
+    [JsonPropertyName("id")]
+    public int Id { get; set; }
+
     [JsonPropertyName("start_date")]
     public DateTime StartDate { get; set; }
 
@@ -17,7 +20,7 @@ public class CreateVenueAvailabilityTimeDto
     public decimal Price { get; set; }
 
     [JsonPropertyName("is_reserved")]
-    public bool IsReserved { get; set; } = false;
+    public bool IsReserved { get; set; }
 
     [JsonPropertyName("user_id")]
     public int? UserId { get; set; }
