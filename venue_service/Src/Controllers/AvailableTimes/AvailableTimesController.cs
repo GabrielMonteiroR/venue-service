@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using venue_service.Src.Dtos.AvailabilityTimes;
 using venue_service.Src.Interfaces.AvailableTimesInterfaces;
 
 namespace venue_service.Src.Controllers.AvailableTimes;
 
 [ApiController]
+[Authorize]
 [Route("api/available-times")]
 public class AvailableTimesController : ControllerBase
 {

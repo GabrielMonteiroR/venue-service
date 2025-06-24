@@ -74,6 +74,7 @@ public class VenueAvailableTimesService : IAvailableTimesService
         {
             var availabilityTimes = await _venueContext.VenueAvailabilities
                 .Include(v => v.Venue)
+                .OrderBy(v => v.StartDate)
                 .ToListAsync();
 
             if (availabilityTimes == null || !availabilityTimes.Any())
