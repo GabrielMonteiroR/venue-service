@@ -10,7 +10,6 @@ namespace venue_service.Src.Contexts
 
         public DbSet<ReservationEntity> Reservations => Set<ReservationEntity>();
         public DbSet<PaymentMethodEntity> PaymentMethods => Set<PaymentMethodEntity>();
-        public DbSet<PaymentRecordEntity> PaymentRecords => Set<PaymentRecordEntity>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -19,7 +18,6 @@ namespace venue_service.Src.Contexts
 
             modelBuilder.Entity<ReservationEntity>().ToTable("reservations");
             modelBuilder.Entity<PaymentMethodEntity>().ToTable("payment_methods");
-            modelBuilder.Entity<PaymentRecordEntity>().ToTable("payment_records");
 
             // Reservation -> User
             modelBuilder.Entity<ReservationEntity>()
@@ -40,12 +38,6 @@ namespace venue_service.Src.Contexts
                 .HasForeignKey(r => r.PaymentMethodId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // PaymentRecord -> Reservation (1:1)
-            modelBuilder.Entity<PaymentRecordEntity>()
-                .HasOne(pr => pr.Reservation)
-                .WithOne(r => r.PaymentRecord)
-                .HasForeignKey<PaymentRecordEntity>(pr => pr.ReservationId)
-                .OnDelete(DeleteBehavior.Cascade);
 
         }
     }

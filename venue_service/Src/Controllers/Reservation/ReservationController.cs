@@ -28,9 +28,9 @@ namespace venue_service.Src.Controllers.Reservation
         }
 
         [HttpGet("{userId}")]
-        public async Task<IActionResult> GetUserReservations(int userId, [FromQuery] ReservationStatusEnum? status)
+        public async Task<IActionResult> GetUserReservations(int userId)
         {
-            var response = await _reservationService.GetReservationsByUserIdAsync(userId, status);
+            var response = await _reservationService.GetReservationsByUserIdAsync(userId);
             return Ok(response);
         }
 

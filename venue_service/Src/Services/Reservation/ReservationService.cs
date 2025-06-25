@@ -2,10 +2,12 @@
 using Microsoft.IdentityModel.Tokens;
 using System.Net;
 using venue_service.Src.Contexts;
+using venue_service.Src.Dtos.AvailabilityTimes;
 using venue_service.Src.Dtos.Reservation;
 using venue_service.Src.Enums;
 using venue_service.Src.Enums.Payment;
 using venue_service.Src.Exceptions;
+using venue_service.Src.Interfaces.AvailableTimesInterfaces;
 using venue_service.Src.Interfaces.PaymentInterfaces;
 
 namespace venue_service.Src.Services.Reservation
@@ -14,20 +16,20 @@ namespace venue_service.Src.Services.Reservation
     {
         private readonly ReservationContext _reservationContext;
         private readonly UserContext _userContext;
+        private readonly IAvailableTimesService _availableTimesService;
         private readonly VenueContext _venueContext;
-        private readonly IPaymentService _paymentService;
 
         public ReservationService(
             ReservationContext reservationContext,
             UserContext userContext,
             VenueContext venueContext,
-            IPaymentService paymentService
+            IAvailableTimesService availableTimesService
         )
         {
             _reservationContext = reservationContext;
             _userContext = userContext;
             _venueContext = venueContext;
-            _paymentService = paymentService;
+            _availableTimesService = availableTimesService;
         }
 
         public async Task<ReservationResponseDto> CreateReservationAsync(CreateReservationDto dto)
@@ -37,36 +39,41 @@ namespace venue_service.Src.Services.Reservation
                 var user = await _userContext.Users.FindAsync(dto.UserId);
                 if (user is null)
                     throw new HttpResponseException(HttpStatusCode.NotFound, "User not found", $"User with ID {dto.UserId} does not exist.");
-
-                var venue = await _venueContext.Venues
-                    .Include(v => v.Owner)
-                    .FirstOrDefaultAsync(v => v.Id == dto.VenueId);
+                var venue = await _venueContext.Venues.FindAsync(dto.VenueId);
                 if (venue is null)
                     throw new HttpResponseException(HttpStatusCode.NotFound, "Venue not found", $"Venue with ID {dto.VenueId} does not exist.");
 
-                var newReservation = new ReservationEntity
+                var avaliableTime = await _availableTimesService.GetVenueAvailabilityTimeById(dto.VenueId);
+
+                if (avaliableTime is null)
+                    throw new HttpResponseException(HttpStatusCode.NotFound, "Available time not found", $"No available time found for venue with ID {dto.VenueId} and time ID {dto.VenueAvailabilityTimeId}.");
+
+                if (avaliableTime.IsReserved is true)
                 {
-                    UserId = dto.UserId,
+                    throw new HttpResponseException(HttpStatusCode.Conflict, "Time slot already reserved", $"The time slot for venue with ID {dto.VenueId} is already reserved.");
+                }
+
+                var reservation = new ReservationEntity
+                {
                     VenueId = dto.VenueId,
-                    TotalAmount = dto.TotalAmount,
-                    PaymentMethodId = dto.PaymentMethodId,
-                    Status = (int)ReservationStatusEnum.PENDING,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
+                    UserId = dto.UserId,
+                    VenueAvailabilityTimeId = dto.VenueAvailabilityTimeId,
+                    IsPaid = false,
+                    PaymentMethodId = dto.PaymentMethodId
                 };
 
-                _reservationContext.Reservations.Add(newReservation);
+                await _reservationContext.Reservations.AddAsync(reservation);
                 await _reservationContext.SaveChangesAsync();
 
                 return new ReservationResponseDto
                 {
-                    Id = newReservation.Id,
-                    UserId = newReservation.UserId,
-                    VenueId = newReservation.VenueId,
-                    PaymentMethodId = newReservation.PaymentMethodId,
-                    Status = newReservation.Status,
-                    CreatedAt = newReservation.CreatedAt
+                    Id = reservation.Id,
+                    UserId = reservation.UserId,
+                    VenueId = reservation.VenueId,
+                    PaymentMethodId = reservation.PaymentMethodId,
+                    IsPaid = reservation.IsPaid,
                 };
+
             }
             catch (Exception ex)
             {
@@ -74,26 +81,23 @@ namespace venue_service.Src.Services.Reservation
             }
         }
 
-        public async Task<ReservationsResponseDto> GetReservationsByUserIdAsync(int userId, ReservationStatusEnum? status)
+        public async Task<ReservationsResponseDto> GetReservationsByUserIdAsync(int userId)
         {
             try
             {
                 var user = await _userContext.Users.FindAsync(userId);
                 if (user is null)
-                    throw new HttpResponseException(HttpStatusCode.NotFound, "User not found", $"User with ID {userId} does not exist.");
-
-                var query = _reservationContext.Reservations
-                    .Include(r => r.PaymentRecord)
-                    .Where(r => r.UserId == userId);
-
-                if (status.HasValue)
                 {
-                    query = query.Where(r => r.Status == (int)status.Value);
+                    throw new HttpResponseException(HttpStatusCode.NotFound, "User not found", $"User with ID {userId} does not exist.");
                 }
 
-                var reservations = await query.ToListAsync();
+                var reservations = await _reservationContext.Reservations
+                    .Include(vt => vt.VenueAvailabilityTime)
+                    .Where(r => r.UserId == userId)
+                    .OrderBy(r => r.VenueAvailabilityTime.StartDate)
+                    .ToListAsync();
 
-                if (reservations.Count == 0)
+                if (reservations.IsNullOrEmpty())
                 {
                     return new ReservationsResponseDto
                     {
@@ -102,30 +106,32 @@ namespace venue_service.Src.Services.Reservation
                     };
                 }
 
-                var content = reservations.Select(r => new ReservationResponseDto
-                {
-                    Id = r.Id,
-                    UserId = r.UserId,
-                    VenueId = r.VenueId,
-                    TotalAmount = r.TotalAmount,
-                    PaymentMethodId = r.PaymentMethodId,
-                    Status = r.Status,
-                    CreatedAt = r.CreatedAt,
-                    UpdatedAt = r.UpdatedAt,
-                    PaidAt = r.PaymentRecord?.PaidAt,
-                    IsPaid = r.PaymentRecord != null && r.PaymentRecord.Status == PaymentStatusEnum.APPROVED.ToString(),
-                    PaymentStatus = r.PaymentRecord != null ? int.Parse(r.PaymentRecord.Status) : 0
-                }).ToList();
-
                 return new ReservationsResponseDto
                 {
                     Message = $"Reservations found for user with id {userId}.",
-                    Reservations = content
+                    Reservations = reservations.Select(r => new ReservationResponseDto
+                    {
+                        Id = r.Id,
+                        UserId = r.UserId,
+                        VenueId = r.VenueId,
+                        PaymentMethodId = r.PaymentMethodId,
+                        IsPaid = r.IsPaid,
+                        VenueAvailabilityTime = new VenueAvailabilityTimeDto
+                        {
+                            StartDate = r.VenueAvailabilityTime.StartDate,
+                            EndDate = r.VenueAvailabilityTime.EndDate,
+                            VenueId = r.VenueAvailabilityTime.VenueId,
+                            IsReserved = r.VenueAvailabilityTime.IsReserved,
+                            UserId = r.VenueAvailabilityTime.UserId
+                        },
+                        VenueAvailabilityTimeId = r.VenueAvailabilityTimeId,
+                    }).ToList()
                 };
+
             }
             catch (Exception ex)
             {
-                throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while retrieving reservations.", ex.Message);
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while retrieving the reservations.", ex.Message);
             }
         }
 
@@ -141,7 +147,7 @@ namespace venue_service.Src.Services.Reservation
 
                 var nextReservation = await _reservationContext.Reservations
                     .Where(r => r.UserId == userId)
-                    .FirstOrDefaultAsync(r => r.CreatedAt > DateTime.UtcNow);
+                    .FirstOrDefaultAsync(r => r.VenueAvailabilityTime.StartDate > DateTime.UtcNow);
 
                 if (nextReservation is null)
                 {
@@ -153,10 +159,17 @@ namespace venue_service.Src.Services.Reservation
                     Id = nextReservation.Id,
                     UserId = nextReservation.UserId,
                     VenueId = nextReservation.VenueId,
-                    TotalAmount = nextReservation.TotalAmount,
                     PaymentMethodId = nextReservation.PaymentMethodId,
-                    Status = nextReservation.Status,
-                    CreatedAt = nextReservation.CreatedAt
+                    IsPaid = nextReservation.IsPaid,
+                    VenueAvailabilityTime = new VenueAvailabilityTimeDto
+                    {
+                        StartDate = nextReservation.VenueAvailabilityTime.StartDate,
+                        EndDate = nextReservation.VenueAvailabilityTime.EndDate,
+                        VenueId = nextReservation.VenueAvailabilityTime.VenueId,
+                        IsReserved = nextReservation.VenueAvailabilityTime.IsReserved,
+                        UserId = nextReservation.VenueAvailabilityTime.UserId
+                    },
+                    VenueAvailabilityTimeId = nextReservation.VenueAvailabilityTimeId,
                 };
             }
             catch (Exception ex)
@@ -170,7 +183,7 @@ namespace venue_service.Src.Services.Reservation
             try
             {
                 var reservation = await _reservationContext.Reservations
-                    .Include(r => r.PaymentRecord)
+                    .Include(r => r.VenueAvailabilityTime)
                     .Where(v => v.VenueId == venueId)
                     .ToListAsync();
 
@@ -191,14 +204,17 @@ namespace venue_service.Src.Services.Reservation
                         Id = r.Id,
                         UserId = r.UserId,
                         VenueId = r.VenueId,
-                        TotalAmount = r.TotalAmount,
                         PaymentMethodId = r.PaymentMethodId,
-                        Status = r.Status,
-                        CreatedAt = r.CreatedAt,
-                        UpdatedAt = r.UpdatedAt,
-                        PaidAt = r.PaymentRecord?.PaidAt,
-                        IsPaid = r.PaymentRecord != null && r.PaymentRecord.Status == PaymentStatusEnum.APPROVED.ToString(),
-                        PaymentStatus = r.PaymentRecord != null ? int.Parse(r.PaymentRecord.Status) : 0
+                        IsPaid = r.IsPaid,
+                        VenueAvailabilityTime = new VenueAvailabilityTimeDto
+                        {
+                            StartDate = r.VenueAvailabilityTime.StartDate,
+                            EndDate = r.VenueAvailabilityTime.EndDate,
+                            VenueId = r.VenueAvailabilityTime.VenueId,
+                            IsReserved = r.VenueAvailabilityTime.IsReserved,
+                            UserId = r.VenueAvailabilityTime.UserId
+                        },
+                        VenueAvailabilityTimeId = r.VenueAvailabilityTimeId,
                     }).ToList()
                 };
             }
@@ -206,7 +222,6 @@ namespace venue_service.Src.Services.Reservation
             {
                 throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while retrieving the reservation.", ex.Message);
             }
-
         }
 
         public async Task<bool> PayReservationAsync(int reservationId)
@@ -219,7 +234,7 @@ namespace venue_service.Src.Services.Reservation
                     throw new HttpResponseException(HttpStatusCode.NotFound, "Reservation not found", $"Reservation with ID {reservationId} does not exist.");
                 }
 
-                reservation.Status = (int)ReservationStatusEnum.CONFIRMED;
+                reservation.IsPaid = true;
 
                 await _reservationContext.SaveChangesAsync();
 

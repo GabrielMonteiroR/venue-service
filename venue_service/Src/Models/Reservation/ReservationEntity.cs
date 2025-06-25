@@ -33,22 +33,16 @@ public class ReservationEntity
     public VenueAvailabilityTimeEntity VenueAvailabilityTime { get; set; }
 
     [Required]
-    [Column("total_amount")]
-    public decimal TotalAmount { get; set; }
-
-    [Required]
     [Column("payment_method_id")]
     public int PaymentMethodId { get; set; }
 
     [ForeignKey("PaymentMethodId")]
     public PaymentMethodEntity PaymentMethod { get; set; }
 
-    [InverseProperty(nameof(PaymentRecordEntity.Reservation))]
-    public PaymentRecordEntity? PaymentRecord { get; set; }
 
     [Required]
-    [Column("status")]
-    public int Status { get; set; }
+    [Column("is_paid")]
+    public bool IsPaid { get; set; }
 
     [Required]
     [Column("created_at")]
