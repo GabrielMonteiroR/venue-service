@@ -44,16 +44,10 @@ namespace venue_service.Src.Models.User
         [Column("profile_image_url")]
         public string? ProfileImageUrl { get; set; }
 
-        [Column("is_banned")]
-        public bool IsBanned { get; set; }
-
         [Required]
         [Column("role_id")]
         public int RoleId { get; set; }
         public RoleEntity Role { get; set; }
-
-        [Column("mercado_pago_user_id")]
-        public string? MercadoPagoUserId { get; set; }
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }

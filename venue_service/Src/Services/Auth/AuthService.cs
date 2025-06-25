@@ -56,7 +56,6 @@ public class AuthService
             Email = user.Email,
             Phone = user.Phone,
             RoleId = user.RoleId,
-            IsBanned = user.IsBanned,
             CreatedAt = user.CreatedAt,
             UpdatedAt = user.UpdatedAt
         };
@@ -94,7 +93,6 @@ public class AuthService
             Email = user.Email,
             Phone = user.Phone,
             RoleId = user.RoleId,
-            IsBanned = user.IsBanned,
             CreatedAt = user.CreatedAt,
             UpdatedAt = user.UpdatedAt
         };
