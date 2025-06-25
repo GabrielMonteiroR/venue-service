@@ -17,6 +17,8 @@ using venue_service.Src.Interfaces.SportInterfaces;
 using venue_service.Src.Services.Sport;
 using venue_service.Src.Interfaces.AvailableTimesInterfaces;
 using venue_service.Src.Services.Schedules;
+using venue_service.Src.Interfaces.ReservationInterfaces;
+using venue_service.Src.Services.Reservation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -82,7 +84,7 @@ builder.Services.Configure<SupabaseStorageOptions>(
 );
 
 // Injeção de Services (respeitando dependências)
-//builder.Services.AddScoped<IReservationService, ReservationService>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IVenueService, VenueService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<IVenueType, VenueTypeService>();

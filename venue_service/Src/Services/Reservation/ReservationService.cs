@@ -9,10 +9,11 @@ using venue_service.Src.Enums.Payment;
 using venue_service.Src.Exceptions;
 using venue_service.Src.Interfaces.AvailableTimesInterfaces;
 using venue_service.Src.Interfaces.PaymentInterfaces;
+using venue_service.Src.Interfaces.ReservationInterfaces;
 
 namespace venue_service.Src.Services.Reservation
 {
-    public class ReservationService
+    public class ReservationService : IReservationService
     {
         private readonly ReservationContext _reservationContext;
         private readonly UserContext _userContext;
