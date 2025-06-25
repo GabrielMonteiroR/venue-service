@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using venue_service.Src.Dtos.Reservation;
-using venue_service.Src.Enums;
-using venue_service.Src.Interfaces.ReservationInterfaces;
 using venue_service.Src.Services.Reservation;
 
 namespace venue_service.Src.Controllers.Reservation
@@ -19,7 +17,6 @@ namespace venue_service.Src.Controllers.Reservation
             _reservationService = reservationService;
         }
 
-        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto dto)
         {
