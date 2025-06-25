@@ -23,6 +23,12 @@ public class UserResponseDto
     [JsonPropertyName("phone")]
     public string Phone { get; set; }
 
+    [JsonPropertyName("cpf")]
+    public string Cpf { get; set; }
+
+    [JsonPropertyName("cnpj")]
+    public string Cnpj { get; set; }
+
     [JsonPropertyName("role_id")]
     public int RoleId { get; set; }
 

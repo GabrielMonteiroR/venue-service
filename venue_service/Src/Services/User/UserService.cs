@@ -35,6 +35,8 @@ public class UserService : IUserService
                 Phone = user.Phone,
                 ProfileImage = user.ProfileImageUrl,
                 RoleId = user.RoleId,
+                Cnpj = user.Cnpj,
+                Cpf = user.Cpf,
             };
         }
         catch (Exception ex)
