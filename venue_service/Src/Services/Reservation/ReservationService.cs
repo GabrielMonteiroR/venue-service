@@ -44,7 +44,7 @@ namespace venue_service.Src.Services.Reservation
                 if (venue is null)
                     throw new HttpResponseException(HttpStatusCode.NotFound, "Venue not found", $"Venue with ID {dto.VenueId} does not exist.");
 
-                var avaliableTime = await _availableTimesService.GetVenueAvailabilityTimeById(dto.VenueId);
+                var avaliableTime = await _availableTimesService.GetVenueAvailabilityTimeById(dto.VenueAvailabilityTimeId);
 
                 if (avaliableTime is null)
                     throw new HttpResponseException(HttpStatusCode.NotFound, "Available time not found", $"No available time found for venue with ID {dto.VenueId} and time ID {dto.VenueAvailabilityTimeId}.");
