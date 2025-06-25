@@ -85,8 +85,13 @@ public class UserService : IUserService
         }
         catch (Exception ex)
         {
-            throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while updating user information.", ex.Message);
+            var detail = ex.InnerException?.Message ?? "";
+            throw new HttpResponseException(
+                HttpStatusCode.InternalServerError,
+                "An error occurred while updating user information.",
+                $"{ex.Message} {detail}");
         }
+
     }
 
     public async Task<UpdateUserProfileImageResponseDto> UpdateProfileImage(int userId, UpdateUserImageDto dto)
