@@ -1,17 +1,31 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
-namespace venue_service.Src.Dtos.User
+namespace venue_service.Src.Dtos.User;
+
+public class UserResponseDto
 {
-    public class UserResponseDto
-    {
-        public int Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string? ProfileImage { get; set; }
-        public string Email { get; set; }
-        public string Phone { get; set; }
-        public int RoleId { get; set; }
-        public bool IsBanned { get; set; }
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-    }
+    [JsonPropertyName("id")]
+    public int Id { get; set; }
+
+    [JsonPropertyName("first_name")]
+    public string FirstName { get; set; }
+
+    [JsonPropertyName("last_name")]
+    public string LastName { get; set; }
+
+    [JsonPropertyName("profile_image_url")]
+    public string? ProfileImage { get; set; }
+
+    [JsonPropertyName("email")]
+    public string Email { get; set; }
+
+    [JsonPropertyName("phone")]
+    public string Phone { get; set; }
+
+    [JsonPropertyName("role_id")]
+    public int RoleId { get; set; }
+
+    [JsonPropertyName("updated_at")]
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 }

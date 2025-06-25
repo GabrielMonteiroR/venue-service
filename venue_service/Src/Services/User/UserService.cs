@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Net;
 using System.Security.Claims;
 using venue_service.Src.Contexts;
 using venue_service.Src.Dtos.User;
@@ -31,10 +32,9 @@ public class UserService : IUserService
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
-                ProfileImage = user.ProfileImageUrl,
                 Phone = user.Phone,
+                ProfileImage = user.ProfileImageUrl,
                 RoleId = user.RoleId,
-
             };
         }
         catch (Exception ex)
@@ -49,11 +49,25 @@ public class UserService : IUserService
         {
             var user = await _userContext.Users.FindAsync(id);
             if (user is null) throw new HttpResponseException(HttpStatusCode.NotFound, "User not found", $"User with id {id} not found.");
+
             user.FirstName = userDto.FirstName;
             user.LastName = userDto.LastName;
             user.Email = userDto.Email;
             user.Phone = userDto.Phone;
+            user.RoleId = userDto.RoleId;
             user.UpdatedAt = DateTime.UtcNow;
+
+            var emailExists = await _userContext.Users.AnyAsync(u => u.Email == userDto.Email && u.Id != id);
+
+            if (emailExists)
+            {
+                throw new HttpResponseException(HttpStatusCode.Conflict, "Email already exists", $"The email {userDto.Email} is already in use by another user.");
+            }
+            var phoneExists = await _userContext.Users.AnyAsync(u => u.Phone == userDto.Phone && u.Id != id);
+            if (phoneExists)
+            {
+                throw new HttpResponseException(HttpStatusCode.Conflict, "Phone number already exists", $"The phone number {userDto.Phone} is already in use by another user.");
+            }
 
             _userContext.Users.Update(user);
             await _userContext.SaveChangesAsync();
