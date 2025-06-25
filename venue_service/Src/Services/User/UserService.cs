@@ -71,7 +71,6 @@ public class UserService : IUserService
                 throw new HttpResponseException(HttpStatusCode.Conflict, "Phone number already exists", $"The phone number {userDto.Phone} is already in use by another user.");
             }
 
-            _userContext.Users.Update(user);
             await _userContext.SaveChangesAsync();
 
             return new UserResponseDto
