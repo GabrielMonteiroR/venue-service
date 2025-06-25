@@ -9,7 +9,7 @@ namespace venue_service.Src.Controllers.Reservation
 {
     [Authorize]
     [ApiController]
-    [Route("api/reservation")]
+    [Route("api/reservations")]
     public class ReservationController : ControllerBase
     {
         private readonly ReservationService _reservationService;
@@ -20,7 +20,7 @@ namespace venue_service.Src.Controllers.Reservation
         }
 
         [Authorize]
-        [HttpPost("reservations")]
+        [HttpPost]
         public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto dto)
         {
             await _reservationService.CreateReservationAsync(dto);
@@ -34,14 +34,14 @@ namespace venue_service.Src.Controllers.Reservation
             return Ok(response);
         }
 
-        [HttpGet("venue/{venueId}")]
+        [HttpGet("by-venue/{venueId}")]
         public async Task<IActionResult> GetVenueReservations(int venueId)
         {
             var response = await _reservationService.GetReservationByVenueIdAsync(venueId);
             return Ok(response);
         }
 
-        [HttpPut("pay/{reservationId}")]
+        [HttpPut("pay-reservation/{reservationId}")]
         public async Task<IActionResult> PayReservation(int reservationId)
         {
             var response = await _reservationService.PayReservationAsync(reservationId);
