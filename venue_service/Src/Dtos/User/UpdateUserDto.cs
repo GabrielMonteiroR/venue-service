@@ -26,8 +26,4 @@ public class UpdateUserDto
     [StringLength(20)]
     [JsonPropertyName("phone")]
     public string Phone { get; set; }
-
-
-    [JsonPropertyName("updated_at")]
-    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 }
