@@ -56,7 +56,6 @@ public class UserService : IUserService
             user.LastName = userDto.LastName;
             user.Email = userDto.Email;
             user.Phone = userDto.Phone;
-            user.RoleId = userDto.RoleId;
             user.UpdatedAt = DateTime.UtcNow;
 
             var emailExists = await _userContext.Users.AnyAsync(u => u.Email == userDto.Email && u.Id != id);

@@ -6,10 +6,6 @@ namespace venue_service.Src.Dtos.User;
 public class UpdateUserDto
 {
     [Required]
-    [JsonPropertyName("id")]
-    public int Id { get; set; }
-
-    [Required]
     [StringLength(50, MinimumLength = 2)]
     [JsonPropertyName("first_name")]
     public string FirstName { get; set; }
@@ -31,8 +27,6 @@ public class UpdateUserDto
     [JsonPropertyName("phone")]
     public string Phone { get; set; }
 
-    [JsonPropertyName("role_id")]
-    public int RoleId { get; set; }
 
     [JsonPropertyName("updated_at")]
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
