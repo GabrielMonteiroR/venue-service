@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using venue_service.Src.Dtos.Reservation;
+using venue_service.Src.Interfaces.ReservationInterfaces;
 using venue_service.Src.Services.Reservation;
 
 namespace venue_service.Src.Controllers.Reservation
@@ -10,9 +11,9 @@ namespace venue_service.Src.Controllers.Reservation
     [Route("api/reservations")]
     public class ReservationController : ControllerBase
     {
-        private readonly ReservationService _reservationService;
+        private readonly IReservationService _reservationService;
 
-        public ReservationController(ReservationService reservationService)
+        public ReservationController(IReservationService reservationService)
         {
             _reservationService = reservationService;
         }
