@@ -20,8 +20,4 @@ public class CreateReservationDto
     [Required]
     [JsonPropertyName("paymentMethodId")]
     public int PaymentMethodId { get; set; }
-
-    [Required]
-    [JsonPropertyName("isPaid")]
-    public bool IsPaid { get; set; }
 }
