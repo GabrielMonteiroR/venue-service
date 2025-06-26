@@ -89,6 +89,15 @@ namespace venue_service.Src.Services.Reservation
                     IsPaid = reservation.IsPaid,
                 };
             }
+            catch (DbUpdateException dbEx)
+            {
+                throw new HttpResponseException(HttpStatusCode.BadRequest, "Database update error", dbEx.InnerException?.Message ?? dbEx.Message);
+            }
+            catch (HttpResponseException httpEx)
+            {
+                throw httpEx;
+            }
+
             catch (Exception ex)
             {
                 throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while creating the reservation.", ex.Message);
