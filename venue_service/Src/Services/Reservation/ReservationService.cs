@@ -54,6 +54,8 @@ namespace venue_service.Src.Services.Reservation
                     throw new HttpResponseException(HttpStatusCode.Conflict, "Time slot already reserved", $"The time slot for venue with ID {dto.VenueId} is already reserved.");
                 }
 
+                avaliableTime.IsReserved = true;
+
                 var reservation = new ReservationEntity
                 {
                     VenueId = dto.VenueId,
@@ -95,6 +97,7 @@ namespace venue_service.Src.Services.Reservation
                 var reservations = await _reservationContext.Reservations
                     .Include(vt => vt.VenueAvailabilityTime)
                     .Where(r => r.UserId == userId)
+                    .Where(vt => vt.VenueAvailabilityTime.EndDate >= DateTime.UtcNow)
                     .OrderBy(r => r.VenueAvailabilityTime.StartDate)
                     .ToListAsync();
 
