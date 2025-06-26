@@ -44,7 +44,7 @@ namespace venue_service.Src.Services.Reservation
                 if (venue is null)
                     throw new HttpResponseException(HttpStatusCode.NotFound, "Venue not found", $"Venue with ID {dto.VenueId} does not exist.");
 
-                var avaliableTime = await _availableTimesService.GetVenueAvailabilityTimeById(dto.VenueAvailabilityTimeId);
+                var avaliableTime = await _venueContext.VenueAvailabilities.FindAsync(dto.VenueAvailabilityTimeId);
 
                 if (avaliableTime is null)
                     throw new HttpResponseException(HttpStatusCode.NotFound, "Available time not found", $"No available time found for venue with ID {dto.VenueId} and time ID {dto.VenueAvailabilityTimeId}.");
@@ -54,7 +54,16 @@ namespace venue_service.Src.Services.Reservation
                     throw new HttpResponseException(HttpStatusCode.Conflict, "Time slot already reserved", $"The time slot for venue with ID {dto.VenueId} is already reserved.");
                 }
 
+                var availableTimeIsFromThiVenue = avaliableTime.VenueId == dto.VenueId;
+
+                if (!availableTimeIsFromThiVenue)
+                {
+                    throw new HttpResponseException(HttpStatusCode.BadRequest, "Invalid venue availability time", $"The availability time with ID {dto.VenueAvailabilityTimeId} does not belong to the venue with ID {dto.VenueId}.");
+                }
+
                 avaliableTime.IsReserved = true;
+                _venueContext.VenueAvailabilities.Update(avaliableTime);
+                await _venueContext.SaveChangesAsync();
 
                 var reservation = new ReservationEntity
                 {
@@ -76,7 +85,6 @@ namespace venue_service.Src.Services.Reservation
                     PaymentMethodId = reservation.PaymentMethodId,
                     IsPaid = reservation.IsPaid,
                 };
-
             }
             catch (Exception ex)
             {

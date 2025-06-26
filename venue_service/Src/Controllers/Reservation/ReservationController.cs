@@ -21,8 +21,8 @@ namespace venue_service.Src.Controllers.Reservation
         [HttpPost]
         public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto dto)
         {
-            await _reservationService.CreateReservationAsync(dto);
-            return Ok();
+            var response = await _reservationService.CreateReservationAsync(dto);
+            return Ok(response);
         }
 
         [HttpGet("{userId}")]
