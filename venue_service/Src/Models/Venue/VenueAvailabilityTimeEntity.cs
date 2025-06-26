@@ -33,8 +33,5 @@ namespace venue_service.Src.Models.Venue
         [Column("is_reserved")]
         public bool IsReserved { get; set; }
 
-        [Column("reserved_by")]
-        public int? UserId { get; set; }
-
     }
 }

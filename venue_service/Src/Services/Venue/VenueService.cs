@@ -164,7 +164,6 @@ namespace venue_service.Src.Services.Venue
                         Price = t.Price,
                         VenueId = t.VenueId,
                         IsReserved = t.IsReserved,
-                        UserId = t.UserId
                     }).ToList(),
                     Sports = v.VenueSports.Select(s => s.Sport.Name).ToList(),
                     VenueTypeId = v.VenueTypeId,
@@ -348,7 +347,6 @@ namespace venue_service.Src.Services.Venue
                         Price = t.Price,
                         VenueId = t.VenueId,
                         IsReserved = t.IsReserved,
-                        UserId = t.UserId
                     }).ToList(),
                     ImageUrls = v.VenueImages?.Select(i => i.ImageUrl).ToList() ?? new List<string>()
                 }).ToList();

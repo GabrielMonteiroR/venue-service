@@ -22,6 +22,4 @@ public class VenueAvailabilityTimeDto
     [JsonPropertyName("is_reserved")]
     public bool IsReserved { get; set; }
 
-    [JsonPropertyName("user_id")]
-    public int? UserId { get; set; }
 }

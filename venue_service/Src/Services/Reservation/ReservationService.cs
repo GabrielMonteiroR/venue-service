@@ -141,7 +141,6 @@ namespace venue_service.Src.Services.Reservation
                             EndDate = r.VenueAvailabilityTime.EndDate,
                             VenueId = r.VenueAvailabilityTime.VenueId,
                             IsReserved = r.VenueAvailabilityTime.IsReserved,
-                            UserId = r.VenueAvailabilityTime.UserId
                         },
                         VenueAvailabilityTimeId = r.VenueAvailabilityTimeId,
                     }).ToList()
@@ -186,7 +185,6 @@ namespace venue_service.Src.Services.Reservation
                         EndDate = nextReservation.VenueAvailabilityTime.EndDate,
                         VenueId = nextReservation.VenueAvailabilityTime.VenueId,
                         IsReserved = nextReservation.VenueAvailabilityTime.IsReserved,
-                        UserId = nextReservation.VenueAvailabilityTime.UserId
                     },
                     VenueAvailabilityTimeId = nextReservation.VenueAvailabilityTimeId,
                 };
@@ -232,7 +230,6 @@ namespace venue_service.Src.Services.Reservation
                             EndDate = r.VenueAvailabilityTime.EndDate,
                             VenueId = r.VenueAvailabilityTime.VenueId,
                             IsReserved = r.VenueAvailabilityTime.IsReserved,
-                            UserId = r.VenueAvailabilityTime.UserId
                         },
                         VenueAvailabilityTimeId = r.VenueAvailabilityTimeId,
                     }).ToList()

@@ -28,7 +28,6 @@ public class VenueAvailableTimesService : IAvailableTimesService
                 VenueId = requestDto.VenueId,
                 Price = requestDto.Price,
                 IsReserved = requestDto.IsReserved,
-                UserId = requestDto.UserId
             };
 
 
@@ -59,8 +58,7 @@ public class VenueAvailableTimesService : IAvailableTimesService
                 EndDate = request.EndDate,
                 VenueId = request.VenueId,
                 Price = request.Price,
-                IsReserved = request.IsReserved,
-                UserId = request.UserId
+                IsReserved = request.IsReserved
             };
         }
         catch (Exception ex)
@@ -98,7 +96,6 @@ public class VenueAvailableTimesService : IAvailableTimesService
                     VenueId = v.VenueId,
                     Price = v.Price,
                     IsReserved = v.IsReserved,
-                    UserId = v.UserId
                 }).ToList()
             };
 
@@ -130,7 +127,6 @@ public class VenueAvailableTimesService : IAvailableTimesService
                 VenueId = availabilityTime.VenueId,
                 Price = availabilityTime.Price,
                 IsReserved = availabilityTime.IsReserved,
-                UserId = availabilityTime.UserId
             };
 
         }
@@ -199,8 +195,7 @@ public class VenueAvailableTimesService : IAvailableTimesService
                 EndDate = availabilityTimeToBeUpdated.EndDate,
                 VenueId = availabilityTimeToBeUpdated.VenueId,
                 Price = availabilityTimeToBeUpdated.Price,
-                IsReserved = availabilityTimeToBeUpdated.IsReserved,
-                UserId = availabilityTimeToBeUpdated.UserId
+                IsReserved = availabilityTimeToBeUpdated.IsReserved
             };
         }
         catch (Exception ex)
@@ -240,7 +235,6 @@ public class VenueAvailableTimesService : IAvailableTimesService
                     VenueId = availableTimeDeleted.VenueId,
                     Price = availableTimeDeleted.Price,
                     IsReserved = availableTimeDeleted.IsReserved,
-                    UserId = availableTimeDeleted.UserId
                 }
             };
 
@@ -290,7 +284,6 @@ public class VenueAvailableTimesService : IAvailableTimesService
                     VenueId = v.VenueId,
                     Price = v.Price,
                     IsReserved = v.IsReserved,
-                    UserId = v.UserId
                 }).ToList()
             };
         }

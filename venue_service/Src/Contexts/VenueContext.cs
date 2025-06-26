@@ -36,7 +36,6 @@ public class VenueContext : DbContext
         modelBuilder.Entity<Venue_SportEntity>().ToTable("venue_sports");
 
         modelBuilder.Entity<VenueAvailabilityTimeEntity>().Property(v => v.Price).HasColumnType("numeric");
-        modelBuilder.Entity<VenueAvailabilityTimeEntity>().Property(v => v.UserId).HasColumnName("reserved_by");
 
         modelBuilder.Entity<Venue_SportEntity>()
             .HasKey(vs => new { vs.VenueId, vs.SportId });
