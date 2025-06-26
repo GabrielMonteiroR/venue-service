@@ -4,6 +4,7 @@ using System.Net;
 using venue_service.Src.Contexts;
 using venue_service.Src.Dtos.AvailabilityTimes;
 using venue_service.Src.Dtos.Reservation;
+using venue_service.Src.Dtos.User;
 using venue_service.Src.Enums;
 using venue_service.Src.Enums.Payment;
 using venue_service.Src.Exceptions;
@@ -201,6 +202,8 @@ namespace venue_service.Src.Services.Reservation
             {
                 var reservation = await _reservationContext.Reservations
                     .Include(r => r.VenueAvailabilityTime)
+                    .Include(u => u.User)
+                    .Include(p => p.PaymentMethod)
                     .Where(v => v.VenueId == venueId)
                     .Where(vt => vt.VenueAvailabilityTime.EndDate >= DateTime.UtcNow)
                     .ToListAsync();
@@ -232,6 +235,14 @@ namespace venue_service.Src.Services.Reservation
                             IsReserved = r.VenueAvailabilityTime.IsReserved,
                         },
                         VenueAvailabilityTimeId = r.VenueAvailabilityTimeId,
+                        User = new PartialUserResponseDto
+                        {
+                            Email = r.User.Email,
+                            FirstName = r.User.FirstName,
+                            LastName = r.User.LastName,
+                            Phone = r.User.Phone,
+                            ProfileImage = r.User.ProfileImageUrl
+                        }
                     }).ToList()
                 };
             }
