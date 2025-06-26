@@ -186,6 +186,7 @@ namespace venue_service.Src.Services.Reservation
                 var reservation = await _reservationContext.Reservations
                     .Include(r => r.VenueAvailabilityTime)
                     .Where(v => v.VenueId == venueId)
+                    .Where(vt => vt.VenueAvailabilityTime.EndDate >= DateTime.UtcNow)
                     .ToListAsync();
 
                 if (reservation.IsNullOrEmpty())
