@@ -44,25 +44,25 @@ namespace venue_service.Src.Services.Reservation
                 if (venue is null)
                     throw new HttpResponseException(HttpStatusCode.NotFound, "Venue not found", $"Venue with ID {dto.VenueId} does not exist.");
 
-                var avaliableTime = await _venueContext.VenueAvailabilities.FindAsync(dto.VenueAvailabilityTimeId);
+                var availableTime = await _venueContext.VenueAvailabilities.FindAsync(dto.VenueAvailabilityTimeId);
 
-                if (avaliableTime is null)
+                if (availableTime is null)
                     throw new HttpResponseException(HttpStatusCode.NotFound, "Available time not found", $"No available time found for venue with ID {dto.VenueId} and time ID {dto.VenueAvailabilityTimeId}.");
 
-                if (avaliableTime.IsReserved is true)
+                if (availableTime.IsReserved is true)
                 {
                     throw new HttpResponseException(HttpStatusCode.Conflict, "Time slot already reserved", $"The time slot for venue with ID {dto.VenueId} is already reserved.");
                 }
 
-                var availableTimeIsFromThiVenue = avaliableTime.VenueId == dto.VenueId;
+                var availableTimeIsFromThiVenue = availableTime.VenueId == dto.VenueId;
 
                 if (!availableTimeIsFromThiVenue)
                 {
                     throw new HttpResponseException(HttpStatusCode.BadRequest, "Invalid venue availability time", $"The availability time with ID {dto.VenueAvailabilityTimeId} does not belong to the venue with ID {dto.VenueId}.");
                 }
 
-                avaliableTime.IsReserved = true;
-                _venueContext.VenueAvailabilities.Update(avaliableTime);
+                availableTime.IsReserved = true;
+                _venueContext.VenueAvailabilities.Update(availableTime);
                 await _venueContext.SaveChangesAsync();
 
                 var reservation = new ReservationEntity
@@ -71,8 +71,11 @@ namespace venue_service.Src.Services.Reservation
                     UserId = dto.UserId,
                     VenueAvailabilityTimeId = dto.VenueAvailabilityTimeId,
                     IsPaid = false,
-                    PaymentMethodId = dto.PaymentMethodId
+                    PaymentMethodId = dto.PaymentMethodId,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
                 };
+
 
                 await _reservationContext.Reservations.AddAsync(reservation);
                 await _reservationContext.SaveChangesAsync();
