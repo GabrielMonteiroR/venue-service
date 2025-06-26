@@ -71,9 +71,7 @@ namespace venue_service.Src.Services.Reservation
                     UserId = dto.UserId,
                     VenueAvailabilityTimeId = dto.VenueAvailabilityTimeId,
                     IsPaid = false,
-                    PaymentMethodId = dto.PaymentMethodId,
-                    CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
-                    UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc),
+                    PaymentMethodId = dto.PaymentMethodId
                 };
 
 

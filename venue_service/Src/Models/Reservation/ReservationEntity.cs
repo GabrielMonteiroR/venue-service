@@ -44,14 +44,4 @@ public class ReservationEntity
     [Column("is_paid")]
     public bool IsPaid { get; set; }
 
-    [Required]
-    [Column("created_at")]
-    public DateTime CreatedAt { get; set; }
-
-    [Required]
-    [Column("updated_at")]
-    public DateTime UpdatedAt { get; set; }
-
-    [Column("deleted_at")]
-    public DateTime? DeletedAt { get; set; }
 }
