@@ -10,4 +10,6 @@ public interface IAvailableTimesService
     Task<VenueAvailabilityTimeDto> UpdateVenueAvailabilityTime(int availabilityTimeId, UpdateVenueAvailabilityTimeDto requestDto);
     Task<DeleteVenueAvailabilityTimeDto> DeleteVenueAvailabilityTime(int id);
     Task<VenueAvailabilityTimeResponseDto> GetAvailabilityTimesByVenueId(int venueId, bool? isReserved = null);
+    Task<bool> SetTrueToIsReserved(int AvailabilityTimeId);
+
 }

@@ -209,7 +209,6 @@ public class VenueAvailableTimesService : IAvailableTimesService
         }
     }
 
-
     public async Task<DeleteVenueAvailabilityTimeDto> DeleteVenueAvailabilityTime(int id)
     {
         try
@@ -298,6 +297,30 @@ public class VenueAvailableTimesService : IAvailableTimesService
         catch (Exception ex)
         {
             throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while retrieving venue availability times by venue ID.", ex.Message);
+        }
+    }
+
+    public async Task<bool> SetTrueToIsReserved(int AvailabilityTimeId)
+    {
+        try
+        {
+            var entity = await _venueContext.VenueAvailabilities.FindAsync(AvailabilityTimeId);
+
+            if (entity == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound, "Venue availability time not found.", $"No venue availability time found with ID {AvailabilityTimeId}.");
+            }
+
+            entity.IsReserved = true;
+
+            await _venueContext.SaveChangesAsync();
+
+            return true;
+
+        }
+        catch (Exception ex)
+        {
+            throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while setting IsReserved to true.", ex.Message);
         }
     }
 }

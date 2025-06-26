@@ -60,11 +60,7 @@ namespace venue_service.Src.Services.Reservation
                 {
                     throw new HttpResponseException(HttpStatusCode.BadRequest, "Invalid venue availability time", $"The availability time with ID {dto.VenueAvailabilityTimeId} does not belong to the venue with ID {dto.VenueId}.");
                 }
-
-                availableTime.IsReserved = true;
-                _venueContext.VenueAvailabilities.Update(availableTime);
-                await _venueContext.SaveChangesAsync();
-
+                
                 var reservation = new ReservationEntity
                 {
                     VenueId = dto.VenueId,
@@ -74,6 +70,7 @@ namespace venue_service.Src.Services.Reservation
                     PaymentMethodId = dto.PaymentMethodId
                 };
 
+                await _availableTimesService.SetTrueToIsReserved(dto.VenueAvailabilityTimeId);
 
                 await _reservationContext.Reservations.AddAsync(reservation);
                 await _reservationContext.SaveChangesAsync();
