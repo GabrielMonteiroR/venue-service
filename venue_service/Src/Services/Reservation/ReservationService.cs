@@ -138,10 +138,12 @@ namespace venue_service.Src.Services.Reservation
                         IsPaid = r.IsPaid,
                         VenueAvailabilityTime = new VenueAvailabilityTimeDto
                         {
+                            Id = r.VenueAvailabilityTime.Id,
                             StartDate = r.VenueAvailabilityTime.StartDate,
                             EndDate = r.VenueAvailabilityTime.EndDate,
                             VenueId = r.VenueAvailabilityTime.VenueId,
                             IsReserved = r.VenueAvailabilityTime.IsReserved,
+                            Price = r.VenueAvailabilityTime.Price
                         },
                         VenueAvailabilityTimeId = r.VenueAvailabilityTimeId,
                     }).ToList()
