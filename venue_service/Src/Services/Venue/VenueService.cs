@@ -86,7 +86,7 @@ namespace venue_service.Src.Services.Venue
             }
         }
 
-        public async Task<VenuesResponseDto> GetVenuesAsync(int? venueTypeId = null, DateTime? from = null, DateTime? to = null, int? minCapacity = null, int? maxCapacity = null, string? name = null, List<int>? sportId = null, bool? isReserved = null)
+        public async Task<VenuesResponseDto> GetVenuesAsync(int? venueTypeId = null, DateTime? from = null, DateTime? to = null, int? minCapacity = null, int? maxCapacity = null, string? name = null, List<int>? sportId = null, bool? isReserved = false)
         {
             try
             {
