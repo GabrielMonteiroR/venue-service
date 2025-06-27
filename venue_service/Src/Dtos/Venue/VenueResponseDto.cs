@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using venue_service.Src.Dtos.Sports;
 
 namespace venue_service.Src.Dtos.Venue;
 
@@ -48,6 +49,9 @@ public class VenueResponseDto
 
     [JsonPropertyName("sports")]
     public List<string> Sports { get; set; } = new();
+
+    [JsonPropertyName("sports_obj")]
+    public List<SportResponseDto>? SportsObj { get; set; } = new();
 
     [JsonPropertyName("description")]
     public string Description { get; set; }

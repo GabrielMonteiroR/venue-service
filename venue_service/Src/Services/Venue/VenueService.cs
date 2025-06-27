@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Net;
 using venue_service.Src.Contexts;
+using venue_service.Src.Dtos.Sports;
 using venue_service.Src.Dtos.Venue;
 using venue_service.Src.Exceptions;
 using venue_service.Src.Interfaces.ImageStorageInterfaces;
@@ -167,6 +168,11 @@ namespace venue_service.Src.Services.Venue
                         IsReserved = t.IsReserved,
                     }).ToList(),
                     Sports = v.VenueSports.Select(s => s.Sport.Name).ToList(),
+                    SportsObj = v.VenueSports.Select(s => new SportResponseDto
+                    {
+                        Id = s.Sport.Id,
+                        Name = s.Sport.Name
+                    }).ToList(),
                     VenueTypeId = v.VenueTypeId,
                     venueTypeName = v.VenueType.Name,
                     Rules = v.Rules,
