@@ -144,6 +144,14 @@ namespace venue_service.Src.Services.Reservation
                         VenueId = r.VenueId,
                         PaymentMethodId = r.PaymentMethodId,
                         IsPaid = r.IsPaid,
+                        Locator = new PartialUserResponseDto
+                        {
+                            Email = r.Venue.Owner.Email,
+                            FirstName = r.Venue.Owner.FirstName,
+                            LastName = r.Venue.Owner.LastName,
+                            Phone = r.Venue.Owner.Phone,
+                            ProfileImage = r.Venue.Owner.ProfileImageUrl
+                        },
                         VenueAvailabilityTime = new VenueAvailabilityTimeDto
                         {
                             Id = r.VenueAvailabilityTime.Id,
