@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using venue_service.Src.Dtos.AvailabilityTimes;
 using venue_service.Src.Dtos.User;
+using venue_service.Src.Dtos.Venue;
 
 namespace venue_service.Src.Dtos.Reservation
 {
@@ -23,6 +24,8 @@ namespace venue_service.Src.Dtos.Reservation
 
         [JsonPropertyName("user")]
         public PartialUserResponseDto User { get; set; }
+
+        public VenueResponseDto Venue { get; set; }
 
         [JsonPropertyName("paymentMethodId")]
         public int PaymentMethodId { get; set; }
