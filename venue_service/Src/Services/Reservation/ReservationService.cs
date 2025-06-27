@@ -4,7 +4,9 @@ using System.Net;
 using venue_service.Src.Contexts;
 using venue_service.Src.Dtos.AvailabilityTimes;
 using venue_service.Src.Dtos.Reservation;
+using venue_service.Src.Dtos.Reservation.ByUserId;
 using venue_service.Src.Dtos.User;
+using venue_service.Src.Dtos.Venue;
 using venue_service.Src.Enums;
 using venue_service.Src.Enums.Payment;
 using venue_service.Src.Exceptions;
@@ -100,7 +102,7 @@ namespace venue_service.Src.Services.Reservation
             }
         }
 
-        public async Task<ReservationsResponseDto> GetReservationsByUserIdAsync(int userId)
+        public async Task<ReservationsResponseByIdDto> GetReservationsByUserIdAsync(int userId)
         {
             try
             {
@@ -112,6 +114,8 @@ namespace venue_service.Src.Services.Reservation
 
                 var reservations = await _reservationContext.Reservations
                     .Include(vt => vt.VenueAvailabilityTime)
+                    .Include(v => v.Venue)
+                    .Include(u => u.User)
                     .Where(r => r.UserId == userId)
                     .Where(vt => vt.VenueAvailabilityTime.EndDate >= DateTime.UtcNow)
                     .OrderBy(r => r.VenueAvailabilityTime.StartDate)
@@ -119,17 +123,17 @@ namespace venue_service.Src.Services.Reservation
 
                 if (reservations.IsNullOrEmpty())
                 {
-                    return new ReservationsResponseDto
+                    return new ReservationsResponseByIdDto
                     {
                         Message = $"No reservations found for user with id {userId}.",
-                        Reservations = new List<ReservationResponseDto>()
+                        Reservations = new List<ReservationResponseByIdDto>()
                     };
                 }
 
-                return new ReservationsResponseDto
+                return new ReservationsResponseByIdDto
                 {
                     Message = $"Reservations found for user with id {userId}.",
-                    Reservations = reservations.Select(r => new ReservationResponseDto
+                    Reservations = reservations.Select(r => new ReservationResponseByIdDto
                     {
                         Id = r.Id,
                         UserId = r.UserId,
@@ -144,6 +148,27 @@ namespace venue_service.Src.Services.Reservation
                             IsReserved = r.VenueAvailabilityTime.IsReserved,
                         },
                         VenueAvailabilityTimeId = r.VenueAvailabilityTimeId,
+                        Venue = new VenueResponseDto
+                        {
+                            Id = r.Venue.Id,
+                            Name = r.Venue.Name,
+                            Capacity = r.Venue.Capacity,
+                            City = r.Venue.City,
+                            Complement = r.Venue.Complement,
+                            Description = r.Venue.Description,
+                            ImageUrls = r.Venue.VenueImages.Select(img => img.ImageUrl).ToList(),
+                            State = r.Venue.State,
+                            Latitude = r.Venue.Latitude,
+                            Longitude = r.Venue.Longitude,
+                            OwnerId = r.Venue.OwnerId,
+                            OwnerName = r.Venue.Owner.FirstName + r.Venue.Owner.LastName,
+                            Number = r.Venue.Number,
+                            Neighborhood = r.Venue.Neighborhood,
+                            PostalCode = r.Venue.PostalCode,
+                            Rules = r.Venue.Rules,
+                            Street = r.Venue.Street,
+                            VenueTypeId = r.Venue.VenueTypeId,
+                        },
                     }).ToList()
                 };
 
