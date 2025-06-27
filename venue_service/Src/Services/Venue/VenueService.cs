@@ -96,6 +96,7 @@ namespace venue_service.Src.Services.Venue
                     .Include(vt => vt.VenueType)
                     .Include(s => s.VenueSports).ThenInclude(vs => vs.Sport)
                     .Include(va => va.VenueAvailabilityTimes)
+                    .Where(vat => vat.VenueAvailabilityTimes.Any(vat => vat.EndDate >= DateTime.UtcNow))
                     .AsQueryable();
 
                 if (venueTypeId.HasValue)
