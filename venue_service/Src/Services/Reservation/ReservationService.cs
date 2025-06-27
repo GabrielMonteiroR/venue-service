@@ -63,7 +63,7 @@ namespace venue_service.Src.Services.Reservation
                 {
                     throw new HttpResponseException(HttpStatusCode.BadRequest, "Invalid venue availability time", $"The availability time with ID {dto.VenueAvailabilityTimeId} does not belong to the venue with ID {dto.VenueId}.");
                 }
-                
+
                 var reservation = new ReservationEntity
                 {
                     VenueId = dto.VenueId,
@@ -113,13 +113,17 @@ namespace venue_service.Src.Services.Reservation
                 }
 
                 var reservations = await _reservationContext.Reservations
-                    .Include(vt => vt.VenueAvailabilityTime)
-                    .Include(v => v.Venue)
-                    .Include(u => u.User)
-                    .Where(r => r.UserId == userId)
-                    .Where(vt => vt.VenueAvailabilityTime.EndDate >= DateTime.UtcNow)
-                    .OrderBy(r => r.VenueAvailabilityTime.StartDate)
-                    .ToListAsync();
+                .Include(r => r.VenueAvailabilityTime)
+                .Include(r => r.Venue)
+                .ThenInclude(v => v.VenueImages)     
+                .Include(r => r.Venue)
+                .ThenInclude(v => v.Owner)          
+                .Include(r => r.User)
+                .Where(r => r.UserId == userId)
+                .Where(r => r.VenueAvailabilityTime.EndDate >= DateTime.UtcNow)
+                .OrderBy(r => r.VenueAvailabilityTime.StartDate)
+                .ToListAsync();
+
 
                 if (reservations.IsNullOrEmpty())
                 {
