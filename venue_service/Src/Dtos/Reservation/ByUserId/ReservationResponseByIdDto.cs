@@ -22,7 +22,7 @@ namespace venue_service.Src.Dtos.Reservation.ByUserId
         [JsonPropertyName("venueAvailabilityTime")]
         public VenueAvailabilityTimeDto VenueAvailabilityTime { get; set; }
 
-        [JsonPropertyName("user")]
+        [JsonPropertyName("locator")]
         public PartialUserResponseDto Locator { get; set; }
 
         public VenueResponseDto Venue { get; set; }
