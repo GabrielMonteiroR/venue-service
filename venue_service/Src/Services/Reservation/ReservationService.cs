@@ -333,7 +333,7 @@ public class ReservationService : IReservationService
         }
     }
 
-    public async Task<ReservationsResponseDto> GetHistoryByUserIdAsync(int userId)
+    public async Task<ReservationsResponseByIdDto> GetHistoryByUserIdAsync(int userId)
     {
         try
         {
@@ -351,23 +351,44 @@ public class ReservationService : IReservationService
 
             if (reservations.IsNullOrEmpty())
             {
-                return new ReservationsResponseDto
+                return new ReservationsResponseByIdDto
                 {
                     Message = $"No reservation history found for user with id {userId}.",
-                    Reservations = new List<ReservationResponseDto>()
+                    Reservations = new List<ReservationResponseByIdDto>()
                 };
             }
 
-            return new ReservationsResponseDto
+            return new ReservationsResponseByIdDto
             {
                 Message = $"Reservation history found for user with id {userId}.",
-                Reservations = reservations.Select(r => new ReservationResponseDto
+                Reservations = reservations.Select(r => new ReservationResponseByIdDto
                 {
                     Id = r.Id,
                     UserId = r.UserId,
                     VenueId = r.VenueId,
                     PaymentMethodId = r.PaymentMethodId,
                     IsPaid = r.IsPaid,
+                    Venue = new VenueResponseDto
+                    {
+                        Id = r.Venue.Id,
+                        Name = r.Venue.Name,
+                        Capacity = r.Venue.Capacity,
+                        City = r.Venue.City,
+                        Complement = r.Venue.Complement,
+                        Description = r.Venue.Description,
+                        ImageUrls = r.Venue.VenueImages.Select(img => img.ImageUrl).ToList(),
+                        State = r.Venue.State,
+                        Latitude = r.Venue.Latitude,
+                        Longitude = r.Venue.Longitude,
+                        OwnerId = r.Venue.OwnerId,
+                        OwnerName = $"{r.Venue.Owner.FirstName} {r.Venue.Owner.LastName}",
+                        Number = r.Venue.Number,
+                        Neighborhood = r.Venue.Neighborhood,
+                        PostalCode = r.Venue.PostalCode,
+                        Rules = r.Venue.Rules,
+                        Street = r.Venue.Street,
+                        VenueTypeId = r.Venue.VenueTypeId
+                    },
                     VenueAvailabilityTime = new VenueAvailabilityTimeDto
                     {
                         Id = r.VenueAvailabilityTime.Id,
@@ -378,14 +399,15 @@ public class ReservationService : IReservationService
                         Price = r.VenueAvailabilityTime.Price
                     },
                     VenueAvailabilityTimeId = r.VenueAvailabilityTimeId,
-                    User = new PartialUserResponseDto
+                    Locator = new PartialUserResponseDto
                     {
-                        Email = r.User.Email,
-                        FirstName = r.User.FirstName,
-                        LastName = r.User.LastName,
-                        Phone = r.User.Phone,
-                        ProfileImage = r.User.ProfileImageUrl
-                    },
+                        Email = r.Venue.Owner.Email,
+                        FirstName = r.Venue.Owner.FirstName,
+                        LastName = r.Venue.Owner.LastName,
+                        Phone = r.Venue.Owner.Phone,
+                        ProfileImage = r.Venue.Owner.ProfileImageUrl
+
+                    }
                 }).ToList()
             };
 

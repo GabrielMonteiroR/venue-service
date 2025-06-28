@@ -9,7 +9,7 @@ public interface IReservationService
     Task<ReservationsResponseByIdDto> GetReservationsByUserIdAsync(int userId);
     Task<ReservationsResponseDto> GetReservationByVenueIdAsync(int venueId);
     Task<bool> PayReservationAsync(int reservationId);
-    Task<ReservationsResponseDto> GetHistoryByUserIdAsync(int userId);
+    Task<ReservationsResponseByIdDto> GetHistoryByUserIdAsync(int userId);
     Task<ReservationsResponseDto> GetNextUserReservationAsync(int userId);
     Task<ReservationsResponseDto> GetHistoryByVenueId(int VenueId);
 }
