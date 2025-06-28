@@ -197,14 +197,18 @@ public class ReservationService : IReservationService
     {
         try
         {
-           var reservation = await _reservationContext.Reservations
-                .Include(r => r.VenueAvailabilityTime)
-                .Include(u => u.User)
-                .Include(p => p.PaymentMethod)
-                .Where(r => r.UserId == userId)
-                .Where(vt => vt.VenueAvailabilityTime.EndDate >= DateTime.UtcNow)
-                .OrderBy(r => r.VenueAvailabilityTime.StartDate)
-                .FirstOrDefaultAsync();
+            var reservation = await _reservationContext.Reservations
+     .Include(r => r.VenueAvailabilityTime)
+     .Include(r => r.User)
+     .Include(r => r.PaymentMethod)
+     .Include(r => r.Venue)
+         .ThenInclude(v => v.Owner)
+     .Include(r => r.Venue)
+         .ThenInclude(v => v.VenueImages)
+     .Where(r => r.UserId == userId)
+     .Where(r => r.VenueAvailabilityTime.EndDate >= DateTime.UtcNow)
+     .OrderBy(r => r.VenueAvailabilityTime.StartDate)
+     .FirstOrDefaultAsync(); ;
             if (reservation is null)
             {
                 return new ReservationsResponseByIdDto
