@@ -193,7 +193,7 @@ public class ReservationService : IReservationService
         }
     }
 
-    public async Task<ReservationsResponseDto> GetNextUserReservationAsync(int userId)
+    public async Task<ReservationsResponseByIdDto> GetNextUserReservationAsync(int userId)
     {
         try
         {
@@ -207,18 +207,18 @@ public class ReservationService : IReservationService
                 .FirstOrDefaultAsync();
             if (reservation is null)
             {
-                return new ReservationsResponseDto
+                return new ReservationsResponseByIdDto
                 {
                     Message = $"No upcoming reservations found for user with id {userId}.",
-                    Reservations = new List<ReservationResponseDto>()
+                    Reservations = new List<ReservationResponseByIdDto>()
                 };
             }
-            return new ReservationsResponseDto
+            return new ReservationsResponseByIdDto
             {
                 Message = $"Upcoming reservation found for user with id {userId}.",
-                Reservations = new List<ReservationResponseDto>
+                Reservations = new List<ReservationResponseByIdDto>
                 {
-                    new ReservationResponseDto
+                    new ReservationResponseByIdDto
                     {
                         Id = reservation.Id,
                         UserId = reservation.UserId,
@@ -235,13 +235,34 @@ public class ReservationService : IReservationService
                             IsReserved = reservation.VenueAvailabilityTime.IsReserved,
                         },
                         VenueAvailabilityTimeId = reservation.VenueAvailabilityTimeId,
-                        User = new PartialUserResponseDto
+                        Locator = new PartialUserResponseDto
                         {
                             Email = reservation.User.Email,
                             FirstName = reservation.User.FirstName,
                             LastName = reservation.User.LastName,
                             Phone = reservation.User.Phone,
                             ProfileImage = reservation.User.ProfileImageUrl
+                        },
+                        Venue = new VenueResponseDto
+                        {
+                            Id = reservation.Venue.Id,
+                            Name = reservation.Venue.Name,
+                            Capacity = reservation.Venue.Capacity,
+                            City = reservation.Venue.City,
+                            Complement = reservation.Venue.Complement,
+                            Description = reservation.Venue.Description,
+                            ImageUrls = reservation.Venue.VenueImages.Select(img => img.ImageUrl).ToList(),
+                            State = reservation.Venue.State,
+                            Latitude = reservation.Venue.Latitude,
+                            Longitude = reservation.Venue.Longitude,
+                            OwnerId = reservation.Venue.OwnerId,
+                            OwnerName = $"{reservation.Venue.Owner.FirstName} {reservation.Venue.Owner.LastName}",
+                            Number = reservation.Venue.Number,
+                            Neighborhood = reservation.Venue.Neighborhood,
+                            PostalCode = reservation.Venue.PostalCode,
+                            Rules = reservation.Venue.Rules,
+                            Street = reservation.Venue.Street,
+                            VenueTypeId = reservation.Venue.VenueTypeId
                         }
                     }
                 }
