@@ -193,45 +193,63 @@ public class ReservationService : IReservationService
         }
     }
 
-    public async Task<ReservationResponseDto> GetNextUserReservationAsync(int userId)
+    public async Task<ReservationsResponseDto> GetNextUserReservationAsync(int userId)
     {
         try
         {
-            var user = await _userContext.Users.FindAsync(userId);
-            if (user is null)
-            {
-                throw new HttpResponseException(HttpStatusCode.NotFound, "User not found", $"User with ID {userId} does not exist.");
-            }
-
-            var nextReservation = await _reservationContext.Reservations
+           var reservation = await _reservationContext.Reservations
+                .Include(r => r.VenueAvailabilityTime)
+                .Include(u => u.User)
+                .Include(p => p.PaymentMethod)
                 .Where(r => r.UserId == userId)
-                .FirstOrDefaultAsync(r => r.VenueAvailabilityTime.StartDate > DateTime.UtcNow);
-
-            if (nextReservation is null)
+                .Where(vt => vt.VenueAvailabilityTime.EndDate >= DateTime.UtcNow)
+                .OrderBy(r => r.VenueAvailabilityTime.StartDate)
+                .FirstOrDefaultAsync();
+            if (reservation is null)
             {
-                throw new HttpResponseException(HttpStatusCode.NotFound, "No upcoming reservations", $"User with ID {userId} has no upcoming reservations.");
-            }
-
-            return new ReservationResponseDto
-            {
-                Id = nextReservation.Id,
-                UserId = nextReservation.UserId,
-                VenueId = nextReservation.VenueId,
-                PaymentMethodId = nextReservation.PaymentMethodId,
-                IsPaid = nextReservation.IsPaid,
-                VenueAvailabilityTime = new VenueAvailabilityTimeDto
+                return new ReservationsResponseDto
                 {
-                    StartDate = nextReservation.VenueAvailabilityTime.StartDate,
-                    EndDate = nextReservation.VenueAvailabilityTime.EndDate,
-                    VenueId = nextReservation.VenueAvailabilityTime.VenueId,
-                    IsReserved = nextReservation.VenueAvailabilityTime.IsReserved,
-                },
-                VenueAvailabilityTimeId = nextReservation.VenueAvailabilityTimeId,
+                    Message = $"No upcoming reservations found for user with id {userId}.",
+                    Reservations = new List<ReservationResponseDto>()
+                };
+            }
+            return new ReservationsResponseDto
+            {
+                Message = $"Upcoming reservation found for user with id {userId}.",
+                Reservations = new List<ReservationResponseDto>
+                {
+                    new ReservationResponseDto
+                    {
+                        Id = reservation.Id,
+                        UserId = reservation.UserId,
+                        VenueId = reservation.VenueId,
+                        PaymentMethodId = reservation.PaymentMethodId,
+                        IsPaid = reservation.IsPaid,
+                        VenueAvailabilityTime = new VenueAvailabilityTimeDto
+                        {
+                            Id = reservation.VenueAvailabilityTime.Id,
+                            StartDate = reservation.VenueAvailabilityTime.StartDate,
+                            EndDate = reservation.VenueAvailabilityTime.EndDate,
+                            Price = reservation.VenueAvailabilityTime.Price,
+                            VenueId = reservation.VenueAvailabilityTime.VenueId,
+                            IsReserved = reservation.VenueAvailabilityTime.IsReserved,
+                        },
+                        VenueAvailabilityTimeId = reservation.VenueAvailabilityTimeId,
+                        User = new PartialUserResponseDto
+                        {
+                            Email = reservation.User.Email,
+                            FirstName = reservation.User.FirstName,
+                            LastName = reservation.User.LastName,
+                            Phone = reservation.User.Phone,
+                            ProfileImage = reservation.User.ProfileImageUrl
+                        }
+                    }
+                }
             };
         }
         catch (Exception ex)
         {
-            throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while retrieving the last reservation.", ex.Message);
+            throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while retrieving the next user reservation.", ex.Message);
         }
     }
 
