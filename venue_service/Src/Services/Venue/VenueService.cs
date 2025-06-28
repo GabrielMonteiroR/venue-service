@@ -103,10 +103,11 @@ namespace venue_service.Src.Services.Venue
                 if (venueTypeId.HasValue)
                     query = query.Where(v => v.VenueTypeId == venueTypeId.Value);
 
-                if (isReserved.HasValue)
+                if (isReserved.HasValue && isReserved.Value == false)
                 {
-                    query = query.Where(v => v.VenueAvailabilityTimes.Any(va => va.IsReserved == isReserved.Value));
+                    query = query.Where(v => v.VenueAvailabilityTimes.Any(va => !va.IsReserved && va.EndDate >= DateTime.UtcNow));
                 }
+
 
                 if (sportId != null && sportId.Count > 0)
                 {
@@ -158,7 +159,9 @@ namespace venue_service.Src.Services.Venue
                     Latitude = v.Latitude,
                     Longitude = v.Longitude,
                     Description = v.Description,
-                    venueAvaliabilityTimes = v.VenueAvailabilityTimes.Select(t => new VenueAvailabilityTimeResponseDto
+                    venueAvaliabilityTimes = v.VenueAvailabilityTimes 
+                    .Where(t => !t.IsReserved && t.EndDate >= DateTime.UtcNow)
+                    .Select(t => new VenueAvailabilityTimeResponseDto
                     {
                         Id = t.Id,
                         StartDate = t.StartDate,
