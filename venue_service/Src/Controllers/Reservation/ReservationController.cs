@@ -49,14 +49,14 @@ namespace venue_service.Src.Controllers.Reservation
         [HttpGet("history/by-venue/{venueId}")]
         public async Task<IActionResult> GetHistoryByUserIdAsync(int venueId)
         {
-            var response = await _reservationService.GetHistoryByUserIdAsync(venueId);
+            var response = await _reservationService.GetHistoryByVenueId(venueId);
             return Ok(response);
         }
 
         [HttpGet("history/by-user/{userId}")]
         public async Task<IActionResult> GetHistoryByVenueIdAsync(int userId)
         {
-            var response = await _reservationService.GetHistoryByVenueId(userId);
+            var response = await _reservationService.GetHistoryByUserIdAsync(userId);
             return Ok(response);
         }
 
