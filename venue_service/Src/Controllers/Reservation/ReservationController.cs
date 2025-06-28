@@ -59,5 +59,12 @@ namespace venue_service.Src.Controllers.Reservation
             var response = await _reservationService.GetHistoryByVenueId(userId);
             return Ok(response);
         }
+
+        [HttpGet("next-reservation/{userId}")]
+        public async Task<IActionResult> GetNextUserReservationAsync(int userId)
+        {
+            var response = await _reservationService.GetNextUserReservationAsync(userId);
+            return Ok(response);
+        }
     }
 }
