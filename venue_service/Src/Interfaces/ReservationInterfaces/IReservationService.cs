@@ -10,4 +10,6 @@ public interface IReservationService
     Task<ReservationResponseDto> GetNextUserReservationAsync(int userId);
     Task<ReservationsResponseDto> GetReservationByVenueIdAsync(int venueId);
     Task<bool> PayReservationAsync(int reservationId);
+    Task<ReservationsResponseDto> GetHistoryByUserIdAsync(int userId);
+    Task<ReservationsResponseDto> GetHistoryByVenueId(int VenueId);
 }
