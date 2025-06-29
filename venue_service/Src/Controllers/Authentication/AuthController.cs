@@ -40,4 +40,12 @@ public class AuthController : ControllerBase
             var response = await _authService.Login(dto);
             return Ok(response);
     }
+
+    [AllowAnonymous]
+    [HttpPost("validate-unique")]
+    public async Task<IActionResult> ValidateUnique([FromBody] UniqueValidatorDto dto)
+    {
+        var response = await _authService.ValidateUniqueFieldsAsync(dto);
+        return Ok(response);
+    }
 }

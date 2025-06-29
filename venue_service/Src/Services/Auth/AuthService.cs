@@ -37,7 +37,7 @@ public class AuthService
             Cnpj = dto.Cnpj,
             Phone = dto.Phone,
             ProfileImageUrl = dto.Image,
-            RoleId = (int)UserRoleEnum.OWNER, 
+            RoleId = (int)UserRoleEnum.OWNER,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
@@ -101,7 +101,7 @@ public class AuthService
     public async Task<AuthResponseDto> Login(LoginRequestDto dto)
     {
         var user = _userContext.Users
-            .Include(u => u.Role) 
+            .Include(u => u.Role)
             .FirstOrDefault(u => u.Email == dto.Email)
             ?? throw new Exception("Invalid user or password.");
 
@@ -147,5 +147,26 @@ public class AuthService
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public async Task<UniqueValidatorDto> ValidateUniqueFieldsAsync(UniqueValidatorDto dto)
+    {
+        try
+        {
+            var emailExists = await _userContext.Users.AnyAsync(u => u.Email == dto.EmailExists.ToString());
+            var cpfExists = await _userContext.Users.AnyAsync(u => u.Cpf == dto.CpfExists.ToString());
+            var phoneExists = await _userContext.Users.AnyAsync(u => u.Phone == dto.PhoneExists.ToString());
+
+            return new UniqueValidatorDto
+            {
+                EmailExists = emailExists,
+                CpfExists = cpfExists,
+                PhoneExists = phoneExists
+            };
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error validating unique fields: " + ex.Message);
+        }
     }
 }
