@@ -558,8 +558,8 @@ public class ReservationService : IReservationService
                 UserId = userId,
                 StreakCount = streak,
                 Message = streak > 1
-                    ? $"Usuário está há {streak} semanas consecutivas praticando!"
-                    : "Usuário praticou apenas uma semana até agora. Vamos manter o ritmo!"
+                    ? $"{streak} semanas consecutivas praticando!"
+                    : "Uma semana até agora. Vamos manter o ritmo!"
             };
         }
         catch (Exception ex)
