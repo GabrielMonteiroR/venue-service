@@ -31,7 +31,7 @@ public class AuthService
             throw new ConflictException("E-mail já está em uso");
 
         if (_userContext.Users.Any(u => u.Cnpj == dto.Cnpj))
-            throw new ConflictException("CPF já está em uso");
+            throw new ConflictException("CNPJ já está em uso");
 
         if (_userContext.Users.Any(u => u.Phone == dto.Phone))
             throw new ConflictException("Telefone já está em uso");
