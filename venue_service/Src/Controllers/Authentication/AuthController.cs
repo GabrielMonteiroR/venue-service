@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using venue_service.Src.Dtos.Auth;
+using venue_service.Src.Exceptions;
 using venue_service.Src.Services.Auth;
 
 namespace venue_service.Src.Controllers.Authentication;
@@ -19,10 +20,21 @@ public class AuthController : ControllerBase
 
     [AllowAnonymous]
     [HttpPost("register-athlete")]
-    public async Task<IActionResult> RegisterAthlete([FromBody] RegisterUserRequestDto dto)
+    public async Task<IActionResult> RegisterAthleteAsync([FromBody] RegisterUserRequestDto dto)
     {
-        var response = await _authService.RegisterAthleteAsync(dto);
-        return Ok(response);
+        try
+        {
+            var response = await _authService.RegisterAthleteAsync(dto);
+            return Ok(response);
+        }
+        catch (ConflictException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Erro inesperado: " + ex.Message });
+        }
     }
 
     [AllowAnonymous]
@@ -41,11 +53,4 @@ public class AuthController : ControllerBase
             return Ok(response);
     }
 
-    [AllowAnonymous]
-    [HttpPost("validate-unique")]
-    public async Task<IActionResult> ValidateUnique([FromBody] UniqueValidatorDto dto)
-    {
-        var response = await _authService.ValidateUniqueFieldsAsync(dto);
-        return Ok(response);
-    }
 }

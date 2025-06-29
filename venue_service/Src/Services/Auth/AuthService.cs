@@ -1,12 +1,13 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using venue_service.Src.Contexts;
 using venue_service.Src.Dtos.Auth;
 using venue_service.Src.Enums;
+using venue_service.Src.Exceptions;
 using venue_service.Src.Models.User;
 
 namespace venue_service.Src.Services.Auth;
@@ -65,7 +66,13 @@ public class AuthService
     public async Task<AuthResponseDto> RegisterAthleteAsync(RegisterUserRequestDto dto)
     {
         if (_userContext.Users.Any(u => u.Email == dto.Email))
-            throw new Exception("Email already in use!");
+            throw new ConflictException("E-mail já está em uso");
+
+        if (_userContext.Users.Any(u => u.Cpf == dto.Cpf))
+            throw new ConflictException("CPF já está em uso");
+
+        if (_userContext.Users.Any(u => u.Phone == dto.Phone))
+            throw new ConflictException("Telefone já está em uso");
 
         var user = new UserEntity
         {
@@ -73,6 +80,7 @@ public class AuthService
             LastName = dto.LastName,
             Email = dto.Email,
             Phone = dto.Phone,
+            Cpf = dto.Cpf,
             ProfileImageUrl = dto.Image,
             RoleId = (int)UserRoleEnum.ATHLETE,
             CreatedAt = DateTime.UtcNow,
@@ -97,6 +105,7 @@ public class AuthService
             UpdatedAt = user.UpdatedAt
         };
     }
+
 
     public async Task<AuthResponseDto> Login(LoginRequestDto dto)
     {
