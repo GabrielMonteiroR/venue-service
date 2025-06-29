@@ -507,8 +507,8 @@ public class ReservationService : IReservationService
         try
         {
             var dates = await _reservationContext.Reservations
-                .Include(r => r.VenueAvailabilityTime)          
-                .Where(r => r.UserId == userId && r.IsPaid)     
+                .Include(r => r.VenueAvailabilityTime)
+                .Where(r => r.UserId == userId && r.IsPaid)
                 .Select(r => r.VenueAvailabilityTime.StartDate.Date)
                 .Distinct()
                 .ToListAsync();
@@ -523,30 +523,43 @@ public class ReservationService : IReservationService
                 };
             }
 
+            var calendar = CultureInfo.InvariantCulture.Calendar;
+
             var weeks = dates
-                .Select(d => CultureInfo.InvariantCulture.Calendar
-                   .GetWeekOfYear(d, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday))
+                .Select(date => new
+                {
+                    Year = calendar.GetYear(date),
+                    Week = calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday)
+                })
                 .Distinct()
-                .OrderByDescending(w => w)
+                .OrderByDescending(w => w.Year)
+                .ThenByDescending(w => w.Week)
                 .ToList();
 
-            int streak = 0;
-            int thisWeek = CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(
-                               DateTime.Today, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
-
-            foreach (var w in weeks)
+            int streak = 1;
+            for (int i = 1; i < weeks.Count; i++)
             {
-                if (w == thisWeek) { streak++; thisWeek--; }
-                else break;
+                var prev = weeks[i - 1];
+                var curr = weeks[i];
+
+                if ((prev.Year == curr.Year && prev.Week == curr.Week + 1) ||
+                    (prev.Year == curr.Year + 1 && prev.Week == 1 && curr.Week == GetLastWeekOfYear(curr.Year)))
+                {
+                    streak++;
+                }
+                else
+                {
+                    break;
+                }
             }
 
             return new StreakDto
             {
                 UserId = userId,
                 StreakCount = streak,
-                Message = streak > 0
-                              ? $"Usuário está há {streak} semana(s) consecutiva(s) praticando! 👏"
-                              : "Sem streak ativo no momento."
+                Message = streak > 1
+                    ? $"Usuário está há {streak} semanas consecutivas praticando!"
+                    : "Usuário praticou apenas uma semana até agora. Vamos manter o ritmo!"
             };
         }
         catch (Exception ex)
@@ -557,5 +570,13 @@ public class ReservationService : IReservationService
                 ex.Message);
         }
     }
+
+    private int GetLastWeekOfYear(int year)
+    {
+        var lastDay = new DateTime(year, 12, 31);
+        var calendar = CultureInfo.InvariantCulture.Calendar;
+        return calendar.GetWeekOfYear(lastDay, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+    }
+
 
 }
