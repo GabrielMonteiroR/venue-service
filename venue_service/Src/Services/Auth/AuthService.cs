@@ -28,7 +28,13 @@ public class AuthService
     public async Task<AuthResponseDto> RegisterOwnerAsync(RegisterOwnerRequestDto dto)
     {
         if (_userContext.Users.Any(u => u.Email == dto.Email))
-            throw new Exception("Email already in use!");
+            throw new ConflictException("E-mail já está em uso");
+
+        if (_userContext.Users.Any(u => u.Cnpj == dto.Cnpj))
+            throw new ConflictException("CPF já está em uso");
+
+        if (_userContext.Users.Any(u => u.Phone == dto.Phone))
+            throw new ConflictException("Telefone já está em uso");
 
         var user = new UserEntity
         {
@@ -61,7 +67,6 @@ public class AuthService
             UpdatedAt = user.UpdatedAt
         };
     }
-
 
     public async Task<AuthResponseDto> RegisterAthleteAsync(RegisterUserRequestDto dto)
     {

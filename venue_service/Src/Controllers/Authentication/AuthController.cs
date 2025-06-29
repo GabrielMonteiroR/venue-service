@@ -41,8 +41,19 @@ public class AuthController : ControllerBase
     [HttpPost("register-owner")]
     public async Task<IActionResult> RegisterOwner([FromBody] RegisterOwnerRequestDto dto)
     {
-        var response = await _authService.RegisterOwnerAsync(dto);
-        return Ok(response);
+        try
+        {
+            var response = await _authService.RegisterOwnerAsync(dto);
+            return Ok(response);
+        }
+        catch (ConflictException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Erro inesperado: " + ex.Message });
+        }
     }
 
     [AllowAnonymous]
