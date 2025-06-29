@@ -66,5 +66,12 @@ namespace venue_service.Src.Controllers.Reservation
             var response = await _reservationService.GetNextUserReservationAsync(userId);
             return Ok(response);
         }
+
+        [HttpGet("streak/{userId}")]
+        public async Task<IActionResult> GetUserStreakAsync(int userId)
+        {
+            var response = await _reservationService.GetUserStreak(userId);
+            return Ok(response);
+        }
     }
 }

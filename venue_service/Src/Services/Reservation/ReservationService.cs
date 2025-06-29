@@ -1,10 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Globalization;
 using System.Net;
 using venue_service.Src.Contexts;
 using venue_service.Src.Dtos.AvailabilityTimes;
 using venue_service.Src.Dtos.Reservation;
 using venue_service.Src.Dtos.Reservation.ByUserId;
+using venue_service.Src.Dtos.Streak;
 using venue_service.Src.Dtos.User;
 using venue_service.Src.Dtos.Venue;
 using venue_service.Src.Enums;
@@ -499,4 +501,61 @@ public class ReservationService : IReservationService
             throw new HttpResponseException(HttpStatusCode.InternalServerError, "An error occurred while retrieving the reservation history.", ex.Message);
         }
     }
+
+    public async Task<StreakDto> GetUserStreak(int userId)
+    {
+        try
+        {
+            var dates = await _reservationContext.Reservations
+                .Include(r => r.VenueAvailabilityTime)          
+                .Where(r => r.UserId == userId && r.IsPaid)     
+                .Select(r => r.VenueAvailabilityTime.StartDate.Date)
+                .Distinct()
+                .ToListAsync();
+
+            if (!dates.Any())
+            {
+                return new StreakDto
+                {
+                    UserId = userId,
+                    StreakCount = 0,
+                    Message = "Usuário ainda não possui reservas pagas."
+                };
+            }
+
+            var weeks = dates
+                .Select(d => CultureInfo.InvariantCulture.Calendar
+                   .GetWeekOfYear(d, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday))
+                .Distinct()
+                .OrderByDescending(w => w)
+                .ToList();
+
+            int streak = 0;
+            int thisWeek = CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(
+                               DateTime.Today, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+
+            foreach (var w in weeks)
+            {
+                if (w == thisWeek) { streak++; thisWeek--; }
+                else break;
+            }
+
+            return new StreakDto
+            {
+                UserId = userId,
+                StreakCount = streak,
+                Message = streak > 0
+                              ? $"Usuário está há {streak} semana(s) consecutiva(s) praticando! 👏"
+                              : "Sem streak ativo no momento."
+            };
+        }
+        catch (Exception ex)
+        {
+            throw new HttpResponseException(
+                HttpStatusCode.InternalServerError,
+                "Erro ao calcular o streak do usuário.",
+                ex.Message);
+        }
+    }
+
 }
